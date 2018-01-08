@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-pandoc -s -o dist/output.pdf markdown/*.md --toc
+dir=$(dirname $(readlink -f $0))
+$(dirname $(readlink -f $0))/pandoc.sh -o dist/output.pdf
