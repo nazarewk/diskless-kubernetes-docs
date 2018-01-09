@@ -364,6 +364,9 @@ $else$
 $if(colorlinks)$
 \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
 $endif$
+$if(toc-title)$
+\renewcommand{\contentsname}{$toc-title$}
+$endif$
 \setcounter{tocdepth}{$toc-depth$}
 \tableofcontents
 }
