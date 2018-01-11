@@ -1,1 +1,7 @@
-# Temat
+# Wstęp
+
+## System bezdyskowy
+
+
+
+ 

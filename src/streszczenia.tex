@@ -1,20 +1,26 @@
 \newpage
 \begin{center}
   \large \bf
-  \@title
+  Implementacja i testy wydajnosci środowiska Kubernetes na maszynach bezdyskowych
 \end{center}
 
 \section*{Streszczenie}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Morbi ac dolor scelerisque, malesuada ex vel, feugiat augue.
-Suspendisse dictum, elit efficitur vestibulum eleifend, mi neque
-accumsan velit, at ultricies ex lectus et urna. Pellentesque vel
-lorem turpis. Donec blandit arcu lacus, vitae dapibus tellus tempus et.
-Etiam orci libero, mollis in dapibus tempor, rutrum eget magna.
-Nullam congue libero non velit suscipit, vel cursus elit commodo.
-Praesent mollis augue quis lorem laoreet, condimentum scelerisque ex pharetra.
-Sed est ex, gravida a porta in, tristique ac nunc. Nunc at varius sem, sit amet consectetur velit.
+Celem tej pracy inżynierskiej jest przybliżenie czytelnikowi zagadnień
+związanych z uruchamianiem systemu Kubernetes na maszynach bezdyskowych.
+
+Zacznę od wyjaśnienia pojęcia systemu bezdyskowego oraz sposobu jego
+funkcjonowania na przykładzie sieci uczelnianej wzorującego się na niej
+przygotowanie przeze mnie lokalnego środowiska.
+
+Następnie opiszę problem izolacji i przydzielania zasobów systemowych
+na przykładzie wirtualnych maszyn, chroot, control group i kontenerów.
+
+W głównej części dokumentu przedstawię pojęcie orkiestrami kontenerami,
+w jaki sposób odnosi się do wcześniej postawionych problemów. Opiszę
+alternatywy Kubernetes, jego architekturę oraz sposoby uruchamiania.
+Na koniec spróbuję uruchomić Kubernetes na maszynach bezdyskowych,
+problemy z tym związane oraz przedstawię wyniki.
 
 \bigskip
 {\noindent\bf Słowa kluczowe:} praca dyplomowa, LaTeX, jakość
@@ -24,7 +30,7 @@ Sed est ex, gravida a porta in, tristique ac nunc. Nunc at varius sem, sit amet 
 
 \begin{center}
   \large \bf
-  [TODO: English] \@title
+  Implementing and testing Kubernetes running on diskless machines
 \end{center}
 
 \section*{Abstract}
