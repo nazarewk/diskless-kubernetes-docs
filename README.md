@@ -9,4 +9,4 @@ Companion repos:
 Requirements (Arch Linux):
 - pandoc
 - pandoc-citeproc
-- texlive-core
+- texlive-most

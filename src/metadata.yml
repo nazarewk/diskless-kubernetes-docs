@@ -1,7 +1,12 @@
 ---
-title:  'Diskless Kubernetes'
-toc-title: 'Spis treści'
+title:  'Implementacja i testy wydajnosci środowiska Kubernets na maszynach bezdyskowych'
+biblio-title: 'Bibliografia'
 
 links-as-notes: yes
 toc: yes
+
+documentclass: report
+classoption: a4paper,12pt,twoside,openany
+lang: pl-PL
+otherlangs: [en-GB]
 ...

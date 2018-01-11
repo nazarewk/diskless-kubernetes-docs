@@ -1,0 +1,4 @@
+#!/bin/sh
+set -x
+bin/pdf-convert.sh
+git add dist/output.pdf
