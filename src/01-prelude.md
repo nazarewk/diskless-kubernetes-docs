@@ -1,7 +1,4 @@
 # Wstęp
 
-## System bezdyskowy
-
-
 
  
