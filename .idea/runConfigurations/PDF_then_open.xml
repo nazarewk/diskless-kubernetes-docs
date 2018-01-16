@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PDF then open" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
+    <toRun type="BashConfigurationType" name="open output.pdf" />
+    <toRun type="BashConfigurationType" name="pdf" />
+    <method />
+  </configuration>
+</component>
