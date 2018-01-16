@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="open output.pdf" type="BashConfigurationType" factoryName="Bash" activateToolWindowBeforeRun="false" singleton="true">
     <option name="INTERPRETER_OPTIONS" value="" />
-    <option name="INTERPRETER_PATH" value="/sbin/bash" />
+    <option name="INTERPRETER_PATH" value="/bin/bash" />
     <option name="WORKING_DIRECTORY" value="" />
     <option name="PARENT_ENVS" value="true" />
     <option name="SCRIPT_NAME" value="xdg-open" />
