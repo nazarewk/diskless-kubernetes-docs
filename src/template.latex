@@ -9,7 +9,7 @@
 \usepackage{helvet}
 \usepackage[T1]{fontenc}
 \usepackage{anyfontsize}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[pdftex]{graphicx}
 \usepackage{tabularx}
 \usepackage{array}
@@ -98,6 +98,7 @@ $if(listings)$
     basewidth=0.5em,
     rulecolor=\color{black},
 }
+\lstset{postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}}
 $endif$
 
 

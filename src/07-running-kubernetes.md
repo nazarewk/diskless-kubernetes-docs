@@ -61,7 +61,6 @@ runcmd:
 
 ## kubespray-cli
 
-
 Jest to narzędzie ułatwiające korzystanie z `kubespray`.
 Z powodu [błędu](https://github.com/kubespray/kubespray-cli/issues/120)
 logiki narzędzie nie radzi sobie z brakiem Python'a na domyślnej dystrybucji 
@@ -77,6 +76,11 @@ Wykrzacza się na kroku czekania na uruchomienie `etcd` ponieważ oczekuje
 połączenia na NATowym interfejsie z adresem `10.0.3.15` zamiast host network
 z adresem `192.168.56.10`, stąd `ansible_default_ipv4.address`.
 
+Według użytkowników 
+[oficjalnego Slacka kubespray](https://kubernetes.slack.com/messages/kubespray)
+`kubespray-cli` jest deprekowane.
+
+
 ## kubespray
 
 Kod znajduje się w moim repozytorium
@@ -85,7 +89,13 @@ Kod znajduje się w moim repozytorium
 ```{.bash include=kubernetes-cluster/bin/setup-cluster}
 ```
 
-TODO: jak sie dostać do dashboard'u?
+### Dostęp do dashboard'u
+
+https://github.com/kubernetes/dashboard/wiki/Access-control#kubeconfig
+https://github.com/kubernetes-incubator/kubespray/blob/master/docs/getting-started.md#accessing-kubernetes-dashboard
+
+
+### Napotkane błędy
 
 Błąd przy ustawieniu `loadbalancer_apiserver.address` na `0.0.0.0`:
 ```

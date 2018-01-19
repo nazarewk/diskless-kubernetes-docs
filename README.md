@@ -6,8 +6,14 @@ Companion repos:
 - [ipxe-boot](https://github.com/nazarewk/ipxe-boot)
 - [kubernetes-cluster](https://github.com/nazarewk/kubernetes-cluster)
 
-Requirements (Arch Linux):
-- pandoc
-- pandoc-citeproc
-- texlive-most
-- [pandoc-include-code](https://github.com/owickstrom/pandoc-include-code) [pandoc-include-code-bin](https://aur.archlinux.org/packages/pandoc-include-code-bin/)
+Requirements:
+- `bash`
+- `git`
+- `docker`
+- set of template files from 
+
+Building PDF: 
+
+    bin/pdf-convert.sh
+    
+First run will take a while to build the proper Docker image.

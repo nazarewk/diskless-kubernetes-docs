@@ -6,5 +6,5 @@ ignore_line="!$1"
 link_to="src/$1"
 cd ${bin}/..
 #grep "${ignore_line}" ${ignore} || echo "${ignore_line}" >> ${ignore}
-[ -f "${link_to}" ] || ln -s ../${dyplom}/$1 ${link_to}
+[ -f "${link_to}" ] || ln -s ${dyplom}/$1 ${link_to}
 git add ${link_to}

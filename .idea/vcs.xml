@@ -2,6 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../docker-archlinux" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../docker-archlinux-haskell" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../docker-pandoc" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../ipxe-boot" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kubernetes-cluster" vcs="Git" />
   </component>
