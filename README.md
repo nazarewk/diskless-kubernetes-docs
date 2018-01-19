@@ -10,3 +10,4 @@ Requirements (Arch Linux):
 - pandoc
 - pandoc-citeproc
 - texlive-most
+- [pandoc-include-code](https://github.com/owickstrom/pandoc-include-code) [pandoc-include-code-bin](https://aur.archlinux.org/packages/pandoc-include-code-bin/)

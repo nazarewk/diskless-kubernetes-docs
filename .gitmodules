@@ -1,0 +1,6 @@
+[submodule "src/kubernetes-cluster"]
+	path = src/kubernetes-cluster
+	url = git@github.com:nazarewk/kubernetes-cluster.git
+[submodule "src/ipxe-boot"]
+	path = src/ipxe-boot
+	url = git@github.com:nazarewk/ipxe-boot.git

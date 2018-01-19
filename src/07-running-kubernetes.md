@@ -5,6 +5,7 @@ Najpopularniejszym rozwiązaniem konfiguracji klastra Kubernetes jest
 
 
 Interesują nas tylko i wyłącznie rozwiązania bare-metal:
+
 - [kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/)
   - [Install with kubadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
 - [kubespray](https://github.com/kubernetes-incubator/kubespray)
@@ -18,87 +19,78 @@ Interesują nas tylko i wyłącznie rozwiązania bare-metal:
 - [Rancher Kubernetes Installer](http://rancher.com/announcing-rke-lightweight-kubernetes-installer/)
 - [Rancher 1.X](https://rancher.com/rancher/)
 
-## Rancher 2.0
+## Rancher 1.X/2.0 {#rancher-kubernetes}
+
+Wygodne narzędzie do uruchamiania i monitorowania klastra Kubernetes, ale wymaga
+interakcji użytkownika. 
 
 ```bash
-docker run --rm --name rancher -d -p 8080:8080 rancher/server:v2.0.0-alpha10
-#docker logs -f rancher
+#rancher_version=latest
+rancher_version=v2.0.0-alpha10
+docker run --rm --name rancher -d -p 8080:8080 rancher/server:${rancher_version}
 ```
-potem wyklikac host, podac adres w sieci z node'ami Kubernetes i uruchomic
-dockerowa komende na node'ach (np. CoreOSowych)
 
-## Rancher 1.X
+Najpierw należy zalogować się do panelu administracyjnego Ranchera i 
+przeprowadzić podstawową konfigurację (adres Ranchera + uzyskanie komendy).
 
+Następnie w celu dodania węzła do klastra wystarczy wywołać jedną komendę 
+udostępnioną w panelu administracyjnym Ranchera na docelowym węźle, 
+jej domyślny format to:
+    
 ```bash
-docker run --rm --name rancher -d -p 8080:8080 rancher/server:latest
+wersja_agenta=v1.2.9
+ip_ranchera=192.168.56.1
+skrypt=B52944BEFAA613F0CE90:1514678400000:E2yB6KfxzSix4YHti39BTw5RbKw
+
+sudo docker run --rm --privileged \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/rancher:/var/lib/rancher \
+  rancher/agent:${wersja_agenta} \
+  http://${ip_ranchera}:8080/v1/scripts/${skrypt}
 ```
 
-jw.
+W ciągu 2 godzin przeglądu nie udało mi się zautomatyzować procesu uzyskiwania
+ww. komendy.
+
+Następnie w cloud-config'u RancherOS'a możemy dodać ww. komendę w formie:
+```yaml
+#cloud-config
+runcmd:
+- docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.9 http://192.168.56.1:8080/v1/scripts/...
+```
 
 ## kubespray-cli
 
-Nie radzi sobie z brakiem Python'a na domyślnej dystrybucji CoreOS'a, stąd
-do standardowego flow potrzebny jest dodatkowy playbook realizujący jego
-instalację zanim uruchomimy `kubespray deploy`
 
-```bash
-#!/usr/bin/env bash
-set -e
+Jest to narzędzie ułatwiające korzystanie z `kubespray`.
+Z powodu [błędu](https://github.com/kubespray/kubespray-cli/issues/120)
+logiki narzędzie nie radzi sobie z brakiem Python'a na domyślnej dystrybucji 
+CoreOS'a, mimo że sam `kubespray` radzi sobie z nim świetnie.
+Do uruchomienia na tym systemie potrzebne jest ręczne wywołanie roli 
+[`bootstrap-os`](https://github.com/kubernetes-incubator/kubespray/blob/master/roles/bootstrap-os/tasks/main.yml)
+z `kubespray` zanim przystąpimy do właściwego deploy'u.
 
-#pip2 install ansible kubespray
-get_coreos_nodes() {
-  for node in $@
-  do
-    echo node1[ansible_host=${node},bootstrap_os=coreos,ansible_user=core]
-  done
-}
-
-NODES=(192.168.56.{10,12,13})
-NODES=($(get_coreos_nodes ${NODES[@]}))
-echo NODES=${NODES[@]}
-kubespray prepare -y --nodes ${NODES[@]}
-cat > ~/.kubespray/bootstrap-os.yml << EOF
-- hosts: all
-  become: yes
-  gather_facts: False
-  roles:
-  - bootstrap-os
-EOF
-
-(cd ~/.kubespray; ansible-playbook -i inventory/inventory.cfg bootstrap-os.yml)
-kubespray deploy -y --coreos
+```{.bash include=ipxe-boot/bin/kubernetes-kubespray-cli.sh}
 ```
+
 Wykrzacza się na kroku czekania na uruchomienie `etcd` ponieważ oczekuje 
 połączenia na NATowym interfejsie z adresem `10.0.3.15` zamiast host network
-z adresem `192.168.56.10`.
+z adresem `192.168.56.10`, stąd `ansible_default_ipv4.address`.
 
 ## kubespray
 
-```bash
-#!/usr/bin/env bash
-set -e
+Kod znajduje się w moim repozytorium
+[kubernetes-cluster](https://github.com/nazarewk/kubernetes-cluster).
 
-#pip2 install ansible kubespray
-dir=~/.kubespray
-inventory=my_inventory
-[ -f ${dir} ] && git clone git@github.com:kubernetes-incubator/kubespray.git ${dir} || (cd ${dir} && git pull)
-cd ${dir}
-
-# based on https://github.com/kubernetes-incubator/kubespray/blob/master/docs/getting-started.md#building-your-own-inventory
-cp -r inventory ${inventory}
-declare -a IPS=(192.168.56.{10,12,13})
-CONFIG_FILE=${inventory}/inventory.cfg python3 contrib/inventory_builder/inventory.py ${IPS[@]}
-
-cat > ${inventory}/group_vars/all.yml << EOF
-bootstrap_os: coreos
-loadbalancer_apiserver:
-  address: 0.0.0.0
-  port: 8080
-kubeconfig_localhost: true
-kubectl_localhost: true
-EOF
-
-ansible-playbook -i ${inventory}/inventory.cfg cluster.yml -b -v
+```{.bash include=kubernetes-cluster/bin/setup-cluster}
 ```
 
 TODO: jak sie dostać do dashboard'u?
+
+Błąd przy ustawieniu `loadbalancer_apiserver.address` na `0.0.0.0`:
+```
+TASK [kubernetes-apps/cluster_roles : Apply workaround to allow all nodes with cert O=system:nodes to register] ************************************
+Wednesday 17 January 2018  22:22:59 +0100 (0:00:00.626)       0:08:31.946 *****
+fatal: [node2]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
+fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
+```

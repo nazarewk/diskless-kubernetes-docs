@@ -3,6 +3,7 @@ title:  'Implementacja i testy wydajnosci środowiska Kubernetes na maszynach be
 biblio-title: 'Bibliografia'
 
 links-as-notes: yes
+listings: yes
 toc: yes
 
 documentclass: report
