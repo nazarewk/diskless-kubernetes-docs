@@ -20,6 +20,7 @@ run_pandoc () {
   opts="${opts} -v ${src}/:/source/:ro"
   opts="${opts} -v ${src}/kubernetes-cluster/:/source/kubernetes-cluster:ro"
   opts="${opts} -v ${src}/ipxe-boot/:/source/ipxe-boot:ro"
+  opts="${opts} --rm"
   cmd docker run ${opts} ${image_name} "$@"
 }
 

@@ -59,6 +59,16 @@ runcmd:
 - docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.9 http://192.168.56.1:8080/v1/scripts/...
 ```
 
+Od wersji 2.0 umożliwia połączenie się z istniejącym klastrem:
+
+    kubectl apply -f http://192.168.56.1:8080/v3/scripts/303F60E1A5E186F53F3F:1514678400000:wstQFdHpOgHqKahoYdmsCXEWMW4.yaml
+
+
+W wersji `v2.0.0-alpha10` losowo pojawia się błąd
+[Upgrade Environment](https://github.com/rancher/rancher/issues/10396).
+
+![Błąd pt. Upgrade Environment](assets/rancher2.0-error.png){dpi=400}
+
 ## kubespray-cli
 
 Jest to narzędzie ułatwiające korzystanie z `kubespray`.
