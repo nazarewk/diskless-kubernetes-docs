@@ -89,10 +89,21 @@ Kod znajduje się w moim repozytorium
 ```{.bash include=kubernetes-cluster/bin/setup-cluster}
 ```
 
-### Dostęp do dashboard'u
 
-https://github.com/kubernetes/dashboard/wiki/Access-control#kubeconfig
-https://github.com/kubernetes-incubator/kubespray/blob/master/docs/getting-started.md#accessing-kubernetes-dashboard
+### Kubernetes Dashboard
+Dostęp do Dashboardu najprościej można uzyskać:
+
+1. [nadanie wszystkich uprawnień roli `kubernetes-dashboard`](https://github.com/kubernetes/dashboard/wiki/Access-control#admin-privileges)
+2. Wejście na http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login
+3. Kliknięcie skip
+
+```{.bash include=kubernetes-cluster/bin/dashboard}
+```
+
+Linki:
+
+- https://github.com/kubernetes/dashboard/wiki/Access-control
+- https://github.com/kubernetes-incubator/kubespray/blob/master/docs/getting-started.md#accessing-kubernetes-dashboard
 
 
 ### Napotkane błędy
