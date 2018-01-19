@@ -1,32 +1,20 @@
-# Przegląd sposobów konfiguracji klastra Kubernetes
+# Sposoby konfiguracji klastra Kubernetes
 
 Najpopularniejszym rozwiązaniem konfiguracji klastra Kubernetes jest 
-[kops](https://github.com/kubernetes/kops), ale jak większoś
+[kops](https://github.com/kubernetes/kops), ale jak większość rozwiązań zakłada
+uruchomienie w środowiskach chmurowych, PaaS lub IaaS. W związku z tym nie ma
+żadnego zastosowania w tej pracy inżynierskiej.
 
-
-Interesują nas tylko i wyłącznie rozwiązania bare-metal:
-
-- [kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/)
-  - [Install with kubadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
-- [kubespray](https://github.com/kubernetes-incubator/kubespray)
-  - zestaw skryptów Ansible konfigurujących klaster na jednym z wielu systemów operacyjnych
-  - dąży do zostania tzw.  
-    [Operatorem](https://github.com/kubernetes-incubator/kubespray/blob/master/docs/comparisons.md)
-    korzystającym z kubeadm
-- [Fedora via Ansible](https://kubernetes.io/docs/getting-started-guides/fedora/fedora_ansible_config/)
-  - deprekowane na rzecz kubespray - odpada
-- [Rancher 2.0](http://rancher.com/rancher2-0/), korzysta z RKE
-- [Rancher Kubernetes Installer](http://rancher.com/announcing-rke-lightweight-kubernetes-installer/)
-- [Rancher 1.X](https://rancher.com/rancher/)
-
-## Rancher 1.X/2.0 {#rancher-kubernetes}
+## Rancher 2.0 {#rancher-kubernetes}
 
 Wygodne narzędzie do uruchamiania i monitorowania klastra Kubernetes, ale wymaga
-interakcji użytkownika. 
+interakcji użytkownika.
+Wersja 2.0 (obecnie w fazie alpha) oferuje lepszą integrację z Kubernetes
+całkowicie porzucając inne platformy.
 
 ```bash
 #rancher_version=latest
-rancher_version=v2.0.0-alpha10
+rancher_version=preview
 docker run --rm --name rancher -d -p 8080:8080 rancher/server:${rancher_version}
 ```
 
