@@ -25,8 +25,7 @@ ze standardami OCI, m. in.:
 - [Docker on FreeBSD](https://wiki.freebsd.org/Docker)
 - [Running CloudABI applications on a FreeBSD based Kubernetes cluster, by Ed Schouten (EuroBSDcon '17)](https://www.youtube.com/watch?v=akLa9L5O0NY)
 
-## Zarządzanie Kubernetes
-
+## Zarządzanie Kubernetes bez graficznego interfejsu
   
 ### kubeadm
 
@@ -34,16 +33,20 @@ ze standardami OCI, m. in.:
 - [Install with kubadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
 
 ### Kubespray
-
 - [kubespray](https://github.com/kubernetes-incubator/kubespray)
 - zestaw skryptów Ansible konfigurujących klaster na jednym z wielu systemów operacyjnych
 - dąży do zostania tzw.  
   [Operatorem](https://github.com/kubernetes-incubator/kubespray/blob/master/docs/comparisons.md)
   korzystającym z kubeadm
+  
+### OpenShift Ansible
+Konfiguracja [OpenShift Origin](#openshift-origin) realizowana jest zestawem
+skryptów Ansible'owych rozwijanych jako projekt 
+[openshift-ansible](https://github.com/openshift/openshift-ansible).
 
 ### Eksperymentalne i deprekowane rozwiązania
 - [Fedora via Ansible](https://kubernetes.io/docs/getting-started-guides/fedora/fedora_ansible_config/)
-  - deprekowane na rzecz kubespray - odpada
+  deprekowane na rzecz kubespray
 - [Rancher Kubernetes Installer](http://rancher.com/announcing-rke-lightweight-kubernetes-installer/)
 
 
@@ -61,10 +64,17 @@ umożliwiającą między innymi zarządzanie klastrem Kubernetes.
 Od wersji 2.0 twórcy skupiają się tylko i wyłącznie na zarządzaniu Kubernetes 
 porzucając inne rozwiązania.
 
-### Openshift Origin
+### OpenShift by Red Hat {#openshift-origin}
+OpenShift jest komercyjną usługą typu PaaS (Platform as a Service), od wersji 3 
+skupia się na zarządzaniu klastrem Kubernetes.
 
-- [Openshift Origin vs Kuberentes](https://www.reddit.com/r/devops/comments/59ql4r/openshift_origin_vs_kubernetes/)
-- [The Differences Between Kubernetes and Openshift](https://medium.com/levvel-consulting/the-differences-between-kubernetes-and-openshift-ae778059a90e)
+Rdzeniem projektu jest open sourcowy 
+[OpenShift Origin](https://github.com/openshift/origin) konfigurowany przez
+[OpenShift Ansible](#openshift-ansible).
+
+- [OpenShift Origin vs Kubernetes](https://www.reddit.com/r/devops/comments/59ql4r/openshift_origin_vs_kubernetes/)
+- [The Differences Between Kubernetes and OpenShift](https://medium.com/levvel-consulting/the-differences-between-kubernetes-and-openshift-ae778059a90e)
+- [Demo konsoli](https://youtu.be/-mFovK19aB4?t=6m54s) (niestety po hebrajsku)
 
 ### DC/OS
 
