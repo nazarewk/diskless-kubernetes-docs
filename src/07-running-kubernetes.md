@@ -110,3 +110,33 @@ Wednesday 17 January 2018  22:22:59 +0100 (0:00:00.626)       0:08:31.946 *****
 fatal: [node2]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
 fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
 ```
+
+## OpenShift Origin
+
+Według dokumentacji są dwie metody uruchamiania serwera, w dockerze
+i na systemie linux.
+
+```bash
+# https://docs.openshift.org/latest/getting_started/administrators.html#installation-methods
+docker run -d --name "origin" \
+  --privileged --pid=host --net=host \
+  -v /:/rootfs:ro \
+  -v /var/run:/var/run:rw \
+  -v /sys:/sys \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+  -v /var/lib/docker:/var/lib/docker:rw \
+  -v /var/lib/origin/openshift.local.volumes:/var/lib/origin/openshift.local.volumes:rslave \
+  openshift/origin start
+```
+
+OpenShifta próbowałem uruchomić na następujących systemach obiema metodami:
+
+- Arch Linux `Linux krna 4.14.13-1-ARCH #1 SMP PREEMPT Wed Jan 10 11:14:50 UTC 2018 x86_64 GNU/Linux`
+- CoreOS `Linux localhost 4.14.11-coreos #1 SMP Fri Jan 5 11:00:14 UTC 2018 x86_64 Intel(R) Core(TM) i5-2500K CPU @ 3.30GHz GenuineIntel GNU/Linux`
+
+We wszystkich konfiguracjach obie metody
+[skutkują błędem](https://github.com/openshift/origin/issues/14766):
+
+```
+F0120 19:18:58.708005   25376 node.go:269] failed to run Kubelet: failed to create kubelet: misconfiguration: kubelet cgroup driver: "systemd" is different from docker cgroup driver: "cgroupfs"
+```
