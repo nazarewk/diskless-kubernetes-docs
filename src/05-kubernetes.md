@@ -1,15 +1,8 @@
 # Kubernetes
 
+https://jvns.ca/categories/kubernetes/
+
 ## Architektura
-
-### Komunikacja sieciowa
-
-4 rodzaje sieci:
-1. komunikacja wewnątrz Podów (localhost)
-2. komunikacja między Podami (SDN/CNI, np. flannel, Calico)
-3. komunikacja między Podami i Serwisami (kube-proxy)
-4. komunikacja świata z Serwisami
-
 
 ### Składowe kontrolujące klaster
 - etcd - przechowywanie stanu klastra
@@ -28,3 +21,12 @@
   odpowiedniego kontenera
 - cAdvisor - monitoruje zużycie zasobów i wydajność kontenerów w ramach jednego
   węzła
+
+### Komunikacja sieciowa
+
+4 rodzaje sieci:
+1. komunikacja wewnątrz Podów (localhost)
+2. komunikacja między Podami (SDN/CNI, np. flannel, Calico)
+3. komunikacja między Podami i Serwisami (kube-proxy)
+4. komunikacja świata z Serwisami
+

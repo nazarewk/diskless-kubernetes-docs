@@ -1,4 +1,4 @@
-# Sposoby konfiguracji klastra Kubernetes
+# Konfiguracja klastra Kubernetes
 
 Najpopularniejszym rozwiązaniem konfiguracji klastra Kubernetes jest 
 [kops](https://github.com/kubernetes/kops), ale jak większość rozwiązań zakłada
@@ -55,11 +55,11 @@ Od wersji 2.0 umożliwia połączenie się z istniejącym klastrem:
 W wersji `v2.0.0-alpha10` losowo pojawia się błąd
 [Upgrade Environment](https://github.com/rancher/rancher/issues/10396).
 
-![Błąd pt. Upgrade Environment](assets/rancher2.0-error.png){dpi=400}
+![Błąd pt. Upgrade Environment](assets/rancher2.0-error.png){width=500 height=140}
+
 
 ## kubespray-cli
 
-Jest to narzędzie ułatwiające korzystanie z `kubespray`.
 Z powodu [błędu](https://github.com/kubespray/kubespray-cli/issues/120)
 logiki narzędzie nie radzi sobie z brakiem Python'a na domyślnej dystrybucji 
 CoreOS'a, mimo że sam `kubespray` radzi sobie z nim świetnie.
@@ -74,9 +74,6 @@ Wykrzacza się na kroku czekania na uruchomienie `etcd` ponieważ oczekuje
 połączenia na NATowym interfejsie z adresem `10.0.3.15` zamiast host network
 z adresem `192.168.56.10`, stąd `ansible_default_ipv4.address`.
 
-Według użytkowników 
-[oficjalnego Slacka kubespray](https://kubernetes.slack.com/messages/kubespray)
-`kubespray-cli` jest deprekowane.
 
 
 ## kubespray
