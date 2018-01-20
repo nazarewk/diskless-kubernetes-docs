@@ -102,7 +102,7 @@ Konfiguracja [OpenShift Origin](#openshift-origin) realizowana jest zestawem
 skryptów Ansible'owych rozwijanych jako projekt 
 [openshift-ansible](https://github.com/openshift/openshift-ansible).
 
-### Canonical Kubernetes distribution
+### Canonical distribution of Kubernetes
 
 Jest to prosta w instalacji dystrybucja Kubernetes. Niestety wymaga 
 infrastruktury chmurowej do uruchomienia klastra składającego się z więcej niż 
@@ -114,7 +114,7 @@ działającego środowiska [Metal as a Service]().
 W związku z powyższym nie będę dalej zajmował się tym narzędziem.
 
 Przydatne materiały:
-- Juju Charm [the canonical distribution of kubernetes](https://jujucharms.com/canonical-kubernetes/)
+- Juju Charm [the Canonical distribution of Kubernetes](https://jujucharms.com/canonical-kubernetes/)
 - [Install Kubernetes with conjure-up](https://tutorials.ubuntu.com/tutorial/install-kubernetes-with-conjure-up)
 - [Kubernetes the not so easy way](https://insights.ubuntu.com/2017/10/12/kubernetes-the-not-so-easy-way/)
   opisuje instalację lokalnego klastra.
