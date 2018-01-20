@@ -2,6 +2,8 @@
 
 https://jvns.ca/categories/kubernetes/
 
+https://github.com/kelseyhightower/kubernetes-the-hard-way
+
 ## Architektura
 
 ### Składowe kontrolujące klaster
@@ -26,7 +28,7 @@ https://jvns.ca/categories/kubernetes/
 
 4 rodzaje sieci:
 1. komunikacja wewnątrz Podów (localhost)
-2. komunikacja między Podami (SDN/CNI, np. flannel, Calico)
+2. komunikacja między Podami (SDN lub tzw. overlay network, np. flannel, Calico)
 3. komunikacja między Podami i Serwisami (kube-proxy)
 4. komunikacja świata z Serwisami
 
