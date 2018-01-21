@@ -57,6 +57,14 @@ W wersji `v2.0.0-alpha10` losowo pojawia się błąd
 
 ![Błąd pt. Upgrade Environment](assets/rancher2.0-error.png){width=500 height=140}
 
+### Wnioski
+
+Rancher na chwilę obecną (styczeń 2018) jest bardzo wygodnym, ale również
+niestabilnym rozwiązaniem.
+
+Ze względu na brak stabilności odrzucam Ranchera jako rozwiązanie problemu
+uruchamiania klastra Kubernetes.
+
 
 ## kubespray-cli
 
@@ -74,6 +82,12 @@ Wykrzacza się na kroku czekania na uruchomienie `etcd` ponieważ oczekuje
 połączenia na NATowym interfejsie z adresem `10.0.3.15` zamiast host network
 z adresem `192.168.56.10`, stąd `ansible_default_ipv4.address`.
 
+### Wnioski
+
+W trakcie testowania okazało się, że `kubespray-cli` nie jest aktywnie 
+rozwiązane i stało się niekompatybilne z samym Kubespray.
+W związku z tym uznaję `kubespray-cli` za nie mające zastosowania w tej pracy
+inżynierskiej.
 
 
 ## kubespray
@@ -113,8 +127,8 @@ fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/op
 
 ## OpenShift Origin
 
-Według dokumentacji są dwie metody uruchamiania serwera, w dockerze
-i na systemie linux.
+Według [dokumentacji](https://docs.openshift.org/latest/getting_started/administrators.html)
+są dwie metody uruchamiania serwera, w Dockerze i na systemie linux.
 
 ```bash
 # https://docs.openshift.org/latest/getting_started/administrators.html#installation-methods
@@ -126,8 +140,10 @@ docker run -d --name "origin" \
   -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
   -v /var/lib/docker:/var/lib/docker:rw \
   -v /var/lib/origin/openshift.local.volumes:/var/lib/origin/openshift.local.volumes:rslave \
-  openshift/origin start
+  openshift/origin start --public-master
 ```
+
+Dodałem opcję `--public-master` aby uruchomić konsolę webową
 
 ### Korzystanie ze sterownika systemd zamiast domyślnego cgroupfs
 
@@ -157,3 +173,171 @@ Dla przykładu w Arch Linux'ie zmiana wygląda następująco:
     < ExecStart=/usr/bin/dockerd -H fd://
     ---
     > ExecStart=/usr/bin/dockerd -H fd:// --exec-opt native.cgroupdriver=systemd
+
+### Próba uruchomienia serwera na Arch Linux
+
+Po wystartowaniu serwera zgodnie z dokumentacją OpenShift Origin i naprawieniu
+błędu z konfiguracją cgroup przeszedłem do kolejnego kroku [Try It Out](https://docs.openshift.org/latest/getting_started/administrators.html#try-it-out):
+
+0. Uruchomienie shella na serwerze:
+```
+$ docker exec -it origin bash
+```
+
+1. Logowanie jako testowy użytkownik:
+```
+$ oc login
+Username: test
+Password: test
+```
+2. Stworzenie nowego projektu:
+```
+$ oc new-project test
+```
+
+3. Pobranie aplikacji z Docker Huba:
+```
+$ oc tag --source=docker openshift/deployment-example:v1 deployment-example:latest
+```
+
+4. Wystartowanie aplikacji:
+```
+$ oc new-app deployment-example:latest
+```
+
+5. Odczekanie aż aplikacja się uruchomi:
+```
+$ watch -n 5 oc status
+In project test on server https://192.168.0.87:8443
+
+svc/deployment-example - 172.30.52.184:8080
+  dc/deployment-example deploys istag/deployment-example:latest 
+    deployment #1 failed 1 minute ago: config change
+```
+
+
+Niestety nie udało mi się przejść kroku 5, więc próba uruchomienia OpenShift
+Origin na Arch Linux zakończyła się niepowodzeniem.
+
+### Próba uruchomienia serwera na Fedora Atomic Host w VirtualBox'ie
+
+Maszynę z najnowszym Fedora Atomic Host uruchomiłem za pomocą poniższego
+`Vagrantfile`:
+```ruby
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "fedora/27-atomic-host"
+  config.vm.box_check_update = false
+  config.vm.network "forwarded_port", guest: 8443, host: 18443, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8080, host: 18080, host_ip: "127.0.0.1"
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "8192"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+  SHELL
+end
+```
+
+```bash
+$ vagrant up
+$ vagrant ssh
+$ sudo docker run -d --name "origin" \
+  --privileged --pid=host --net=host \
+  -v /:/rootfs:ro \
+  -v /var/run:/var/run:rw \
+  -v /sys:/sys \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+  -v /var/lib/docker:/var/lib/docker:rw \
+  -v /var/lib/origin/openshift.local.volumes:/var/lib/origin/openshift.local.volumes:rslave \
+  openshift/origin start
+```
+
+Kroki 0-4 były analogiczne do uruchamiania na Arch Linux, następnie:
+
+5. Odczekanie aż aplikacja się uruchomi i weryfikacja działania:
+```bash
+$ watch -n 5 oc status
+In project test on server https://10.0.2.15:8443
+
+svc/deployment-example - 172.30.221.105:8080
+  dc/deployment-example deploys istag/deployment-example:latest 
+    deployment #1 deployed 3 seconds ago - 1 pod
+$ curl http://172.30.221.105:8080 | grep v1
+<div class="box"><h1>v1</h1><h2></h2></div>
+```
+
+6. Aktualizacja, przebudowanie i weryfikacja działania aplikacji:
+```bash
+$ oc tag --source=docker openshift/deployment-example:v2 deployment-example:latest
+Tag deployment-example:latest set to openshift/deployment-example:v2.
+$ watch -n 5 oc status
+In project test on server https://10.0.2.15:8443
+
+svc/deployment-example - 172.30.221.105:8080
+  dc/deployment-example deploys istag/deployment-example:latest 
+    deployment #2 running for 8 seconds - 1 pod
+    deployment #1 deployed 8 minutes ago - 1 pod
+$ curl -s http://172.30.221.105:8080 | grep v2
+<div class="box"><h1>v2</h1><h2></h2></div>
+```
+
+7. Nie udało mi się uzyskać dostępu do panelu administracyjnego OpenShift:
+```bash
+$ curl -k 'https://localhost:8443/console/'
+missing service (service "webconsole" not found)
+missing route (service "webconsole" not found)
+```
+
+
+W internecie nie znalazłem żadnych informacji na temat tego błędu.
+Próbowałem również uzyskać pomoc na kanale `#openshift` na `irc.freenode.net`:
+```
+[17:29] <nazarewk> i'm trying to evaluate openshift origin, but when i start server and try to go to https://localhost:8443 i'm getting missing service (service "webconsole" not found)
+[17:30] <nazarewk> any ideas how do i get into the console?
+[17:40] <meta4knox> In your terminal, type 'oc status' to confirm that https://localhost:8443 is your actual cluster address
+[17:41] <nazarewk> meta4knox: i'm getting this https://dpaste.de/7qPu
+[17:41] <jbossbot> Title: dpaste
+[17:43] <nazarewk> tried all options: curl -k https://172.30.0.1:443/console/ and curl -k https://10.0.2.15:8443/console/
+[17:43] <nazarewk> and still getting exactly the same message
+[17:44] <meta4knox> did you visit https://10.0.2.15:8443?
+[17:44] <meta4knox> ok
+[17:45] <meta4knox> Have you previously modified your hosts file such that it could be overriding this request?
+[17:45] <nazarewk> nope i'm on fresh fedora atomic host vagrant
+[17:46] <meta4knox> hmm
+[17:46] <meta4knox> And this worked on other nodes without issue? (i.e. using the same configs?)
+[17:47] <nazarewk> well i never managed to get it working
+[17:47] <meta4knox> If so, then I'd just blow this one away and start fresh.
+[17:47] <nazarewk> i just started researching openshift origin yesterday
+[17:47] <meta4knox> OK
+[17:47] <nazarewk> tried to run it
+[17:47] <nazarewk> got though the try it out without issues on fedora atomic
+[17:47] <nazarewk> but can't get to the console
+[17:47] <meta4knox> Cloud hosting provider?
+[17:48] <nazarewk> nope, i'm on my local machine and running it with vagrant
+[17:48] <nazarewk> (i'm researching ways to get the Kubernetes onto bare metal without any extra infrastructure)
+[17:49] <nazarewk> already went through Rancher and kubespray without issues
+[17:49] <nazarewk> OpenShift looks the most promising but can't get it to work
+[17:49] <meta4knox> Sounds like something's not exposed properly. I seem to remember (from long ago) that you need to expose your vm/container to the host in order to access it.
+[17:49] <nazarewk> i'm trying from withing VM
+[17:50] <meta4knox> Also, if you're trying to get Kube or OpenShift working without much hassle, I strongly recommend looking into Minishift
+[17:50] <nazarewk> vagrant ssh -> sudo docker exec -it origin bash
+[17:50] <nazarewk> i need it to run multi-host
+[17:50] <nazarewk> (in later stages)
+[17:50] <meta4knox> gotcha
+[17:50] <meta4knox> Sorry I couldn't help
+[17:51] <meta4knox> good luck
+[17:51] <nazarewk> thanks for trying :)
+```
+
+
+### Wnioski
+
+Panel administracyjny klastra OpenShift Origin jest jedyną znaczącą przewagą
+nad Kubespray. Reszta zarządzania klastrem odbywa się również za pomocą
+repozytorium skryptów Ansibla ([w tym dodawanie kolejnych węzłów klastra](https://docs.openshift.com/enterprise/3.0/admin_guide/manage_nodes.html#adding-nodes)).
+
+Z powodu braku dostępu do ww. panelu próbę uruchomienia OpenShift Origin
+uznaję za nieudaną.
