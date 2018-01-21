@@ -129,14 +129,31 @@ docker run -d --name "origin" \
   openshift/origin start
 ```
 
-OpenShifta próbowałem uruchomić na następujących systemach obiema metodami:
+### Korzystanie ze sterownika systemd zamiast domyślnego cgroupfs
 
-- Arch Linux `Linux krna 4.14.13-1-ARCH #1 SMP PREEMPT Wed Jan 10 11:14:50 UTC 2018 x86_64 GNU/Linux`
-- CoreOS `Linux localhost 4.14.11-coreos #1 SMP Fri Jan 5 11:00:14 UTC 2018 x86_64 Intel(R) Core(TM) i5-2500K CPU @ 3.30GHz GenuineIntel GNU/Linux`
+Większość dystrybucji linuxa (np. Arch, CoreOS, Fedora, Debian) domyślnie nie
+konfiguruje sterownika cgroup Dockera i korzysta z domyślnego `cgroupfs`.
 
-We wszystkich konfiguracjach obie metody
-[skutkują błędem](https://github.com/openshift/origin/issues/14766):
+Typ sterownika cgroup można wyświetlić komendą `docker info`:
 
-```
-F0120 19:18:58.708005   25376 node.go:269] failed to run Kubelet: failed to create kubelet: misconfiguration: kubelet cgroup driver: "systemd" is different from docker cgroup driver: "cgroupfs"
-```
+    $ docker info | grep -i cgroup                                                                                                                                                                                                                         :(
+    Cgroup Driver: systemd
+
+OpenShift natomiast konfiguruje Kubernetes do korzystania z `cgroup` przez 
+`systemd`. Kubelet przy starcie weryfikuje zgodność silników cgroup, co
+[skutkuje niekompatybilnością z domyślną konfiguracją Dockera](https://github.com/openshift/origin/issues/14766),
+czyli poniższym błędem:
+
+    F0120 19:18:58.708005   25376 node.go:269] failed to run Kubelet: failed to create kubelet: misconfiguration: kubelet cgroup driver: "systemd" is different from docker cgroup driver: "cgroupfs"
+
+Problem można rozwiązać dopisując `--exec-opt native.cgroupdriver=systemd` do
+linii komend `dockerd` (zwykle w pliku `docker.service`).
+Dla przykładu w Arch Linux'ie zmiana wygląda następująco:
+    
+    $ cp /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
+    $ vim /etc/systemd/system/docker.service
+    $ diff /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
+    13c13
+    < ExecStart=/usr/bin/dockerd -H fd://
+    ---
+    > ExecStart=/usr/bin/dockerd -H fd:// --exec-opt native.cgroupdriver=systemd
