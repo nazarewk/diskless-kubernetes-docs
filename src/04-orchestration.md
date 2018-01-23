@@ -41,15 +41,20 @@ z innymi rozwiązaniami](https://coreos.com/rkt/docs/latest/rkt-vs-other-project
 
 ## Kubernetes
 
-[Kubernetes](https://kubernetes.io/) jest jednym z najpopularniejszych narzędzi 
-orkiestracji kontenerami i jednocześnie tematem przewodnim tego dokumentu. 
+[Kubernetes](https://kubernetes.io/) (w skrócie k8s) jest obecnie
+najpopularniejszym narzędziem orkiestracji kontenerami, a przez to tematem 
+przewodnim tego dokumentu.
+
 Został stworzony przez Google na bazie ich wewnętrznego systemu Borg.
+
+W porównaniu do innych narzędzi Kubernetes oferuje najlepszy kompromis między
+oferowanymi możliwościami, a kosztem zarządzania.
+
+## Alternatywne rozwiązania zarządzania kontenerami
 
 - [Choosing the Right Containerization and Cluster Management Tool](https://dzone.com/articles/choosing-the-right-containerization-and-cluster-management-tool)
 
-### Alternatywne rozwiązania zarządzania kontenerami
-
-#### Fleet
+### Fleet
 [Fleet](https://github.com/coreos/fleet)
 jest nakładką na [systemd](https://www.freedesktop.org/wiki/Software/systemd/) 
 realizująca rozproszony system inicjalizacji systemów w systemie operacyjnym
@@ -62,108 +67,31 @@ Aktualnie projekt kończy swój żywot na rzecz Kubernetesa i w dniu 1 lutego 20
 zostanie wycofany z domyślnej dystrybucji CoreOS. Nadal będzie dostępny w
 rejestrze pakietów CoreOS.
 
-#### Docker Swarm
+### Docker Swarm
 [Docker Swarm](https://docs.docker.com/engine/swarm/) 
 jest rozwiązaniem orkiestracji kontenerami od twórców samego Docker'a. 
-Proste w konfiguracji, nie oferuje tak dużych możliwości jak niżej wymienione.
+Proste w obsłudze, ale nie oferuje tak dużych możliwości jak inne rozwiązania.
 
-#### Nomad
-[HasiCorp Nomad vs Kubernetes](https://www.nomadproject.io/intro/vs/kubernetes.html)
+### Nomad
 
-#### Mesos
+[Nomad](https://www.nomadproject.io/intro/index.html) od HashiCorp jest
+narzędziem do zarządzania klastrem, które również oferuje zarządzanie
+kontenerami.
+
+Przy jego tworzeniu twórcy kierują się filozofią Unix'a. W związku z tym Nomad
+jest prosty w obsłudze, wyspecjalizowany i rozszerzalny. Zwykle działa w
+tandemie z innymi produktami HashiCorp jak Consul i Vault.
+
+Materiały:
+
+- [HashiCorp Nomad vs Other Software](https://www.nomadproject.io/intro/vs/index.html)
+
+### Mesos
 
 [Apache Mesos](http://mesos.apache.org/) jest najbardziej zaawansowanym i
 najlepiej skalującym się rozwiązaniem orkiestracji kontenerami.
 Jest również najbardziej skomplikowanym i trudnym w zarządzaniu rozwiązaniem.
 
+Materiały:
+
 - [An Introduction to Mesosphere](https://www.digitalocean.com/community/tutorials/an-introduction-to-mesosphere)
-
-
-## Zarządzanie Kubernetes z linii komend
-  
-### kubeadm
-
-[kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/)
-jest narzędziem pozwalającym na niskopoziomowe zarządzanie klastrem Kubernetes.
-Stąd trendem jest bazowanie na kubeadm przy tworzeniu narzędzi z wyższym
-poziomem abstrakcji.
-
-- [Install with kubadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
-
-### Kubespray
-- [kubespray](https://github.com/kubernetes-incubator/kubespray)
-- zestaw skryptów Ansible konfigurujących klaster na jednym z wielu systemów operacyjnych
-- dąży do zostania tzw.  
-  [Operatorem](https://github.com/kubernetes-incubator/kubespray/blob/master/docs/comparisons.md)
-  korzystającym z kubeadm
-  
-### OpenShift Ansible
-Konfiguracja [OpenShift Origin](#openshift-origin) realizowana jest zestawem
-skryptów Ansible'owych rozwijanych jako projekt 
-[openshift-ansible](https://github.com/openshift/openshift-ansible).
-
-### Canonical distribution of Kubernetes
-
-Jest to prosta w instalacji dystrybucja Kubernetes. Niestety wymaga 
-infrastruktury chmurowej do uruchomienia klastra składającego się z więcej niż 
-jednego węzła. 
-
-Opcja bare-metal, która by mnie interesowała nadal wymaga 
-działającego środowiska [Metal as a Service](). 
-
-W związku z powyższym nie będę dalej zajmował się tym narzędziem.
-
-Przydatne materiały:
-- Juju Charm [the Canonical distribution of Kubernetes](https://jujucharms.com/canonical-kubernetes/)
-- [Install Kubernetes with conjure-up](https://tutorials.ubuntu.com/tutorial/install-kubernetes-with-conjure-up)
-- [Kubernetes the not so easy way](https://insights.ubuntu.com/2017/10/12/kubernetes-the-not-so-easy-way/)
-  opisuje instalację lokalnego klastra.
-
-
-### Eksperymentalne i deprekowane rozwiązania
-- [Fedora via Ansible](https://kubernetes.io/docs/getting-started-guides/fedora/fedora_ansible_config/)
-  deprekowane na rzecz kubespray
-- [Rancher Kubernetes Installer](http://rancher.com/announcing-rke-lightweight-kubernetes-installer/)
-  jest eksperymentalnym rozwiązaniem wykorzystywanym w Rancher 2.0,
-  
-#### kubespray-cli
-
-Jest to narzędzie ułatwiające korzystanie z `kubespray`.
-Według użytkowników 
-[oficjalnego Slacka kubespray](https://kubernetes.slack.com/messages/kubespray)
-`kubespray-cli` jest deprekowane.
-
-
-## Graficzne nakładki na Kubernetes
-
-### Kubernetes Dashboard
-
-[Kubernetes Dashboard](https://github.com/kubernetes/dashboard) jest wbudowanym
-interfejsem graficznym klastra Kubernetes. Umożliwia monitorowanie i zarządzanie
-klastrem w ramach funkcjonalności samego Kubernetes.
-
-### Rancher 
-[Rancher](https://rancher.com/) jest platformą zarządzania kontenerami 
-umożliwiającą między innymi zarządzanie klastrem Kubernetes.
-Od wersji 2.0 twórcy skupiają się tylko i wyłącznie na zarządzaniu Kubernetes 
-porzucając inne rozwiązania.
-
-### OpenShift by Red Hat {#openshift-origin}
-OpenShift jest komercyjną usługą typu PaaS (Platform as a Service), od wersji 3 
-skupia się na zarządzaniu klastrem Kubernetes.
-
-Rdzeniem projektu jest open sourcowy 
-[OpenShift Origin](https://github.com/openshift/origin) konfigurowany przez
-[OpenShift Ansible](#openshift-ansible).
-
-- [OpenShift Origin vs Kubernetes](https://www.reddit.com/r/devops/comments/59ql4r/openshift_origin_vs_kubernetes/)
-- [The Differences Between Kubernetes and OpenShift](https://medium.com/levvel-consulting/the-differences-between-kubernetes-and-openshift-ae778059a90e)
-- [Demo konsoli](https://youtu.be/-mFovK19aB4?t=6m54s) (niestety po hebrajsku)
-
-### DC/OS
-
-[Datacenter Operating System](https://dcos.io/) jest częścią
-[Mesosphere](https://mesosphere.com/) i Mesosa. Niedawno został rozszerzony
-o [Kubernetes](https://mesosphere.com/blog/kubernetes-dcos/) jako alternatywnego
-(w stosunku do [Marathon](https://mesosphere.github.io/marathon/)) systemu
-orkiestracji kontenerami.
