@@ -9,7 +9,7 @@
 \usepackage{helvet}
 \usepackage[T1]{fontenc}
 \usepackage{anyfontsize}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[pdftex]{graphicx}
 \usepackage{tabularx}
 \usepackage{array}

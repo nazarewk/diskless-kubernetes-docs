@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/diskless-kubernetes-docs.iml" filepath="$PROJECT_DIR$/.idea/diskless-kubernetes-docs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../docker-archlinux/.idea/docker-archlinux.iml" filepath="$PROJECT_DIR$/../docker-archlinux/.idea/docker-archlinux.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../docker-pandoc/.idea/docker-pandoc.iml" filepath="$PROJECT_DIR$/../docker-pandoc/.idea/docker-pandoc.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ipxe-boot/.idea/ipxe-boot.iml" filepath="$PROJECT_DIR$/../ipxe-boot/.idea/ipxe-boot.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kubernetes-cluster/.idea/kubernetes-cluster.iml" filepath="$PROJECT_DIR$/../kubernetes-cluster/.idea/kubernetes-cluster.iml" />
     </modules>
