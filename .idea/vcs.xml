@@ -4,5 +4,6 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../ipxe-boot" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kubernetes-cluster" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../kubernetes-cluster/kubespray" vcs="Git" />
   </component>
 </project>
