@@ -36,7 +36,17 @@ Docker jest najstarszym i w związku z tym aktualnie najpopularniejszym
 rozwiązaniem problemu konteneryzacji.
 
 Dobrym przeglądem alternatyw Dockera jest [porównianie `rkt` (kolejna generacja Dockera)
-z innymi rozwiązaniami](https://coreos.com/rkt/docs/latest/rkt-vs-other-projects.html)
+z innymi rozwiązaniami](https://coreos.com/rkt/docs/latest/rkt-vs-other-projects.html).
+
+Domyślnie obrazy są pobierane przez internet z [Docker Huba](https://hub.docker.com/),
+co jest ograniczone przepustowością łącza.
+Wolnemu łączu możemy zaradzić kieszeniując zapytania HTTP ub
+uruchamiając [rejestr obrazów](https://docs.docker.com/registry/deploying/) w
+sieci lokalnej.
+Lokalny rejestr może być ograniczony do obrazów ręcznie w nim umieszczonych lub
+udostępniać i kieszeniować obrazy z zewnętrznego rejestru (np. Docker Hub).
+Pierwsze rozwiązanie w połączeniu z zablokowaniem dostępu do zewnętrznych
+rejestrów daje prawie pełną kontrolę nad obrazami uruchamianymi wewnątrz sieci.
 
 
 ## Kubernetes

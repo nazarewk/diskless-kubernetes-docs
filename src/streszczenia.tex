@@ -1,51 +1,59 @@
 \newpage
 \begin{center}
   \large \bf
-  Implementacja i testy wydajnosci środowiska Kubernetes na maszynach bezdyskowych
+  Implementacja środowiska Kubernetes na maszynach bezdyskowych
 \end{center}
 
 \section*{Streszczenie}
 
 Celem tej pracy inżynierskiej jest przybliżenie czytelnikowi zagadnień
-związanych z uruchamianiem systemu Kubernetes na maszynach bezdyskowych.
+związanych z systemem Kubernetes oraz jego uruchamianiem na maszynach
+bezdyskowych.
 
-Zacznę od wyjaśnienia pojęcia systemu bezdyskowego oraz sposobu jego
-funkcjonowania na przykładzie sieci uczelnianej i wzorującego się na niej
-przygotowanie przeze mnie lokalnego środowiska.
+Zacznę od wyjaśnienia pojęcia kontenerów, problemu orkiestracji nimi i krótkiego
+teoretycznego przeglądu dostępnych rozwiązań.
+Opiszę czym jest Kubernetes, jaką ma architekturę oraz przedstawię podstawowe
+pojęcia pozwalające na zrozumienie i korzystanie z niego.
+Opis Kubernetes zakończę przedstawieniem sposobów jego uruchomienia na maszynach
+bezdyskowych.
 
-Następnie opiszę problem izolacji i przydzielania zasobów systemowych
-na przykładzie wirtualnych maszyn, chroot i konteneryzacji.
+Następnie przeprowadzę krótki teoretyczno-praktyczny przegląd systemów
+operacyjnych i sposobów uruchamiania Kubernetes na nich.
 
-W głównej części dokumentu przedstawię pojęcie orkiestrami kontenerami,
-w jaki sposób odnosi się do wcześniej postawionych problemów. Opiszę
-alternatywy Kubernetes, jego architekturę oraz sposoby uruchamiania.
-Na koniec spróbuję uruchomić Kubernetes na maszynach bezdyskowych,
-problemy z tym związane oraz przedstawię wyniki.
+Po ich wybraniu przeprowadzę testy na sieci uczelnianej, a na koniec doprowadzę
+ją do stanu docelowego pozwalającego na przeprowadzenie laboratoriów Kubernetes.
 
 \bigskip
-{\noindent\bf Słowa kluczowe:} praca dyplomowa, LaTeX, jakość
+{\noindent\bf Słowa kluczowe:} Kubernetes, konteneryzacja, orkiestracja, maszyny bezdyskowe
 
 \vskip 2cm
 
 
 \begin{center}
   \large \bf
-  Implementing and testing Kubernetes running on diskless machines
+  Implementing Kubernetes on diskless machines
 \end{center}
 
 \section*{Abstract}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Morbi ac dolor scelerisque, malesuada ex vel, feugiat augue.
-Suspendisse dictum, elit efficitur vestibulum eleifend, mi neque
-accumsan velit, at ultricies ex lectus et urna. Pellentesque vel
-lorem turpis. Donec blandit arcu lacus, vitae dapibus tellus tempus et.
-Etiam orci libero, mollis in dapibus tempor, rutrum eget magna.
-Nullam congue libero non velit suscipit, vel cursus elit commodo.
-Praesent mollis augue quis lorem laoreet, condimentum scelerisque ex pharetra.
-Sed est ex, gravida a porta in, tristique ac nunc. Nunc at varius sem, sit amet consectetur velit.
+Primary goal of this document is to present basic concepts related to Kuberentes
+and running it on diskless systems.
+
+I will start with explaining what are containers, problem of their orchestration
+and I will theoretically inspect available solutions.
+
+I will describe what is Kuberentes, provide overview of it's architecture and
+basic concepts allowing to understand and use it.
+I will end the description with overview of it's provisioning tools working on
+diskless systems.
+
+Then I will research and conduct brief practical tests of available operating
+systems and provisioning tools.
+
+After selecting solutions I will conduct practical tests on university network
+and finally configure Kubernetes to run the network.
 
 \bigskip
-{\noindent\bf Keywords:} thesis, LaTeX, quality
+{\noindent\bf Keywords:} Kubernetes, containerization, orchestration, diskless systems
 
 \vfill

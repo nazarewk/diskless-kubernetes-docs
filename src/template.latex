@@ -76,7 +76,7 @@ $if(listings)$
 \usepackage{xcolor}
 
 \lstset{
-    basicstyle=\ttfamily,
+    basicstyle=\fontsize{11}{12}\ttfamily,
     numbers=left,
     keywordstyle=\color[rgb]{0.13,0.29,0.53}\bfseries,
     stringstyle=\color[rgb]{0.31,0.60,0.02},
@@ -108,15 +108,15 @@ $endif$
 
 %%%%%%%%%%%%%%% Strona Tytułowa %%%%%%%%%%%%%%%%%
 % To trzeba wypelnic swoimi danymi
-\title{Implementacja i testy wydajnosci środowiska Kubernetes na maszynach bezdyskowych}
+\title{Implementacja środowiska Kubernetes na maszynach bezdyskowych}
 
 % autor
 \author{Krzysztof Nazarewski}
-\nrindeksu{123456}
+\nrindeksu{240579}
 
 \opiekun{mgr inż. Andrzej Toboła}
 %\konsultant{prof. Dzielny Konsultant}  % opcjonalnie
-\terminwykonania{1 lutego 1234} % data na oświadczeniu o samodzielności
+\terminwykonania{1 lutego 2018} % data na oświadczeniu o samodzielności
 \rok{2018}
 
 
@@ -150,7 +150,5 @@ $endif$
 \begin{document}
 \maketitle
 $body$
-
-%TODO: bibliografia
 
 \end{document}
