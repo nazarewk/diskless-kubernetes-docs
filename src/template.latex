@@ -101,6 +101,7 @@ $if(listings)$
 \lstset{postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}}
 $endif$
 
+\raggedbottom
 
 %%%%%%%%%%%%%%% Dodatkowe Pakiety %%%%%%%%%%%%%%%%%
 \usepackage{prmag2017}   % definiuje komendy opieku,nrindeksu, rodzaj pracy, ...

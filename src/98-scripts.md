@@ -1,7 +1,21 @@
 
 # Wykaz skryptów
 
+## ipxe-boot
+[`ipxe-boot`](https://github.com/nazarewk/ipxe-boot) jest stworzonym przeze mnie
+na potrzeby pracy repozytorium git skryptów pozwalających na bezdyskowe
+uruchamianie maszyn poza siecią uczelnianą.
+
+Nie zostały one wykorzystane w końcowej formie pracy inżynierskiej, więc nie
+będę ich bezpośrednio wymieniał.
+
+
 ## kubernetes-cluster
+
+[`kubernetes-cluster`](https://github.com/nazarewk/kubernetes-cluster)
+jest repozytorium Git, które zawiera kompletny kod źródłowy wykorzystywany w tej
+pracy inżynierskiej i umieszczony w katalogu
+`/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster/` sieci uczelnianej.
 
 \newpage
 ### `bin/pull`
@@ -11,7 +25,6 @@ zależności:
 ```{.bash include=kubernetes-cluster/bin/pull}
 ```
 
-\newpage
 ### `bin/vars`
 Zawiera wspólne zmienne środowiskowe wykorzystywane w reszcie
 skryptów oraz linii komend:
@@ -51,7 +64,6 @@ maszynach CoreOS:
 ```{.bash include=kubernetes-cluster/bin/setup-cluster}
 ```
 
-\newpage
 ### `bin/setup-cluster-full`
 Skrót do pobierania najnowszej wersji, a następnie
 uruchamiania klastra:
@@ -66,7 +78,6 @@ wywołujący `upgrade-cluster.yml` zamiast `cluster.yml`:
 ```{.bash include=kubernetes-cluster/bin/setup-cluster-upgrade}
 ```
 
-\newpage
 ### `bin/kubectl`
 Skrót `kubectl` z automatycznym dołączaniem konfiguracji
 `kubespray`:
@@ -89,7 +100,6 @@ Listuje przepustki konkretnego użytkownika:
 ```{.bash include=kubernetes-cluster/bin/student-tokens}
 ```
 
-\newpage
 ### `zetis/.ssh/kubernetes.conf`
 Częściowy plik konfiguracyjny SSH do umieszczenia w `~/.ssh/config`:
 
@@ -106,7 +116,49 @@ Skrypt iPXE uruchamiający maszynę z CoreOS:
 \newpage
 ### `zetis/WWW/boot/coreos.yml`
 Plik konfiguracyjny Container Linux Config w formacie YAML,
-docelowo do przepuszczenia przez narzędzie `ct`:
+docelowo do przepuszczenia przez narzędzie `ct`. Wyjątkowo skróciłem ten skrypt,
+ze względu na długość kluczy SSH:
 
-```{.bash include=kubernetes-cluster/zetis/WWW/boot/coreos.yml}
+```yaml
+passwd:
+  users:
+  - name: admin
+    groups: [sudo, docker]
+    ssh_authorized_keys:
+    - ssh-rsa AAAAB3N...dAYs7Y6L8= ato@volt.iem.pw.edu.pl
+    - ssh-rsa AAAAB3N...N9aLYp0ct/ nazarewk
+    - ssh-rsa AAAAB3N...XRjw== nazarewk@ldap.iem.pw.edu.pl
+
+```
+
+### `zetis/WWW/boot/coreos.ign`
+Z powyższego pliku wygenerowany zostaje (również skrócony) plik JSON:
+```json
+{
+  "ignition": {
+    "config": {},
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {},
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "sudo",
+          "docker"
+        ],
+        "name": "admin",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3N...N9aLYp0ct/ nazarewk",
+          "ssh-rsa AAAAB3N...XRjw== nazarewk@ldap.iem.pw.edu.pl",
+          "ssh-rsa AAAAB3N...dAYs7Y6L8= ato@volt.iem.pw.edu.pl"
+        ]
+      }
+    ]
+  },
+  "storage": {},
+  "systemd": {}
+}
+
 ```

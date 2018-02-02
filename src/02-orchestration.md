@@ -1,9 +1,5 @@
 # Przegląd pojęć i systemów związanych z konteneryzacją
 
-W związku z mnogością pojęć związanych z izolacją, konteneryzacją i zarządzaniem
-systemami komputerowymi zdecydowałem się w dużym skrócie przybliżyć
-najważniejsze pojęcia z tematem związane.
-
 ## Konteneryzacja
 
 Konteneryzacja jest sposobem izolacji aplikacji i jej zależności. 
@@ -35,7 +31,7 @@ ze standardami OCI, m. in.:
 Docker jest najstarszym i w związku z tym aktualnie najpopularniejszym
 rozwiązaniem problemu konteneryzacji.
 
-Dobrym przeglądem alternatyw Dockera jest [porównianie `rkt` (kolejna generacja Dockera)
+Dobrym przeglądem alternatyw Dockera jest [porównianie `rkt`
 z innymi rozwiązaniami](https://coreos.com/rkt/docs/latest/rkt-vs-other-projects.html).
 
 Domyślnie obrazy są pobierane przez internet z [Docker Huba](https://hub.docker.com/),
