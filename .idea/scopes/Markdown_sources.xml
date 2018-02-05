@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Markdown sources" pattern="file[diskless-kubernetes-docs]:src//*||file:bin/*convert*" />
+  <scope name="Markdown sources" pattern="file[diskless-kubernetes-docs]:src/*.md&amp;&amp;!file[diskless-kubernetes-docs]:src/ipxe-boot//*&amp;&amp;!file[diskless-kubernetes-docs]:src/kubernetes-cluster//*" />
 </component>

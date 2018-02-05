@@ -7,9 +7,9 @@ Companion repos:
 - [kubernetes-cluster](https://github.com/nazarewk/kubernetes-cluster)
 
 Requirements:
-- `bash`
-- `git`
-- `docker`
+- _bash_
+- _git_
+- _docker_
 - set of template files from 
 
 Building PDF: 
