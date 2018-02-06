@@ -59,6 +59,7 @@
 \newcommand{\passthrough}[1]{#1}
 \usepackage{xcolor}
 
+\usepackage{listingsutf8}
 \usepackage[ttdefault=true]{AnonymousPro}
 \lstset{
     basicstyle=\fontsize{11}{12}\ttfamily,
@@ -82,30 +83,7 @@
     linewidth=\textwidth,
     basewidth=0.6em,
     rulecolor=\color{black},
-}
-\usepackage{listingsutf8}
-\lstset{
     inputencoding=utf8,
-    extendedchars=\true,
-    literate=%
-{ą}{{\k{a}}}1
-{Ą}{{\k{A}}}1
-{ć}{{\'c}}1
-{Ć}{{\'{C}}}1
-{ę}{{\k{e}}}1
-{Ę}{{\k{E}}}1
-{ł}{{\l{}}}1
-{Ł}{{\L{}}}1
-{ń}{{\'n}}1
-{Ń}{{\'N}}1
-{ó}{{\'o}}1
-{Ó}{{\'O}}1
-{ś}{{\'s}}1
-{Ś}{{\'S}}1
-{ż}{{\.z}}1
-{Ż}{{\.Z}}1
-{ź}{{\'z}}1
-{Ź}{{\'Z}}1
 }
 \lstset{postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}}
 
@@ -335,7 +313,7 @@ kontrolę nad obrazami uruchamianymi wewnątrz sieci.
 kontenerami}\label{dostux119pne-rozwiux105zania-zarzux105dzania-kontenerami}}
 
 \hypertarget{kubernetes}{%
-\subsection{\texorpdfstring{\emph{Kubernetes}}{Kubernetes}}\label{kubernetes}}
+\subsubsection{\texorpdfstring{\emph{Kubernetes}}{Kubernetes}}\label{kubernetes}}
 
 \href{https://kubernetes.io/}{\emph{Kubernetes}} (w skrócie \emph{k8s})
 jest obecnie najpopularniejszym narzędziem orkiestracji kontenerami, a
@@ -352,7 +330,7 @@ Dobrym przeglądem alternatyw \emph{Kubernetes} jest artykuł pt.
 the Right Containerization and Cluster Management Tool}}.
 
 \hypertarget{fleet}{%
-\subsection{\texorpdfstring{\emph{Fleet}}{Fleet}}\label{fleet}}
+\subsubsection{\texorpdfstring{\emph{Fleet}}{Fleet}}\label{fleet}}
 
 \href{https://github.com/coreos/fleet}{\emph{Fleet}} jest nakładką~na
 \href{https://www.freedesktop.org/wiki/Software/systemd/}{\emph{systemd}}
@@ -367,7 +345,7 @@ Aktualnie projekt kończy swój żywot na rzecz \emph{Kubernetes} i w dniu
 Nadal będzie dostępny w rejestrze pakietów \emph{CoreOS}.
 
 \hypertarget{docker-swarm}{%
-\subsection{\texorpdfstring{\emph{Docker
+\subsubsection{\texorpdfstring{\emph{Docker
 Swarm}}{Docker Swarm}}\label{docker-swarm}}
 
 \href{https://docs.docker.com/engine/swarm/}{\emph{Docker Swarm}} jest
@@ -376,7 +354,7 @@ Proste w obsłudze, ale nie oferuje tak dużych możliwości jak inne
 rozwiązania.
 
 \hypertarget{nomad}{%
-\subsection{\texorpdfstring{\emph{Nomad}}{Nomad}}\label{nomad}}
+\subsubsection{\texorpdfstring{\emph{Nomad}}{Nomad}}\label{nomad}}
 
 \href{https://www.nomadproject.io/intro/index.html}{\emph{Nomad}} od
 \emph{HashiCorp} jest narzędziem do zarządzania klastrem, które również
@@ -393,7 +371,7 @@ Porównanie z innymi rozwiązaniami możemy znaleźć na oficjalnej stronie
 Nomad vs Other Software}}
 
 \hypertarget{mesos}{%
-\subsection{\texorpdfstring{\emph{Mesos}}{Mesos}}\label{mesos}}
+\subsubsection{\texorpdfstring{\emph{Mesos}}{Mesos}}\label{mesos}}
 
 \href{http://mesos.apache.org/}{\emph{Apache Mesos}} jest najbardziej
 zaawansowanym i najlepiej skalującym się rozwiązaniem orkiestracji
@@ -468,7 +446,7 @@ diagramu znalezionego na wikimedia.org}:
 
 \includegraphics[width=5.20833in,height=3.6875in]{assets/kubernetes-architecture.png}\\
 
-Na ilustracji możemy wyróżnić 5 grup tematycznych:
+Na ilustracji możemy wyróżnić 5 grup funkcjonalnych:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -491,7 +469,7 @@ Na ilustracji możemy wyróżnić 5 grup tematycznych:
 \end{enumerate}
 
 \hypertarget{wux119zeux142-zarzux105dzajux105cy}{%
-\subsection{Węzeł
+\subsubsection{Węzeł
 zarządzający}\label{wux119zeux142-zarzux105dzajux105cy}}
 
 Stan \emph{Kubernetes} jest przechowywany w
@@ -523,7 +501,7 @@ popyt na zasoby jednocześnie nie przeciążając pojedynczych węzłów
 klastra.
 
 \hypertarget{wux119zeux142-roboczy}{%
-\subsection{Węzeł roboczy}\label{wux119zeux142-roboczy}}
+\subsubsection{Węzeł roboczy}\label{wux119zeux142-roboczy}}
 
 Podstawowym procesem działającym na węzłach roboczych jest
 \href{https://kubernetes.io/docs/reference/generated/kubelet/}{\emph{kubelet}}.
@@ -542,7 +520,7 @@ Advisor), który monitoruje zużycie zasobów i wydajność kontenerów w
 ramach jednego klastra.
 
 \hypertarget{wtyczka-sieciowa}{%
-\subsection{Wtyczka sieciowa}\label{wtyczka-sieciowa}}
+\subsubsection{Wtyczka sieciowa}\label{wtyczka-sieciowa}}
 
 Podstawowym założeniem \emph{Kubernetesa} jest posiadanie własnego
 adresu IP przez każdą aplikację działającą w klastrze, ale nie narzuca
@@ -560,7 +538,7 @@ Jednymi z najpopularniejszymi rozwiązaniami są:
 \href{https://www.projectcalico.org/}{Project Calico}.
 
 \hypertarget{komunikacja-sieciowa}{%
-\subsection{Komunikacja sieciowa}\label{komunikacja-sieciowa}}
+\subsubsection{Komunikacja sieciowa}\label{komunikacja-sieciowa}}
 
 Materiały źródłowe:
 
@@ -609,13 +587,14 @@ W skrócie:
 \end{itemize}
 
 \hypertarget{zarzux105dzanie-dostux119pami}{%
-\subsection{Zarządzanie dostępami}\label{zarzux105dzanie-dostux119pami}}
+\subsubsection{Zarządzanie
+dostępami}\label{zarzux105dzanie-dostux119pami}}
 
 Podstawowymi pojęciami związanymi z zarządzaniem dostępami w
 \emph{Kubernetesie} są uwierzytelnianie, autoryzacja i \emph{Namespace}.
 
 \hypertarget{uwierzytelnianie}{%
-\subsubsection{Uwierzytelnianie}\label{uwierzytelnianie}}
+\paragraph{Uwierzytelnianie}\label{uwierzytelnianie}}
 
 Pierwszym krokiem w każdym zapytaniu do API jest uwierzytelnienie, czyli
 weryfikacja, że użytkownik (czy to aplikacja) jest tym za kogo się
@@ -645,7 +624,7 @@ Ze względu na prostotę i uniwersalność~rozwiązania w tej pracy będę
 korzystał z \emph{ServiceAccount}.
 
 \hypertarget{autoryzacja}{%
-\subsubsection{Autoryzacja}\label{autoryzacja}}
+\paragraph{Autoryzacja}\label{autoryzacja}}
 
 Drugim krokiem jest autoryzacja, czyli weryfikacja, że użytkownik jest
 uprawniony do korzystania z danego zasobu.
@@ -680,7 +659,7 @@ klastra i oddaniu węzłów do użytku. Z architekturą wiążę pojęcia
 korzystania z klastra, stanu i obiektów \emph{Kubernetesa}.
 
 \hypertarget{obiekty-kubernetes-api}{%
-\subsection{Obiekty Kubernetes API}\label{obiekty-kubernetes-api}}
+\subsubsection{Obiekty Kubernetes API}\label{obiekty-kubernetes-api}}
 
 \href{https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/}{\emph{Obiekty
 Kubernetesa}} są trwale przechowywane w \emph{etcd} i definiują, jak
@@ -751,7 +730,7 @@ pola:
 \end{itemize}
 
 \hypertarget{podstawowe-rodzaje-obiektuxf3w-aplikacyjnych}{%
-\subsection{Podstawowe rodzaje obiektów
+\subsubsection{Podstawowe rodzaje obiektów
 aplikacyjnych}\label{podstawowe-rodzaje-obiektuxf3w-aplikacyjnych}}
 
 Ważną kwestią jest rozróżnienie obiektów imperatywnych i deklaratywnych.
@@ -759,7 +738,7 @@ Obiekty imperatywne reprezentują wykonanie akcji, a deklaratywne
 określają stan w jakim klaster powinien się znaleźć.
 
 \hypertarget{pod}{%
-\subsubsection{\texorpdfstring{\emph{Pod}}{Pod}}\label{pod}}
+\paragraph{\texorpdfstring{\emph{Pod}}{Pod}}\label{pod}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/}{\emph{Pod}}
 jest najmniejszą jednostką aplikacyjną~w \emph{Kubernetesie}.
@@ -788,7 +767,7 @@ wyrejestrowywany z \emph{Service} na czas nieprzechodzenia
 \emph{readinessProbe}.
 
 \hypertarget{replicaset}{%
-\subsubsection{\texorpdfstring{\emph{ReplicaSet}}{ReplicaSet}}\label{replicaset}}
+\paragraph{\texorpdfstring{\emph{ReplicaSet}}{ReplicaSet}}\label{replicaset}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/}{\emph{ReplicaSet}}
 jest następcą \emph{ReplicaControllera}, czyli imperatywnym kontrolerem
@@ -797,7 +776,7 @@ dbającym o działanie określonej liczby \emph{Podów} w klastrze.
 Jest to bardzo prosty kontroler i nie powinien być~używany bezpośrednio.
 
 \hypertarget{deployment}{%
-\subsubsection{\texorpdfstring{\emph{Deployment}}{Deployment}}\label{deployment}}
+\paragraph{\texorpdfstring{\emph{Deployment}}{Deployment}}\label{deployment}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/deployment/}{\emph{Deployment}}
 pozwala na deklaratywne aktualizacje \emph{Podów} i \emph{ReplicaSetów}.
@@ -867,7 +846,7 @@ znaleźć \emph{Pody}, którymi ma zarządzać. Selektor powinien zgadzać się
 ze zdefiniowanym szablonem.
 
 \hypertarget{statefulset}{%
-\subsubsection{StatefulSet}\label{statefulset}}
+\paragraph{StatefulSet}\label{statefulset}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/}{\emph{StatefulSet}}
 jest kontrolerem podobnym do \_Deployment\_u, ale umożliwiającym
@@ -893,7 +872,7 @@ można zastosować między innymi do:
 \end{itemize}
 
 \hypertarget{daemonset}{%
-\subsubsection{DaemonSet}\label{daemonset}}
+\paragraph{DaemonSet}\label{daemonset}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/}{\emph{DaemonSet}}
 jest kontrolerem upewniającym się, że przynajmniej jeden \emph{Pod}
@@ -914,7 +893,7 @@ agenta na każdym z węzłów:
 \end{itemize}
 
 \hypertarget{job-i-cronjob}{%
-\subsubsection{Job i CronJob}\label{job-i-cronjob}}
+\paragraph{Job i CronJob}\label{job-i-cronjob}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/}{\emph{Job}}
 pozwala na jednorazowe uruchomienie \emph{Podów}, które wykonują akcję i
@@ -968,7 +947,7 @@ opuszczenia inkubatora to:
 komend}\label{administracja-klastrem-z-linii-komend}}
 
 \hypertarget{kubeadm}{%
-\subsection{\texorpdfstring{\emph{kubeadm}}{kubeadm}}\label{kubeadm}}
+\subsubsection{\texorpdfstring{\emph{kubeadm}}{kubeadm}}\label{kubeadm}}
 
 \href{https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/}{kubeadm}
 jest narzędziem pozwalającym na niskopoziomowe zarządzanie klastrem
@@ -983,7 +962,7 @@ tworzeniu narzędzi z wyższym poziomem abstrakcji.
 \end{itemize}
 
 \hypertarget{kubespray}{%
-\subsection{\texorpdfstring{\emph{Kubespray}}{Kubespray}}\label{kubespray}}
+\subsubsection{\texorpdfstring{\emph{Kubespray}}{Kubespray}}\label{kubespray}}
 
 \href{https://github.com/kubernetes-incubator/kubespray}{kubespray} jest
 zbiorem skryptów Ansibla konfigurujących klaster na różnych systemach
@@ -994,7 +973,7 @@ Projekt na dzień dzisiejszy znajduje się w inkubatorze i jest aktywnie
 rozwijany.
 
 \hypertarget{openshift-ansible}{%
-\subsection{\texorpdfstring{\emph{OpenShift
+\subsubsection{\texorpdfstring{\emph{OpenShift
 Ansible}}{OpenShift Ansible}}\label{openshift-ansible}}
 
 Konfiguracja \protect\hyperlink{openshift-origin}{OpenShift Origin}
@@ -1003,7 +982,7 @@ projekt
 \href{https://github.com/openshift/openshift-ansible}{openshift-ansible}.
 
 \hypertarget{canonical-distribution-of-kubernetes}{%
-\subsection{\texorpdfstring{\emph{Canonical distribution of
+\subsubsection{\texorpdfstring{\emph{Canonical distribution of
 Kubernetes}}{Canonical distribution of Kubernetes}}\label{canonical-distribution-of-kubernetes}}
 
 Jest to prosta w instalacji dystrybucja \emph{Kubernetesa}. Niestety
@@ -1031,7 +1010,7 @@ Materiały źródłowe:
 \end{itemize}
 
 \hypertarget{bootkube-i-typhoon}{%
-\subsection{\texorpdfstring{\emph{Bootkube} i
+\subsubsection{\texorpdfstring{\emph{Bootkube} i
 \emph{Typhoon}}{Bootkube i Typhoon}}\label{bootkube-i-typhoon}}
 
 \href{https://github.com/kubernetes-incubator/bootkube}{\emph{Bootkube}}
@@ -1054,7 +1033,7 @@ odrzuciłem to narzędzie. W końcowych etapach pisania pracy znalazłem ww.
 wpis i zdecydowałem się zawrzeć o nim informację.
 
 \hypertarget{eksperymentalne-i-deprekowane-rozwiux105zania}{%
-\subsection{Eksperymentalne i deprekowane
+\subsubsection{Eksperymentalne i deprekowane
 rozwiązania}\label{eksperymentalne-i-deprekowane-rozwiux105zania}}
 
 \begin{itemize}
@@ -1069,7 +1048,7 @@ rozwiązania}\label{eksperymentalne-i-deprekowane-rozwiux105zania}}
 \end{itemize}
 
 \hypertarget{kubespray-cli}{%
-\subsubsection{kubespray-cli}\label{kubespray-cli}}
+\paragraph{kubespray-cli}\label{kubespray-cli}}
 
 Jest to narzędzie ułatwiające korzystanie z \emph{kubespray}. Według
 użytkowników
@@ -1082,7 +1061,7 @@ powinno się~korzystać~z czystego \emph{kubespray}.
 graficznych}\label{administracja-klastrem-za-pomocux105-narzux119dzi-graficznych}}
 
 \hypertarget{rancher}{%
-\subsection{Rancher}\label{rancher}}
+\subsubsection{Rancher}\label{rancher}}
 
 \href{https://rancher.com/}{Rancher} jest platformą~zarządzania
 kontenerami umożliwiającą między innymi zarządzanie klastrem
@@ -1090,7 +1069,7 @@ kontenerami umożliwiającą między innymi zarządzanie klastrem
 zarządzaniu \emph{Kubernetesem} porzucając wsparcie innych rozwiązań.
 
 \hypertarget{openshift-origin}{%
-\subsection{OpenShift by Red Hat}\label{openshift-origin}}
+\subsubsection{OpenShift by Red Hat}\label{openshift-origin}}
 
 OpenShift jest komercyjną~usługą typu \emph{PaaS} (Platform as a
 Service), od wersji 3 skupia się na zarządzaniu klastrem
@@ -1117,7 +1096,7 @@ Materiały źródłowe:
 \end{itemize}
 
 \hypertarget{dcos}{%
-\subsection{DC/OS}\label{dcos}}
+\subsubsection{DC/OS}\label{dcos}}
 
 \href{https://dcos.io/}{Datacenter Operating System} jest częścią
 \href{https://mesosphere.com/}{Mesosphere} i Mesosa. Niedawno został
@@ -1269,10 +1248,11 @@ konfiguracji bazowych systemów operacyjnych w środowiskach chmurowych,
 czyli częstego podnoszenia nowych maszyn.
 
 \hypertarget{dostux119pne-implementacje}{%
-\subsection{Dostępne implementacje}\label{dostux119pne-implementacje}}
+\subsubsection{Dostępne
+implementacje}\label{dostux119pne-implementacje}}
 
 \hypertarget{cloud-init}{%
-\subsubsection{\texorpdfstring{\emph{cloud-init}}{cloud-init}}\label{cloud-init}}
+\paragraph{\texorpdfstring{\emph{cloud-init}}{cloud-init}}\label{cloud-init}}
 
 Referencyjny \emph{cloud-init} zaimplementowany jest w Pythonie, co
 częściowo tłumaczy duży rozmiar obrazów przeznaczonych dla chmury. Po
@@ -1297,7 +1277,7 @@ Dodatkowe materiały:
 \end{itemize}
 
 \hypertarget{coreos-cloudinit}{%
-\subsubsection{\texorpdfstring{\emph{coreos-cloudinit}}{coreos-cloudinit}}\label{coreos-cloudinit}}
+\paragraph{\texorpdfstring{\emph{coreos-cloudinit}}{coreos-cloudinit}}\label{coreos-cloudinit}}
 
 \href{https://github.com/coreos/coreos-cloudinit}{\emph{coreos-cloudinit}}
 jest częściową implementacją~standardu w języku Go udostępnioną przez
@@ -1306,7 +1286,7 @@ twórców \protect\hyperlink{coreos}{\emph{CoreOS}}
 temu przestał być~rozwijany} i wychodzi z użytku.
 
 \hypertarget{rancheros-coreos-cloudinit}{%
-\subsubsection{\texorpdfstring{\emph{RancherOS} +
+\paragraph{\texorpdfstring{\emph{RancherOS} +
 \emph{coreos-cloudinit}}{RancherOS + coreos-cloudinit}}\label{rancheros-coreos-cloudinit}}
 
 \href{http://rancher.com/docs/os/latest/en/configuration/}{\emph{Rancher
@@ -1316,7 +1296,7 @@ cloud-init}} jest jest
 zespół \protect\hyperlink{rancheros}{\emph{RancherOS}}.
 
 \hypertarget{clr-cloud-init}{%
-\subsubsection{\texorpdfstring{\emph{clr-cloud-init}}{clr-cloud-init}}\label{clr-cloud-init}}
+\paragraph{\texorpdfstring{\emph{clr-cloud-init}}{clr-cloud-init}}\label{clr-cloud-init}}
 
 \href{https://clearlinux.org/blogs/announcing-clr-cloud-init}{\emph{clr-cloud-init}}
 jest wewnętrzną~implementacją~standardu dla systemu
@@ -1340,7 +1320,7 @@ wersje Dockera i OverlayFS.
 wykupiony przez Red Hat}.
 
 \hypertarget{konfiguracja}{%
-\subsection{Konfiguracja}\label{konfiguracja}}
+\subsubsection{Konfiguracja}\label{konfiguracja}}
 
 Konfiguracja obsługiwana jest przez
 \href{https://coreos.com/os/docs/latest/provisioning.html}{Container
@@ -1387,7 +1367,7 @@ cloud-config}, więc odrzucam ten system operacyjny w dalszych
 rozważaniach.
 
 \hypertarget{ros-config}{%
-\subsection{Konfiguracja}\label{ros-config}}
+\subsubsection{Konfiguracja}\label{ros-config}}
 
 \emph{RancherOS} jest konfigurowany przez
 \protect\hyperlink{rancheros-+-coreos-cloudinit}{własną~wersję}
@@ -1565,7 +1545,7 @@ kubespray deploy -y --coreos
 \end{lstlisting}
 
 \hypertarget{napotkane-problemy}{%
-\subsection{Napotkane problemy}\label{napotkane-problemy}}
+\subsubsection{Napotkane problemy}\label{napotkane-problemy}}
 
 Narzędzie kończy się błędem na kroku czekania na uruchomienie
 \emph{etcd}, ponieważ oczekuje połączenia na NATowym interfejsie z
@@ -1574,7 +1554,7 @@ adresem \emph{10.0.3.15} zamiast host network z adresem
 \emph{ansible\_default\_ipv4.address}.
 
 \hypertarget{wnioski-1}{%
-\subsection{Wnioski}\label{wnioski-1}}
+\subsubsection{Wnioski}\label{wnioski-1}}
 
 W trakcie testowania okazało się, że \emph{kubespray-cli} nie jest
 aktywnie rozwiązane i stało się niekompatybilne z samym projektem
@@ -1597,7 +1577,7 @@ jestem zmuszony odrzucić to rozwiązanie.
 \includegraphics{assets/rancher-tp2-baremetal.png}\\
 
 \hypertarget{testowanie-tech-preview-1-v2.0.0-alpha10}{%
-\subsection{Testowanie tech preview 1
+\subsubsection{Testowanie tech preview 1
 (v2.0.0-alpha10)}\label{testowanie-tech-preview-1-v2.0.0-alpha10}}
 
 \begin{lstlisting}[language=bash]
@@ -1646,7 +1626,7 @@ kubectl apply -f http://192.168.56.1:8080/v3/scripts/303F60E1A5E186F53F3F:151467
 \end{lstlisting}
 
 \hypertarget{napotkane-bux142ux119dy}{%
-\subsubsection{Napotkane błędy}\label{napotkane-bux142ux119dy}}
+\paragraph{Napotkane błędy}\label{napotkane-bux142ux119dy}}
 
 W wersji \emph{v2.0.0-alpha10} losowo pojawia się~błąd
 \href{https://github.com/rancher/rancher/issues/10396}{Upgrade
@@ -1655,7 +1635,7 @@ Environment}.
 \includegraphics[width=5.20833in,height=1.45833in]{assets/rancher2.0-error.png}\\
 
 \hypertarget{wnioski-2}{%
-\subsection{Wnioski}\label{wnioski-2}}
+\subsubsection{Wnioski}\label{wnioski-2}}
 
 Rancher na chwilę obecną (styczeń 2018 roku) jest bardzo wygodnym, ale
 również niestabilnym rozwiązaniem.
@@ -1687,7 +1667,7 @@ docker run -d --name "origin" \
 Dodałem opcję \emph{--public-master} aby uruchomić konsolę webową
 
 \hypertarget{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}{%
-\subsection{Korzystanie ze sterownika systemd zamiast domyślnego
+\subsubsection{Korzystanie ze sterownika systemd zamiast domyślnego
 cgroupfs}\label{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}}
 
 Większość dystrybucji \emph{Linuxa} (np. Arch, CoreOS, Fedora, Debian)
@@ -1728,7 +1708,7 @@ $ diff /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
 \end{lstlisting}
 
 \hypertarget{pruxf3ba-uruchomienia-serwera-na-arch-linux}{%
-\subsection{Próba uruchomienia serwera na Arch
+\subsubsection{Próba uruchomienia serwera na Arch
 Linux}\label{pruxf3ba-uruchomienia-serwera-na-arch-linux}}
 
 Po wystartowaniu serwera zgodnie z dokumentacją~OpenShift Origin i
@@ -1818,8 +1798,8 @@ Niestety nie udało się przejść kroku 5, więc próba uruchomienia
 OpenShift Origin na Arch Linux zakończyła się niepowodzeniem.
 
 \hypertarget{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualboksie}{%
-\subsection{\texorpdfstring{Próba uruchomienia serwera na \emph{Fedora
-Atomic Host} w
+\subsubsection{\texorpdfstring{Próba uruchomienia serwera na
+\emph{Fedora Atomic Host} w
 \emph{VirtualBoksie}}{Próba uruchomienia serwera na Fedora Atomic Host w VirtualBoksie}}\label{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualboksie}}
 
 Maszynę z najnowszym \emph{Fedora Atomic Host} uruchomiłem za pomocą
@@ -1920,7 +1900,7 @@ Próbowałem również uzyskać pomoc na kanale \emph{\#openshift} na
 \emph{irc.freenode.net}, ale bez skutku.
 
 \hypertarget{wnioski-3}{%
-\subsection{Wnioski}\label{wnioski-3}}
+\subsubsection{Wnioski}\label{wnioski-3}}
 
 Panel administracyjny klastra \emph{OpenShift Origin} jest
 jedyną~znaczącą przewagą nad \emph{Kubesprayem}. Reszta zarządzania
@@ -1938,7 +1918,7 @@ Cały kod znajduje się w moim repozytorium
 \href{https://github.com/nazarewk/kubernetes-cluster}{kubernetes-cluster}.
 
 \hypertarget{kubernetes-dashboard-1}{%
-\subsection{\texorpdfstring{\emph{Kubernetes
+\subsubsection{\texorpdfstring{\emph{Kubernetes
 Dashboard}}{Kubernetes Dashboard}}\label{kubernetes-dashboard-1}}
 
 Dostęp do Dashboardu najprościej można uzyskać poprzez:
@@ -1968,7 +1948,7 @@ Materiały źródłowe:
 \end{itemize}
 
 \hypertarget{napotkane-bux142ux119dy-1}{%
-\subsection{Napotkane błędy}\label{napotkane-bux142ux119dy-1}}
+\subsubsection{Napotkane błędy}\label{napotkane-bux142ux119dy-1}}
 
 Błąd przy ustawieniu \emph{loadbalancer\_apiserver.address} na
 \emph{0.0.0.0}:
@@ -2041,7 +2021,7 @@ sudo lab 's4 s5 s6 s8 s9' boot http://vol/~nazarewk/boot/coreos.ipxe
 Ubuntu}\label{przeszkody-zwiux105zane-z-uruchamianiem-skryptuxf3w-na-uczelnianym-ubuntu}}
 
 \hypertarget{brak-virtualenva}{%
-\subsection{Brak virtualenv'a}\label{brak-virtualenva}}
+\subsubsection{Brak virtualenv'a}\label{brak-virtualenva}}
 
 Moje skrypty nie przewidywały braku \emph{virtualenva}, więc musiałem
 ręcznie zainstalować go komendą
@@ -2049,7 +2029,7 @@ ręcznie zainstalować go komendą
 do skryptu \emph{setup-packages}.
 
 \hypertarget{klonowanie-repozytorium-bez-logowania}{%
-\subsection{Klonowanie repozytorium bez
+\subsubsection{Klonowanie repozytorium bez
 logowania}\label{klonowanie-repozytorium-bez-logowania}}
 
 W celu umożliwienia anonimowego klonowania repozytorium z Githuba,
@@ -2062,7 +2042,7 @@ git clone https://github.com/nazarewk/kubernetes-cluster.git
 Problem pojawił się również dla submodułów gita (\emph{.gitmodules}).
 
 \hypertarget{atrybut-wykonywalnoux15bci-skryptuxf3w}{%
-\subsection{Atrybut wykonywalności
+\subsubsection{Atrybut wykonywalności
 skryptów}\label{atrybut-wykonywalnoux15bci-skryptuxf3w}}
 
 W konfiguracji uczelnianej git nie ustawia domyślnie atrybutu
@@ -2071,7 +2051,7 @@ pliku. Problem rozwiązałem dodaniem komendy
 \passthrough{\lstinline!chmod +x bin/*!} do skryptu \emph{pull}.
 
 \hypertarget{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}{%
-\subsection{Konfiguracja dostępu do maszyn bez
+\subsubsection{Konfiguracja dostępu do maszyn bez
 hasła}\label{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}}
 
 Poza konfiguracją \emph{CoreOS} wypełem konfigurację SSH do bezhasłowego
@@ -2090,7 +2070,7 @@ Host s?
 \end{lstlisting}
 
 \hypertarget{problemy-z-sieciux105}{%
-\subsection{Problemy z siecią}\label{problemy-z-sieciux105}}
+\subsubsection{Problemy z siecią}\label{problemy-z-sieciux105}}
 
 W trakcie pierwszego uruchamiania występowały problemy z siecią
 uczelnianą, więc rozszerzyłem plik \emph{ansible.cfg} o ponawianie prób
@@ -2098,7 +2078,7 @@ wywoływania komend dodając wpis \emph{retires=5} do sekcji
 \emph{{[}ssh\_connection{]}}.
 
 \hypertarget{limit-3-serweruxf3w-dns}{%
-\subsection{Limit 3 serwerów DNS}\label{limit-3-serweruxf3w-dns}}
+\subsubsection{Limit 3 serwerów DNS}\label{limit-3-serweruxf3w-dns}}
 
 Napotkałem
 \href{https://github.com/kubernetes-incubator/kubespray/blob/master/docs/dns-stack.md\#limitations}{limit
@@ -2158,7 +2138,7 @@ Najwięcej czasu spędziłem na rozwiązaniu problemu z DNSami opisanym
 wyżej.
 
 \hypertarget{generowanie-inventory-z-hashicorp-vaultem}{%
-\subsection{Generowanie inventory z HashiCorp
+\subsubsection{Generowanie inventory z HashiCorp
 Vault'em}\label{generowanie-inventory-z-hashicorp-vaultem}}
 
 Skrypt \emph{inventory\_builder.py} z \emph{Kubespray} generuje wpisy
@@ -2184,7 +2164,7 @@ próby. Aby rozwiązać problem trzeba usunąć wpisy pod kategorią
 \emph{{[}vault{]}} z pliku \emph{inventory.cfg}.
 
 \hypertarget{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}{%
-\subsection{Niepoprawne znajdowanie adresów IP w
+\subsubsection{Niepoprawne znajdowanie adresów IP w
 ansible}\label{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}}
 
 Z jakiegoś~powodu konfiguracje \emph{s6} (node3) i \emph{s8} (node4)
@@ -2212,7 +2192,7 @@ Przyczyną błędu okazały się pozostałości konfiguracji maszyn niezależne
 ode mnie.
 
 \hypertarget{dostux119p-do-kubernetes-dashboardu}{%
-\subsection{\texorpdfstring{Dostęp do \emph{Kubernetes
+\subsubsection{\texorpdfstring{Dostęp do \emph{Kubernetes
 Dashboardu}}{Dostęp do Kubernetes Dashboardu}}\label{dostux119p-do-kubernetes-dashboardu}}
 
 \emph{Kubernetes Dashboard} jest dostępny pod poniższą ścieżką~HTTP:
@@ -2243,7 +2223,7 @@ https://10.146.225.4:6443/api/v1/namespaces/kube-system/services/https:kubernete
 \end{lstlisting}
 
 \hypertarget{przekierowanie-portuxf3w}{%
-\subsubsection{Przekierowanie portów}\label{przekierowanie-portuxf3w}}
+\paragraph{Przekierowanie portów}\label{przekierowanie-portuxf3w}}
 
 Jeżeli nie pracujemy z maszyny uczelnianej porty możemy przekierować
 przez SSH na następujące sposoby (jeżeli skrypty uruchamialiśmy z
@@ -2275,7 +2255,7 @@ ssh -L 8001:localhost:8001 -L 6443:10.146.225.4:6443 nazarewk@s2
 \end{lstlisting}
 
 \hypertarget{uux17cytkownik-i-hasux142o}{%
-\subsubsection{Użytkownik i hasło}\label{uux17cytkownik-i-hasux142o}}
+\paragraph{Użytkownik i hasło}\label{uux17cytkownik-i-hasux142o}}
 
 Domyślna nazwa użytkownika Dashboardu to \emph{kube}, a hasło znajduje
 się w pliku \emph{credentials/kube\_user}.
@@ -2290,7 +2270,7 @@ Od 29 stycznia 2018 roku widzę poprawny ekran logowania (opcja Basic):
 \includegraphics[width=5.20833in,height=4.63542in]{assets/dashboard-login-new.png}\\
 
 \hypertarget{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}{%
-\subsection{Instalacja dodatkowych aplikacji z użyciem
+\subsubsection{Instalacja dodatkowych aplikacji z użyciem
 Kubespray}\label{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}}
 
 \emph{Kubespray} ma wbudowaną instalację kilku dodatkowych aplikacji
@@ -2306,7 +2286,7 @@ zmiany \emph{CoreOS} powinny być umieszczane w folderze \emph{/opt}
 W końcu ze względu na liczne błędy zarzuciłem temat.
 
 \hypertarget{instalacja-helm}{%
-\subsection{\texorpdfstring{Instalacja
+\subsubsection{\texorpdfstring{Instalacja
 \emph{Helm}}{Instalacja Helm}}\label{instalacja-helm}}
 
 \href{https://github.com/kubernetes/helm}{\emph{Helm}} jest menadżerem
@@ -2600,7 +2580,7 @@ W skrócie:
 \end{itemize}
 
 \hypertarget{korzystanie-z-klastra-jako-student}{%
-\subsection{Korzystanie z klastra jako
+\subsubsection{Korzystanie z klastra jako
 student}\label{korzystanie-z-klastra-jako-student}}
 
 \begin{itemize}
@@ -2837,7 +2817,7 @@ uczelnianej.
 \newpage
 
 \hypertarget{binpull}{%
-\subsection{\texorpdfstring{\emph{bin/pull}}{bin/pull}}\label{binpull}}
+\subsubsection{\texorpdfstring{\emph{bin/pull}}{bin/pull}}\label{binpull}}
 
 Pobiera aktualną wersję~repozytorium wraz z najnowszą wersją zależności:
 
@@ -2852,7 +2832,7 @@ chmod +x ${0%/*}/*
 \end{lstlisting}
 
 \hypertarget{binvars}{%
-\subsection{\texorpdfstring{\emph{bin/vars}}{bin/vars}}\label{binvars}}
+\subsubsection{\texorpdfstring{\emph{bin/vars}}{bin/vars}}\label{binvars}}
 
 Zawiera wspólne zmienne środowiskowe wykorzystywane w reszcie skryptów
 oraz linii komend:
@@ -2881,7 +2861,7 @@ fi
 \newpage
 
 \hypertarget{binensure-virtualenv}{%
-\subsection{\texorpdfstring{\emph{bin/ensure-virtualenv}}{bin/ensure-virtualenv}}\label{binensure-virtualenv}}
+\subsubsection{\texorpdfstring{\emph{bin/ensure-virtualenv}}{bin/ensure-virtualenv}}\label{binensure-virtualenv}}
 
 Konfiguruje środowisko Pythona, włącznie z próbą instalacji brakującego
 \emph{virtualenv} przez \emph{apt}:
@@ -2934,7 +2914,7 @@ pip install -U -r $PDIR/requirements.txt
 \newpage
 
 \hypertarget{binensure-configuration}{%
-\subsection{\texorpdfstring{\emph{bin/ensure-configuration}}{bin/ensure-configuration}}\label{binensure-configuration}}
+\subsubsection{\texorpdfstring{\emph{bin/ensure-configuration}}{bin/ensure-configuration}}\label{binensure-configuration}}
 
 Generuje brakujące pliki konfiguracyjne SSH, \emph{inventory.cfg} i
 \emph{group\_vars/all.yml} nie nadpisując istniejących:
@@ -3008,7 +2988,7 @@ EOF
 \newpage
 
 \hypertarget{binrender-coreos}{%
-\subsection{\texorpdfstring{\emph{bin/render-coreos}}{bin/render-coreos}}\label{binrender-coreos}}
+\subsubsection{\texorpdfstring{\emph{bin/render-coreos}}{bin/render-coreos}}\label{binrender-coreos}}
 
 Generuje konfigurację Ignition (JSON) na podstawie Container Linux
 Config (YAML):
@@ -3035,7 +3015,7 @@ $BIN/ct -pretty \
 \newpage
 
 \hypertarget{binsetup-cluster}{%
-\subsection{\texorpdfstring{\emph{bin/setup-cluster}}{bin/setup-cluster}}\label{binsetup-cluster}}
+\subsubsection{\texorpdfstring{\emph{bin/setup-cluster}}{bin/setup-cluster}}\label{binsetup-cluster}}
 
 Właściwy skrypt konfigurujący klaster na działających maszynach CoreOS:
 
@@ -3063,7 +3043,7 @@ EOF
 \end{lstlisting}
 
 \hypertarget{binsetup-cluster-full}{%
-\subsection{\texorpdfstring{\emph{bin/setup-cluster-full}}{bin/setup-cluster-full}}\label{binsetup-cluster-full}}
+\subsubsection{\texorpdfstring{\emph{bin/setup-cluster-full}}{bin/setup-cluster-full}}\label{binsetup-cluster-full}}
 
 Skrót do pobierania najnowszej wersji, a następnie uruchamiania klastra:
 
@@ -3078,7 +3058,7 @@ $BIN/setup-cluster $@
 \newpage
 
 \hypertarget{binsetup-cluster-upgrade}{%
-\subsection{\texorpdfstring{\emph{bin/setup-cluster-upgrade}}{bin/setup-cluster-upgrade}}\label{binsetup-cluster-upgrade}}
+\subsubsection{\texorpdfstring{\emph{bin/setup-cluster-upgrade}}{bin/setup-cluster-upgrade}}\label{binsetup-cluster-upgrade}}
 
 Skrypt analogiczny do \emph{setup-cluster}, ale wywołujący
 \emph{upgrade-cluster.yml} zamiast \emph{cluster.yml}:
@@ -3097,7 +3077,7 @@ ansible-playbook -i $INVENTORY/inventory.cfg upgrade-cluster.yml -b -v $@
 \end{lstlisting}
 
 \hypertarget{binkubectl}{%
-\subsection{\texorpdfstring{\emph{bin/kubectl}}{bin/kubectl}}\label{binkubectl}}
+\subsubsection{\texorpdfstring{\emph{bin/kubectl}}{bin/kubectl}}\label{binkubectl}}
 
 Skrót \emph{kubectl} z automatycznym dołączaniem konfiguracji
 \emph{kubespray}:
@@ -3129,7 +3109,7 @@ $kubectl $@
 \newpage
 
 \hypertarget{binstudents}{%
-\subsection{\texorpdfstring{\emph{bin/students}}{bin/students}}\label{binstudents}}
+\subsubsection{\texorpdfstring{\emph{bin/students}}{bin/students}}\label{binstudents}}
 
 Skrypt zarządzający obiektami \emph{Kubernetes} użytkowników, czyli
 studentów:
@@ -3201,7 +3181,7 @@ esac
 \newpage
 
 \hypertarget{binstudent-tokens}{%
-\subsection{\texorpdfstring{\emph{bin/student-tokens}}{bin/student-tokens}}\label{binstudent-tokens}}
+\subsubsection{\texorpdfstring{\emph{bin/student-tokens}}{bin/student-tokens}}\label{binstudent-tokens}}
 
 Listuje przepustki konkretnego użytkownika:
 
@@ -3225,7 +3205,7 @@ done
 \newpage
 
 \hypertarget{bininstall-helm}{%
-\subsection{\texorpdfstring{\emph{bin/install-helm}}{bin/install-helm}}\label{bininstall-helm}}
+\subsubsection{\texorpdfstring{\emph{bin/install-helm}}{bin/install-helm}}\label{bininstall-helm}}
 
 Instaluje menadżer pakietów \emph{Helm}:
 
@@ -3273,7 +3253,7 @@ ssh helm version | grep Server: || ssh helm init --service-account tiller
 \end{lstlisting}
 
 \hypertarget{zetis.sshkubernetes.conf}{%
-\subsection{\texorpdfstring{\emph{zetis/.ssh/kubernetes.conf}}{zetis/.ssh/kubernetes.conf}}\label{zetis.sshkubernetes.conf}}
+\subsubsection{\texorpdfstring{\emph{zetis/.ssh/kubernetes.conf}}{zetis/.ssh/kubernetes.conf}}\label{zetis.sshkubernetes.conf}}
 
 Częściowy plik konfiguracyjny SSH do umieszczenia w
 \emph{\textasciitilde{}/.ssh/config}:
@@ -3293,7 +3273,7 @@ Host s?
 \newpage
 
 \hypertarget{zetiswwwbootcoreos.ipxe}{%
-\subsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ipxe}}{zetis/WWW/boot/coreos.ipxe}}\label{zetiswwwbootcoreos.ipxe}}
+\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ipxe}}{zetis/WWW/boot/coreos.ipxe}}\label{zetiswwwbootcoreos.ipxe}}
 
 Skrypt iPXE uruchamiający maszynę z CoreOS:
 
@@ -3316,7 +3296,7 @@ boot
 \newpage
 
 \hypertarget{zetiswwwbootcoreos.yml}{%
-\subsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.yml}}{zetis/WWW/boot/coreos.yml}}\label{zetiswwwbootcoreos.yml}}
+\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.yml}}{zetis/WWW/boot/coreos.yml}}\label{zetiswwwbootcoreos.yml}}
 
 Plik konfiguracyjny Container Linux Config w formacie YAML, docelowo do
 przepuszczenia przez narzędzie \emph{ct}. Wyjątkowo skróciłem ten
@@ -3334,7 +3314,7 @@ passwd:
 \end{lstlisting}
 
 \hypertarget{zetiswwwbootcoreos.ign}{%
-\subsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ign}}{zetis/WWW/boot/coreos.ign}}\label{zetiswwwbootcoreos.ign}}
+\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ign}}{zetis/WWW/boot/coreos.ign}}\label{zetiswwwbootcoreos.ign}}
 
 Z powyższego pliku wygenerowany zostaje (również skrócony) plik JSON:
 

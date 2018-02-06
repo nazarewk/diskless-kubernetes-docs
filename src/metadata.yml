@@ -5,7 +5,6 @@ biblio-title: 'Bibliografia'
 links-as-notes: yes
 listings: yes
 toc: yes
-toc-depth: 4
 
 documentclass: report
 classoption: a4paper,12pt,twoside,openany

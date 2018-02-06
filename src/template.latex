@@ -75,6 +75,7 @@ $if(listings)$
 \newcommand{\passthrough}[1]{#1}
 \usepackage{xcolor}
 
+\usepackage{listingsutf8}
 \usepackage[ttdefault=true]{AnonymousPro}
 \lstset{
     basicstyle=\fontsize{11}{12}\ttfamily,
@@ -98,30 +99,7 @@ $if(listings)$
     linewidth=\textwidth,
     basewidth=0.6em,
     rulecolor=\color{black},
-}
-\usepackage{listingsutf8}
-\lstset{
     inputencoding=utf8,
-    extendedchars=\true,
-    literate=%
-{ą}{{\k{a}}}1
-{Ą}{{\k{A}}}1
-{ć}{{\'c}}1
-{Ć}{{\'{C}}}1
-{ę}{{\k{e}}}1
-{Ę}{{\k{E}}}1
-{ł}{{\l{}}}1
-{Ł}{{\L{}}}1
-{ń}{{\'n}}1
-{Ń}{{\'N}}1
-{ó}{{\'o}}1
-{Ó}{{\'O}}1
-{ś}{{\'s}}1
-{Ś}{{\'S}}1
-{ż}{{\.z}}1
-{Ż}{{\.Z}}1
-{ź}{{\'z}}1
-{Ź}{{\'Z}}1
 }
 \lstset{postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}}
 $endif$
