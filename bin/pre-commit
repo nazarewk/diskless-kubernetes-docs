@@ -1,4 +1,6 @@
 #!/bin/sh
 set -x
 bin/pdf-convert.sh
+bin/latex-convert.sh
 git add dist/output.pdf
+git add src/output.tex
