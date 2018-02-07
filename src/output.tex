@@ -145,217 +145,139 @@
 \hypertarget{wstux119p}{%
 \chapter{Wstęp}\label{wstux119p}}
 
-W ostatnich latach na popularności zyskują tematy związane z izolacją
-aplikacji, konteneryzacją i zarządzaniem rozproszonymi systemami
-komputerowymi.
+W pracy możemy wyróżnić dwa stosunkowo niezależne od siebie pojęcia:
+zarządzanie kontenerami w klastrze \passthrough{\lstinline!Kubernetes!}
+(zamiennie nazywanym \passthrough{\lstinline!k8s!}) oraz jego bazowaniu
+na maszynach bezdyskowych. W tym rozdziale zarysowany jest problem
+izolacji w kontekście systemów komputerowy: co rozwiązuje, w jaki sposób
+się zmieniał, jaki jest stan obecny. Następnie przedstawione są
+motywacje kierujące wyborem \passthrough{\lstinline!k8s!} z pośród
+dostępnych narzędzi zarządzania kontenerami oraz wyborem systemów
+bezdyskowych jako jego fundamentu.
 
-Sam problem izolacji systemów komputerowych istnieje już od dawna i
-dorobił się wielu podejść do jego rozwiązania:
+\hypertarget{zarys-historyczny-izolacji-zasobuxf3w-komputerowych}{%
+\section{Zarys historyczny izolacji zasobów
+komputerowych}\label{zarys-historyczny-izolacji-zasobuxf3w-komputerowych}}
 
-\begin{itemize}
-\item
-  rozwijane od późnych lat 60 wirtualne maszyny dzielące się na dwa
-  rodzaje:
+Historia wirtualizacji i przydzielania zasobów sięga pierwszych systemów
+komputerowych. Podstawową przeszkodą w korzystaniu z komputerów była ich
+wysoka cena; bogate instytucje odpłatnie wynajmowały swoje systemy innym
+instytucjom. Umożliwiając dostęp tylko jednemu użytkownikowi
+jednocześnie maszyny przez większość czasu nie pracowały. Wraz ze
+wzrostem liczby użytkowników zwiększało się wysycenie zasobów. Kolejną
+przeszkodą był brak ograniczeń dostępowych dla poszczególnych
+użytkowników: każdy świadomie lub nie mógł uszkodzić konta innych
+użytkowników. W ten sposób zrodził się pomysł
+\passthrough{\lstinline!chroot!}, czyli izolacji użytkowników na
+poziomie systemu plików.
 
-  \begin{itemize}
-  \item
-    systemowe lub inaczej emulatory maszyn, w uproszczeniu polegają na
-    uruchamianiu kompletnego systemu operacyjnego, który nie zdaje sobie
-    sprawy ze współdzielenia zasobów ``myśląc'', że posiada całą
-    fizyczną maszynę na własność. Możliwe jest uruchomienie całkiem
-    innego systemu operacyjnego jako gościa;
-  \item
-    działające na poziomie procesu; oferują przede wszystkim izolację
-    zależności i niezależność od systemu operacyjnego, można tu wyróżnić
-    między innymi:
+Na tym etapie wraz z rozwojem technologii zwiększała się różnorodność
+sprzętowa i systemowa. W związku z pierwszą rozwijały się systemy
+operacyjne oferowały abstrakcje dostępu do sprzętu oraz powstawały
+narzędzia emulujące inny sprzęt (tzw. wirtualizacja sprzętowa).
+Różnorodność systemowa była natomiast abstrahowana przez aplikacyjne
+wirtualne maszyny jak na przykład \passthrough{\lstinline!Java!}, które
+umożliwiały jednorodny dostęp do zasobów systemowych.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      interpretery (np. \passthrough{\lstinline!CPython!} lub
-      \passthrough{\lstinline!Lua!}),
-    \item
-      kompilatory JIT (np. \passthrough{\lstinline!Jython!},
-      \passthrough{\lstinline!PyPy!}, \passthrough{\lstinline!LuaJIT!},
-      \passthrough{\lstinline!.NET!}),
-    \item
-      maszyny wirtualne języków programowania (np.
-      \passthrough{\lstinline!Java!} lub \passthrough{\lstinline!V8!});
-    \end{itemize}
-  \end{itemize}
-\item
-  wprowadzony w roku 1979 \passthrough{\lstinline!chroot!} polegający na
-  uruchomieniu procesu ze zmienionym drzewem systemu plików, z którego
-  nie może się wydostać;
-\item
-  parawirtualizacja, która jest podobna do systemowych wirtualnych
-  maszyn, z tą różnicą, że przekierowuje zapytania systemowe do
-  systemu-gospodarza. Ten typ wirtualizacji nie pozwala na uruchomienie
-  całkiem innego systemu operacyjnego i wymaga kompatybilności
-  systemu-gościa. Przykładem jej implementacji są
-  \passthrough{\lstinline!jail!} z \passthrough{\lstinline!FreeBSD!} lub
-  \passthrough{\lstinline!LXC!} (Linux Containers).
-\end{itemize}
+W centrach danych zyskała popularność~wirtualizacja sprzętowa
+pozwalająca na uruchomienie na jednej fizycznej maszynie wielu
+niezależnych od siebie maszyn wirtualnych, na których z kolei działają
+dowolne systemy operacyjne. W toku rozwoju technologii w latach 2000
+pojawił się trend rozpraszania systemów i dążenia do uruchamiania jak
+najmniejszej funkcjonalnej części systemu komputerowego na pojedynczej
+maszynie wirtualnej. Przede wszystkim takie podejście zwiększa
+bezpieczeństwo: po uzyskaniu dostępu do jednego z serwerów włamywacz
+nadal nie ma dostępu do innych części systemu. Przeciętna maszyna
+fizyczna nie jest w stanie uruchomić więcej niż~kilku do kilkunastu
+maszyn wirtualnych. W związku z tym utrzymywanie całej maszyny
+wirtualnej i systemu operacyjnego w celu uruchamiania często
+pojedynczego procesu aplikacyjnego stało się kosztowne i nieekonomiczne.
 
-\pagebreak
+Na przełomie dekady zaczęły pojawiać się narzędzia pozwalające na
+uruchamianie wielu w pełni odizolowanych procesów współdzielących
+jedynie jądro systemu operacyjnego. Znacznie zmniejszyło to narzut
+zasobów wymagany do uruchamiania kolejnych aplikacji-procesów i
+umożliwiło uruchamianie setek, a nawet tysięcy aplikacji na jednej
+fizycznej maszynie. Metodologia zyskała miano konteneryzacji. Jest z
+powodzeniem wykorzystywana w systemach produkcyjnych na całym świecie.
 
-\hypertarget{konteneryzacja}{%
-\section{Konteneryzacja}\label{konteneryzacja}}
-
-Pełna wirtualizacja systemów operacyjnych świetnie się~sprawdza przy
-współdzieleniu zasobów sprzętowych z niezaufanymi użytkownikami. Na
-przykład w centrach danych lub usługach chmurowych.
-
-Natomiast rozwój realnych aplikacji i usług internetowych dąży do
-izolacji jak najmniejszych ich części na poziomie pojedynczego procesu.
-Niektórzy idą dalej i rozbijają procesy na jeszcze mniejsze jednostki
-(tzw. mikroserwisy) ograniczając ich funkcjonalność do minimum.
-
-Zastosowanie w tym przypadku pełnej wirtualizacji skutkowałby
-nieproporcjonalnie dużym narzutem zasobów sprzętowych, a przez to
-finansowych, w stosunku do uruchamianej aplikacji. Standardowe narzędzia
-parawirtualizacji zmniejszają ten narzut, ale nadal jest znaczny i
-wymaga dalszej optymalizacji.
-
-W ten sposób zrodziła się idea konteneryzacji. Polega ona na:
-
-\begin{itemize}
-\tightlist
-\item
-  uruchamianiu pojedynczych procesów,
-\item
-  działaniu we w pełni skonfigurowanym środowisku niezależnym od innych
-  procesów współdzielących system operacyjny,
-\item
-  dążeniu do minimalizacji kosztów uruchamiania kolejnych procesów.
-\end{itemize}
-
-Warto tu zaznaczyć, że konteneryzacja nie jest jedynym narzędziem lub
-gotowym rozwiązaniem. Jest natomiast dobrze określonym zbiorem problemów
-i recept na ich rozwiązanie.
-
-\pagebreak
-
-Konteneryzację realizuje się łącząc wiele istniejących lub nowych
-narzędzi optymalizowanych w konkretnym celu. Sytuację dobrze ilustruje
-poniższe porównanie \passthrough{\lstinline!LXC!} z
-\passthrough{\lstinline!Dockerem!}:
-
-\includegraphics[width=5.20833in,height=3.33333in]{assets/lxc-vs-docker.png}\\
-
-Jak widać na powyższej ilustracji zarówno \passthrough{\lstinline!LXC!}
-jak i \passthrough{\lstinline!Docker!} bazują na kernelu
-\passthrough{\lstinline!Linuxa!}, w tym:
-\passthrough{\lstinline!SELinux!} lub
-\passthrough{\lstinline!AppArmor!}, namespaces i
-\passthrough{\lstinline!cGroups!}. Różnią się natomiast implementacją
-samych kontenerów - \passthrough{\lstinline!LXC!} korzysta jedynie z
-\passthrough{\lstinline!liblxc!}, a \passthrough{\lstinline!Docker!}
-postanowił zaimplementować~wielopoziomowy system:
-\passthrough{\lstinline!Docker Engine!},
-\passthrough{\lstinline!containerd!} i \passthrough{\lstinline!runc!}.
-
-\hypertarget{cel-pracy-inux17cynierskiej}{%
-\section{Cel pracy inżynierskiej}\label{cel-pracy-inux17cynierskiej}}
-
-Celem tej pracy jest: 1) przedstawienie podstawowych pojęć związanych z
-aktualnie najpopularniejszym rozwiązaniem zarządzania kontenerami o
-nazwie \passthrough{\lstinline!k8s!}, 2) przegląd dostępnych rozwiązań
-oraz wdrożenie tego systemu w sieci uczelnianej na potrzeby prowadzenia
-laboratoriów ze studentami.
-
-Wdrożenie w sieci uczelnianej wiąże się z koniecznością uruchomienia
-systemu z sieci na maszynach bezdyskowych.
-
-Celem dodatkowym jest przeprowadzenie testów wydajnościowych klastra
-\passthrough{\lstinline!k8s!}.
-
-\hypertarget{przeglux105d-pojux119ux107-i-systemuxf3w-zwiux105zanych-z-konteneryzacjux105}{%
-\chapter{Przegląd pojęć i systemów związanych z
-konteneryzacją}\label{przeglux105d-pojux119ux107-i-systemuxf3w-zwiux105zanych-z-konteneryzacjux105}}
-
-Wiodącym, ale nie jedynym, rozwiązaniem konteneryzacji jest
+Technologia konteneryzacji jest młoda, a konkurencja duża. Z jednej
+strony trwa wyścig o stworzenie najlepszego rozwiązania. Z drugiej
+strony nikt nie może pozwolić sobie na niekompatybilność implementacji i
+równie aktywnie rozwijane są~ otwarte standardy konteneryzacji w ramach
+\href{https://www.opencontainers.org/about}{\passthrough{\lstinline!Open Container Initiative!}}.
+Obecnie najpopularniejszą implementacją kontenerów jest
 \passthrough{\lstinline!Docker!}.
 
-\hypertarget{open-container-initiative}{%
-\section{Open Container Initiative}\label{open-container-initiative}}
+Aspektem równie ważnym jak same kontenery jest kwestia zarządzania nimi.
+O ile kilkoma serwerami z kilkudziesięcioma kontenerami może zarządzać
+człowiek, o tyle do zarządzania tysiącami kontenerów wymagany jest
+znacznie zautomatyzowany i wyspecjalizowany system. Obecnie przodującym
+rozwiązaniem tego problemu jest \passthrough{\lstinline!Kubernetes!} i
+na nim skupia się ten dokument.
 
-\href{https://www.opencontainers.org/about}{\passthrough{\lstinline!Open Container Initiative!}}
-jest inicjatywą tworzenia i utrzymywania publicznych standardów
-związanych z tworzeniem i obsługą kontenerów.
+\hypertarget{charakterystyka-systemuxf3w-bezdyskowych}{%
+\section{Charakterystyka systemów
+bezdyskowych}\label{charakterystyka-systemuxf3w-bezdyskowych}}
 
-Większość projektów związanych z konteneryzacją dąży do kompatybilności
-ze standardami \passthrough{\lstinline!OCI!}, m. in.:
+Historycznie funkcję serwerów w centrach danych pełniły w pełni
+wyposażone stacje robocze składające się między innymi z:
 
 \begin{itemize}
 \tightlist
 \item
-  \href{https://blog.docker.com/2017/07/demystifying-open-container-initiative-oci-specifications/}{\passthrough{\lstinline!Docker!}}
+  pamięci RAM,
 \item
-  \href{https://github.com/kubernetes-incubator/cri-o}{\passthrough{\lstinline!Kubernetes CRI-O!}}
+  procesorów,
 \item
-  \href{https://wiki.freebsd.org/Docker}{\passthrough{\lstinline!Docker on FreeBSD!}}
+  kart sieciowych,
 \item
-  \href{https://www.youtube.com/watch?v=akLa9L5O0NY}{\passthrough{\lstinline!Running CloudABI applications on a FreeBSD based Kubernetes cluster, by Ed Schouten (EuroBSDcon '17)!}}
+  dysków twardych.
 \end{itemize}
 
-\hypertarget{docker}{%
-\section{Docker}\label{docker}}
+Na takich maszynach systemy operacyjne są indywidualnie instalowane na
+lokalnym dysku twardym w celu ograniczenia komunikacji sieciowej, która
+była znacznie od nich wolniejsza. W takiej architekturze każdy serwer
+miał własną~konfigurację i nie było centralnego miejsca do zarządzania
+nimi.
 
-\passthrough{\lstinline!Docker!} jest najstarszym i w związku z tym
-aktualnie najpopularniejszym rozwiązaniem problemu konteneryzacji.
+W dzisiejszych czasach rozwój sieci komputerowych i spadek cen pamięci
+RAM pozwolił na konfigurację maszyn nie posiadających dysku twardego.
+Bezdyskowe maszyny przy starcie pytają centralny serwer o swoją
+konfigurację (np. protokołem \passthrough{\lstinline!PXE!}), a następnie
+umieszczają kompletny system operacyjny w pamięci RAM.
 
-Dobrym przeglądem alternatyw dla \passthrough{\lstinline!Dockera!} jest
-\href{https://coreos.com/rkt/docs/latest/rkt-vs-other-projects.html}{porównianie
-\passthrough{\lstinline!rkt!} z innymi rozwiązaniami} na oficjalnej
-stronie \passthrough{\lstinline!CoreOS!}.
+W momencie wyłączenia maszyny cały stan jest tracony, a przy ponownym
+rozruchu maszyna konfigurowana jest od nowa. W celu trwałego
+przechowywania danych systemy bezdyskowe łączą się~do zewnętrznego
+serwera plików (np. \passthrough{\lstinline!NFS!} lub
+\passthrough{\lstinline!CephFS!}) i na nim przechowują dane.
 
-Domyślnie obrazy są pobierane przez internet z
-\href{https://hub.docker.com/}{\passthrough{\lstinline!Docker Huba!}},
-co jest ograniczone przepustowością łącza. Na wolne łącze możemy
-zaradzić kieszeniując zapytania HTTP ub uruchamiając
-\href{https://docs.docker.com/registry/deploying/}{rejestr obrazów} w
-sieci lokalnej. Lokalny rejestr może być ograniczony do obrazów ręcznie
-w nim umieszczonych lub udostępniać i kieszeniować~obrazy z zewnętrznego
-rejestru (np. \passthrough{\lstinline!Docker Hub!}). Pierwsze
-rozwiązanie w połączeniu z zablokowaniem dostępu do zewnętrznych
-rejestrów daje prawie pełną kontrolę nad obrazami uruchamianymi wewnątrz
-sieci.
+Rozwiązanie pozwala to na jednorazową konfigurację~bazowego systemu
+operacyjnego i uzyskanie konfiguracji na dowolnej ilości maszyn bez
+ingerencji człowieka. W efekcie koszt utrzymania centrum danych przenosi
+się z konfiguracji indywidualnych maszyn na konfigurację pojedynczych
+usług działających na dowolnej liczbie maszyn.
 
-\hypertarget{dostux119pne-rozwiux105zania-zarzux105dzania-kontenerami}{%
-\section{Dostępne rozwiązania zarządzania
-kontenerami}\label{dostux119pne-rozwiux105zania-zarzux105dzania-kontenerami}}
+W związku z powyższym system bezdyskowy jest bardzo dobrym kandydatem do
+konfiguracji klastra Kubernetes.
 
-\hypertarget{kubernetes}{%
-\subsubsection{Kubernetes}\label{kubernetes}}
+\hypertarget{lista-alternatyw-kubernetes}{%
+\section{Lista alternatyw
+Kubernetes}\label{lista-alternatyw-kubernetes}}
 
-\href{https://kubernetes.io/}{Kubernetes} (dalej jako
-\passthrough{\lstinline!k8s!}) jest obecnie najpopularniejszym
-narzędziem orkiestracji kontenerami, a przez to tematem przewodnim tego
-dokumentu.
-
-Został stworzony przez \passthrough{\lstinline!Google!} na bazie ich
-wewnętrznego systemu Borg.
-
-W porównaniu do innych narzędzi \passthrough{\lstinline!k8s!} oferuje
-najlepszy kompromis między oferowanymi możliwościami, a kosztem
-zarządzania.
-
-Dobrym przeglądem alternatyw \passthrough{\lstinline!k8s!} jest artykuł
-pt.
-\href{https://dzone.com/articles/choosing-the-right-containerization-and-cluster-management-tool}{\passthrough{\lstinline!Choosing the Right Containerization and Cluster Management Tool!}}.
+\passthrough{\lstinline!Kubernetes!} oferuje duże możliwości w stosunku
+do progu wejścia w system, ale istnieją również inne rozwiązania, o
+których warto wspomnieć.
 
 \hypertarget{fleet}{%
-\subsubsection{Fleet}\label{fleet}}
+\paragraph{Fleet}\label{fleet}}
 
-\href{https://github.com/coreos/fleet}{\passthrough{\lstinline!Fleet!}}
-jest nakładką~na
-\href{https://www.freedesktop.org/wiki/Software/systemd/}{\passthrough{\lstinline!systemd!}}
-realizująca rozproszony system inicjalizacji systemów w systemie
-operacyjnym \passthrough{\lstinline!CoreOS!}.
-
-Kontenery są~uruchamiane i zarządzane przez
-\passthrough{\lstinline!systemd!}, a stan przechowywany jest w etcd.
+jest nakładką~na \passthrough{\lstinline!systemd!} realizującą
+rozproszony system inicjalizacji systemów operacyjnych
+\passthrough{\lstinline!CoreOS!}. Kontenery są~uruchamiane i zarządzane
+przez \passthrough{\lstinline!systemd!}, a stan przechowywany jest w
+\passthrough{\lstinline!etcd!}.
 
 Aktualnie projekt kończy swój żywot na rzecz
 \passthrough{\lstinline!k8s!} i w dniu 1 lutego 2018, został wycofany z
@@ -363,73 +285,84 @@ domyślnej dystrybucji \passthrough{\lstinline!CoreOS!}. Nadal będzie
 dostępny w rejestrze pakietów \passthrough{\lstinline!CoreOS!}.
 
 \hypertarget{docker-swarm}{%
-\subsubsection{Docker Swarm}\label{docker-swarm}}
+\paragraph{Docker Swarm}\label{docker-swarm}}
 
-\href{https://docs.docker.com/engine/swarm/}{\passthrough{\lstinline!Docker Swarm!}}
-jest rozwiązaniem orkiestracji kontenerami od twórców samego
-\passthrough{\lstinline!Dockera!}. Proste w obsłudze, ale nie oferuje
-tak dużych możliwości jak inne rozwiązania.
+jest rozwiązaniem zarządzania kontenerami zintegrowanym z systemem
+\passthrough{\lstinline!Docker!}. Główną zaletą jest niski próg wejścia
+i prostota, a wadą są małe możliwości w stosunku do innych rozwiązań.
 
 \hypertarget{nomad}{%
-\subsubsection{Nomad}\label{nomad}}
+\paragraph{Nomad}\label{nomad}}
 
-\href{https://www.nomadproject.io/intro/index.html}{\passthrough{\lstinline!Nomad!}}
-od \passthrough{\lstinline!HashiCorp!} jest narzędziem do zarządzania
-klastrem, które również oferuje zarządzanie kontenerami.
+jest narzędziem do zarządzania siecią komputerową, które również oferuje
+zarządzanie kontenerami.
 
 Przy jego tworzeniu twórcy kierują się filozofią
-\passthrough{\lstinline!Unix!}. W związku z tym Nomad jest prosty w
-obsłudze, wyspecjalizowany i rozszerzalny. Zwykle działa w tandemie z
-innymi produktami HashiCorp jak Consul i Vault.
-
-Porównanie z innymi rozwiązaniami możemy znaleźć na oficjalnej stronie
-\passthrough{\lstinline!Nomada!}:
-\href{https://www.nomadproject.io/intro/vs/index.html}{\passthrough{\lstinline!HashiCorp Nomad vs Other Software!}}
+\passthrough{\lstinline!Unix!}. W związku z tym
+\passthrough{\lstinline!Nomad!} jest prosty w obsłudze, wyspecjalizowany
+i rozszerzalny. Zwykle działa w tandemie z innymi produktami firmy
+``HashiCorp'' jak \passthrough{\lstinline!Consul!} i
+\passthrough{\lstinline!Vault!}.
 
 \hypertarget{mesos}{%
-\subsubsection{Mesos}\label{mesos}}
+\paragraph{Mesos}\label{mesos}}
 
-\href{http://mesos.apache.org/}{\passthrough{\lstinline!Apache Mesos!}}
-jest najbardziej zaawansowanym i najlepiej skalującym się rozwiązaniem
-orkiestracji kontenerami. Jest również najbardziej skomplikowanym i
-trudnym w zarządzaniu rozwiązaniem, w związku z tym znajduje swoje
-zastosowanie tylko w największych systemach komputerowych.
+jest najbardziej zaawansowanym i najefektywniej skalującym się
+rozwiązaniem zarządzania kontenerami. Jest również najbardziej
+skomplikowanym i trudnym w zarządzaniu rozwiązaniem. W związku z tym
+znajduje swoje zastosowanie tylko w największych sieciach komputerowych
+o zasięgu globalnym.
 
-Dobrym wstępem do zagadnienia jest ten artykuł:
-\href{https://www.digitalocean.com/community/tutorials/an-introduction-to-mesosphere}{\passthrough{\lstinline!An Introduction to Mesosphere!}}.
+\hypertarget{system-kubernetes}{%
+\chapter{System Kubernetes}\label{system-kubernetes}}
 
-\hypertarget{kubernetes-1}{%
-\chapter{Kubernetes}\label{kubernetes-1}}
+\href{https://kubernetes.io/}{\passthrough{\lstinline!Kubernetes!}} jest
+obecnie najpopularniejszym systemem zarządzania kontenerami, a przez to
+tematem przewodnim tego dokumentu. Został stworzony przez
+\passthrough{\lstinline!Google!} na bazie ich wewnętrznego systemu Borg,
+a następnie udostępniony na zasadach otwartego oprogramowania.
 
-W tym rozdziale opiszę zagadnienia związane z samym systemem
-\passthrough{\lstinline!k8s!}.
+W porównaniu do innych narzędzi \passthrough{\lstinline!k8s!} oferuje
+najlepszy kompromis między oferowanymi możliwościami, a kosztami
+administracyjnymi.
 
-\hypertarget{administracja-a-korzystanie-z-klastra}{%
-\section{Administracja, a korzystanie z
-klastra}\label{administracja-a-korzystanie-z-klastra}}
+Zarządzanie klastrem zdefiniowane jest jako zbiór czynności i procesów
+polegających na przygotowaniu klastra do użytku oraz definiowanie
+aplikacji realizującymi usługi na poziomie klastra, takimi jak:
 
-Przez zwrot \passthrough{\lstinline!administracja klastrem!} (lub
-zarządzanie nim) rozumiem zbiór czynności i procesów polegających na
-przygotowaniu klastra do użytku i zarządzanie jego infrastrukturą. Na
-przykład: tworzenie klastra, dodawanie i usuwanie węzłów oraz nadawanie
-uprawnień innym użytkownikom.
+\begin{itemize}
+\tightlist
+\item
+  tworzenie klastra,
+\item
+  dodawanie i usuwanie fizycznych węzłów,
+\item
+  integracja z sieciowym systemem plikowym,
+\item
+  integracja z zewnętrznymi systemami zarządzania kontami użytkowników,
+\item
+  nadawanie uprawnień użytkownikom i procesom,
+\item
+  centralny system zbierania dzienników aplikacji (ang.
+  \emph{centrallized logging system}),
+\item
+  centralny system monitorujący obciążenie węzłów,
+\end{itemize}
 
-Przez zwrot \passthrough{\lstinline!korzystanie z klastra!} rozumiem
-uruchamianie aplikacji na działającym klastrze.
+Korzystanie z klastra zdefiniowane jest jako uruchamianie dowolnych
+aplikacji na skonfigurowanym klastrze.
 
-Ze względu na ograniczone zasoby czasu w tej pracy inżynierskiej skupiam
-się na kwestiach związanych z administracją klastrem.
-
-\hypertarget{konfiguracja-klastra}{%
-\section{Konfiguracja klastra}\label{konfiguracja-klastra}}
+\hypertarget{wyjaux15bnienie-pojux119cia-stanu-w-klastrze-kubernetes}{%
+\section{Wyjaśnienie pojęcia stanu w klastrze
+Kubernetes}\label{wyjaux15bnienie-pojux119cia-stanu-w-klastrze-kubernetes}}
 
 Ważną~kwestią jest zrozumienie pojęcia stanu w klastrze
-\passthrough{\lstinline!k8s!}. Jest to stan do którego klaster dąży, a
-nie w jakim się w danej chwili znajduje.
+\passthrough{\lstinline!k8s!}. Jest to konfiguracja do której klaster
+dąży, a nie w której znajduje się w danej chwili.
 
 Zwykle stan docelowy i aktywny szybko się ze sobą~zbiegają, ale nie jest
 to regułą. Najczęstszymi scenariuszami jest brak zasobów do uruchomienia
-aplikacji w klastrze lub zniknięcie węzła roboczego.
+aplikacji w klastrze lub utrata węzła roboczego.
 
 W pierwszym przypadku stan klastra może wskazywać na istnienie 5
 instancji aplikacji, ale pamięci RAM wystarcza na uruchomienie tylko 3.
@@ -447,16 +380,13 @@ klaster zauważy braki aktywny stan 6 nie będzie się zgadzał z docelowym
 3 instancje i uzyskamy docelowy stan klastra: po 3 kopie aplikacji na 3
 węzłach.
 
-\hypertarget{infrastruktura-kubernetesa}{%
-\section{Infrastruktura Kubernetesa}\label{infrastruktura-kubernetesa}}
+\hypertarget{infrastruktura-logiczna-klastra-kubernetes}{%
+\section{Infrastruktura logiczna klastra
+Kubernetes}\label{infrastruktura-logiczna-klastra-kubernetes}}
 
-Infrastrukturę definiuję jako część~odpowiadającą za funkcjonowanie
-klastra, a nie za aplikacje na nim działające. Z infrastrukturą wiążę
-pojęcie administracji klastrem.
+\passthrough{\lstinline!Kubernetes!} jest TODO: WRITE HERE
 
-Zdecydowałem się przybliżyć temat na podstawie
-\href{https://commons.wikimedia.org/wiki/File:Kubernetes.png}{jednego
-diagramu znalezionego na wikimedia.org}:
+Zdecydowałem się przybliżyć temat na podstawie poniższego diagramu:
 
 \includegraphics[width=5.20833in,height=3.6875in]{assets/kubernetes-architecture.png}\\
 
@@ -466,21 +396,21 @@ Na ilustracji możemy wyróżnić 5 grup funkcjonalnych:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \passthrough{\lstinline!Developer/Operator!}, czyli administrator lub
-  programista korzystający z klastra,
+  administrator lub programista korzystający z klastra -
+  \passthrough{\lstinline!Developer/Operator!},
 \item
-  \passthrough{\lstinline!Users!}, czyli użytkowników aplikacji
-  działających w klastrze,
+  użytkowników końcowi aplikacji działających w klastrze -
+  \passthrough{\lstinline!Users!},
 \item
-  \passthrough{\lstinline!Kubernetes Master!}, czyli węzeł zarządzający
-  (zwykle więcej niż~jeden),
+  jeden lub więcej węzeł zarządzający -
+  \passthrough{\lstinline!Kubernetes Master!},
 \item
-  \passthrough{\lstinline!Kubernetes Node!}, czyli jeden z wielu węzłów
-  roboczych, na których działają aplikacje,
+  jeden lub więcej węzeł roboczy -
+  \passthrough{\lstinline!Kubernetes Node!},
 \item
-  \passthrough{\lstinline!Plugin Network!}, czyli wtyczka sieciowa
-  realizująca lub konfigurująca połączenia pomiędzy kontenerami
-  działającymi w ramach klastra,
+  wtyczka sieciowa (\passthrough{\lstinline!Plugin Network!}), czyli
+  oprogramowanie realizujące komunikację sieciową w ramach klastra
+  \passthrough{\lstinline!k8s!},
 \end{enumerate}
 
 \hypertarget{wux119zeux142-zarzux105dzajux105cy}{%
@@ -959,14 +889,6 @@ pozwala na tworzenie \passthrough{\lstinline!Job!}ów jednorazowo o
 określonym czasie lub je powtarzać zgodnie ze
 specyfikacją~\href{https://en.wikipedia.org/wiki/Cron}{\passthrough{\lstinline!cron!}}.
 
-\hypertarget{kubernetes-dashboard}{%
-\section{Kubernetes Dashboard}\label{kubernetes-dashboard}}
-
-\href{https://github.com/kubernetes/dashboard}{\passthrough{\lstinline!Kubernetes Dashboard!}}
-jest wbudowanym interfejsem graficznym klastra
-\passthrough{\lstinline!k8s!}. Umożliwia monitorowanie i zarządzanie
-klastrem w ramach funkcjonalności samego \passthrough{\lstinline!k8s!}.
-
 \hypertarget{kubernetes-incubator}{%
 \section{Kubernetes Incubator}\label{kubernetes-incubator}}
 
@@ -992,9 +914,9 @@ opuszczenia inkubatora to:
   \passthrough{\lstinline!kubernetes-incubator-retired!}
 \end{itemize}
 
-\hypertarget{administracja-klastrem-z-linii-komend}{%
-\section{Administracja klastrem z linii
-komend}\label{administracja-klastrem-z-linii-komend}}
+\hypertarget{zarzux105dzanie-klastrem-z-linii-komend}{%
+\section{Zarządzanie klastrem z linii
+komend}\label{zarzux105dzanie-klastrem-z-linii-komend}}
 
 \hypertarget{kubeadm}{%
 \subsubsection{kubeadm}\label{kubeadm}}
@@ -1107,9 +1029,17 @@ Jest to narzędzie ułatwiające korzystanie z
 \passthrough{\lstinline!kubespray-cli!} jest deprekowane i powinno
 się~korzystać~z czystego \passthrough{\lstinline!kubespray!}.
 
-\hypertarget{administracja-klastrem-za-pomocux105-narzux119dzi-graficznych}{%
-\section{Administracja klastrem za pomocą narzędzi
-graficznych}\label{administracja-klastrem-za-pomocux105-narzux119dzi-graficznych}}
+\hypertarget{zarzux105dzanie-klastrem-za-pomocux105-narzux119dzi-graficznych}{%
+\section{Zarządzanie klastrem za pomocą narzędzi
+graficznych}\label{zarzux105dzanie-klastrem-za-pomocux105-narzux119dzi-graficznych}}
+
+\hypertarget{kubernetes-dashboard}{%
+\section{Kubernetes Dashboard}\label{kubernetes-dashboard}}
+
+\href{https://github.com/kubernetes/dashboard}{\passthrough{\lstinline!Kubernetes Dashboard!}}
+jest wbudowanym interfejsem graficznym klastra
+\passthrough{\lstinline!k8s!}. Umożliwia monitorowanie i zarządzanie
+klastrem w ramach funkcjonalności samego \passthrough{\lstinline!k8s!}.
 
 \hypertarget{rancher}{%
 \subsubsection{Rancher}\label{rancher}}
@@ -1158,7 +1088,7 @@ rozszerzony o
 \href{https://mesosphere.com/blog/kubernetes-dcos/}{\passthrough{\lstinline!k8s!}}
 jako alternatywny (w stosunku do
 \href{https://mesosphere.github.io/marathon/}{\passthrough{\lstinline!Marathon!}})
-system orkiestracji kontenerami.
+system zarządzania kontenerami.
 
 \hypertarget{lista-materiaux142uxf3w-dodatkowych}{%
 \section{Lista materiałów
@@ -1180,69 +1110,9 @@ materiałów dodatkowych:
   skalowaniu \passthrough{\lstinline!k8s!}},
 \end{itemize}
 
-\hypertarget{systemy-bezdyskowe}{%
-\chapter{Systemy bezdyskowe}\label{systemy-bezdyskowe}}
-
-Maszyny bezdyskowe jak nazwa wskazuje nie posiadają lokalnego medium
-trwałego przechowywania informacji. W związku z tym wszystkie informacje
-są przechowywane w pamięci RAM komputera i są tracone w momencie
-restartu maszyny.
-
-System operacyjny musi wspierać uruchamianie w takim środowisku. Wiele
-systemów nie wspiera tego trybu operacyjnego zakładając obecność dysku
-twardego w maszynie.
-
-W niektórych przypadkach mimo braku domyślnego wsparcia istnieje
-możliwość przygotowania własnego obrazu systemu operacyjnego
-wspierającego ten tryb pracy:
-
-\begin{itemize}
-\tightlist
-\item
-  \href{https://www.projectatomic.io/blog/2015/05/building-and-running-live-atomic/}{Fedora
-  Atomic Host}.
-\end{itemize}
-
-Potencjalnymi rozwiązaniami problemu przechowywania stanu maszyn
-bezdyskowych mogą być:
-
-\begin{itemize}
-\tightlist
-\item
-  przydziały NFS,
-\item
-  \href{https://arstechnica.com/information-technology/2015/12/rsync-net-zfs-replication-to-the-cloud-is-finally-here-and-its-fast/}{replikacja
-  ZFS},
-\item
-  przechowywanie całego stanu w
-  \protect\hyperlink{cloud-init-config}{cloud-init}.
-\end{itemize}
-
-\hypertarget{proces-uruchamiania-maszyny-bezdyskowej}{%
-\section{Proces uruchamiania maszyny
-bezdyskowej}\label{proces-uruchamiania-maszyny-bezdyskowej}}
-
-Na uruchamianie maszyn bezdyskowych w protokole PXE składają się 3
-podstawowe elementy:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  serwer DHCP, np. isc-dhcp-server lub dnsmasq,
-\item
-  firmware wspierające PXE, np. iPXE,
-\item
-  serwer plików (np. TFTP, HTTP, NFS) i/lub sieciowej pamięci masowej
-  (np. iSCSI).
-\end{enumerate}
-
-Pełną lokalną~konfigurację bazowaną na Dockerze przechowuję w moim
-repozytorium \href{https://github.com/nazarewk/ipxe-boot}{ipxe-boot}.
-
-\hypertarget{przeglux105d-systemuxf3w-operacyjnych}{%
-\chapter{Przegląd systemów
-operacyjnych}\label{przeglux105d-systemuxf3w-operacyjnych}}
+\hypertarget{praktyczny-przeglux105d-bezdyskowych-systemuxf3w-operacyjnych}{%
+\chapter{Praktyczny przegląd bezdyskowych systemów
+operacyjnych}\label{praktyczny-przeglux105d-bezdyskowych-systemuxf3w-operacyjnych}}
 
 Wszystkie moduły \passthrough{\lstinline!k8s!} są uruchamiane w
 kontenerach, więc dwoma podstawowymi wymaganiami systemu operacyjnego
@@ -1251,7 +1121,7 @@ są:
 \begin{itemize}
 \tightlist
 \item
-  możliwość instalacji i uruchomienia Dockera,
+  możliwość uruchomienia Dockera,
 \item
   wsparcie wybranego narzędzia konfigurującego system do działania w
   klastrze \passthrough{\lstinline!k8s!},
