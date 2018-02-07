@@ -379,7 +379,7 @@ $body$
 
 $if(natbib)$
 $if(bibliography)$
-$if(biblio-title)$
+$if(biblio-title)$f
 $if(book-class)$
 \renewcommand\bibname{$biblio-title$}
 $else$

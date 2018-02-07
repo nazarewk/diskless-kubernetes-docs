@@ -2,8 +2,8 @@
 # Rezultaty i wnioski
 
 Główne założenia pracy inżynierskiej zostały spełnione. Wyjaśniłem dużą ilość
-zagadnień związanych z _Kubernetes_ oraz oddałem do użytku skrypty konfigurujące
-klaster _Kubernetes_ wraz z prostym w obsłudze dodawaniem i usuwaniem jego
+zagadnień związanych z `k8s` oraz oddałem do użytku skrypty konfigurujące
+klaster `k8s` wraz z prostym w obsłudze dodawaniem i usuwaniem jego
 użytkowników.
 
 W trakcie pisania pracy temat okazał się zbyt obszerny, żeby go kompletnie i

@@ -60,8 +60,7 @@
 \usepackage{listingsutf8}
 \usepackage[ttdefault=true]{AnonymousPro}
 \lstset{
-    basicstyle=\fontsize{11}{12}\ttfamily,
-    numbers=left,
+    basicstyle=\fontsize{9}{11}\ttfamily,
     keywordstyle=\color[rgb]{0.13,0.29,0.53}\bfseries,
     stringstyle=\color[rgb]{0.31,0.60,0.02},
     commentstyle=\color[rgb]{0.56,0.35,0.01}\itshape,
@@ -82,10 +81,19 @@
     basewidth=0.6em,
     rulecolor=\color{black},
     inputencoding=utf8,
+    frame=single,
 }
 \lstset{postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}}
 
 \raggedbottom
+
+% Przypisy na końcu dokumentu
+\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+\usepackage{endnotes}
+\usepackage{hyperendnotes}
+\let\footnote=\endnote
+% Wyczyść nagłówek (wykorzystamy nagłówek z markdowna)
+\def\enoteheading{}
 
 %%%%%%%%%%%%%%% Dodatkowe Pakiety %%%%%%%%%%%%%%%%%
 \usepackage{prmag2017}   % definiuje komendy opieku,nrindeksu, rodzaj pracy, ...
@@ -164,26 +172,29 @@ dorobił się wielu podejść do jego rozwiązania:
     \begin{itemize}
     \tightlist
     \item
-      interpretery (np. \emph{CPython} lub \emph{Lua}),
+      interpretery (np. \passthrough{\lstinline!CPython!} lub
+      \passthrough{\lstinline!Lua!}),
     \item
-      kompilatory JIT (np. \emph{Jython}, \emph{PyPy}, \emph{LuaJIT},
-      \emph{.NET}),
+      kompilatory JIT (np. \passthrough{\lstinline!Jython!},
+      \passthrough{\lstinline!PyPy!}, \passthrough{\lstinline!LuaJIT!},
+      \passthrough{\lstinline!.NET!}),
     \item
-      maszyny wirtualne języków programowania (np. \emph{Java} lub
-      \emph{V8});
+      maszyny wirtualne języków programowania (np.
+      \passthrough{\lstinline!Java!} lub \passthrough{\lstinline!V8!});
     \end{itemize}
   \end{itemize}
 \item
-  wprowadzony w roku 1979 \emph{chroot} polegający na uruchomieniu
-  procesu ze zmienionym drzewem systemu plików, z którego nie może się
-  wydostać;
+  wprowadzony w roku 1979 \passthrough{\lstinline!chroot!} polegający na
+  uruchomieniu procesu ze zmienionym drzewem systemu plików, z którego
+  nie może się wydostać;
 \item
   parawirtualizacja, która jest podobna do systemowych wirtualnych
   maszyn, z tą różnicą, że przekierowuje zapytania systemowe do
   systemu-gospodarza. Ten typ wirtualizacji nie pozwala na uruchomienie
   całkiem innego systemu operacyjnego i wymaga kompatybilności
-  systemu-gościa. Przykładem jej implementacji są \emph{jail} z
-  \emph{FreeBSD} lub \emph{LXC} (\emph{Linux Containers}).
+  systemu-gościa. Przykładem jej implementacji są
+  \passthrough{\lstinline!jail!} z \passthrough{\lstinline!FreeBSD!} lub
+  \passthrough{\lstinline!LXC!} (Linux Containers).
 \end{itemize}
 
 \pagebreak
@@ -227,178 +238,184 @@ i recept na ich rozwiązanie.
 
 Konteneryzację realizuje się łącząc wiele istniejących lub nowych
 narzędzi optymalizowanych w konkretnym celu. Sytuację dobrze ilustruje
-poniższe porównanie \emph{LXC} z \emph{Dockerem}:
+poniższe porównanie \passthrough{\lstinline!LXC!} z
+\passthrough{\lstinline!Dockerem!}:
 
 \includegraphics[width=5.20833in,height=3.33333in]{assets/lxc-vs-docker.png}\\
 
-Jak widać na powyższej ilustracji zarówno \emph{LXC} jak i \emph{Docker}
-bazują na kernelu \emph{Linuxa}, w tym: \emph{SELinux} lub
-\emph{AppArmor}, namespaces i \emph{cGroups}. Różnią się natomiast
-implementacją samych kontenerów - \emph{LXC} korzysta jedynie z
-\emph{liblxc}, a \emph{Docker} postanowił zaimplementować~wielopoziomowy
-system: \emph{Docker Engine}, \emph{containerd} i \emph{runc}.
+Jak widać na powyższej ilustracji zarówno \passthrough{\lstinline!LXC!}
+jak i \passthrough{\lstinline!Docker!} bazują na kernelu
+\passthrough{\lstinline!Linuxa!}, w tym:
+\passthrough{\lstinline!SELinux!} lub
+\passthrough{\lstinline!AppArmor!}, namespaces i
+\passthrough{\lstinline!cGroups!}. Różnią się natomiast implementacją
+samych kontenerów - \passthrough{\lstinline!LXC!} korzysta jedynie z
+\passthrough{\lstinline!liblxc!}, a \passthrough{\lstinline!Docker!}
+postanowił zaimplementować~wielopoziomowy system:
+\passthrough{\lstinline!Docker Engine!},
+\passthrough{\lstinline!containerd!} i \passthrough{\lstinline!runc!}.
 
 \hypertarget{cel-pracy-inux17cynierskiej}{%
 \section{Cel pracy inżynierskiej}\label{cel-pracy-inux17cynierskiej}}
 
 Celem tej pracy jest: 1) przedstawienie podstawowych pojęć związanych z
 aktualnie najpopularniejszym rozwiązaniem zarządzania kontenerami o
-nazwie \emph{Kubernetes}, 2) przegląd dostępnych rozwiązań oraz
-wdrożenie tego systemu w sieci uczelnianej na potrzeby prowadzenia
+nazwie \passthrough{\lstinline!k8s!}, 2) przegląd dostępnych rozwiązań
+oraz wdrożenie tego systemu w sieci uczelnianej na potrzeby prowadzenia
 laboratoriów ze studentami.
 
 Wdrożenie w sieci uczelnianej wiąże się z koniecznością uruchomienia
 systemu z sieci na maszynach bezdyskowych.
 
 Celem dodatkowym jest przeprowadzenie testów wydajnościowych klastra
-\emph{Kubernetes}.
+\passthrough{\lstinline!k8s!}.
 
 \hypertarget{przeglux105d-pojux119ux107-i-systemuxf3w-zwiux105zanych-z-konteneryzacjux105}{%
 \chapter{Przegląd pojęć i systemów związanych z
 konteneryzacją}\label{przeglux105d-pojux119ux107-i-systemuxf3w-zwiux105zanych-z-konteneryzacjux105}}
 
 Wiodącym, ale nie jedynym, rozwiązaniem konteneryzacji jest
-\emph{Docker}.
+\passthrough{\lstinline!Docker!}.
 
 \hypertarget{open-container-initiative}{%
 \section{Open Container Initiative}\label{open-container-initiative}}
 
-\href{https://www.opencontainers.org/about}{\emph{Open Container
-Initiative}} jest inicjatywą tworzenia i utrzymywania publicznych
-standardów związanych z tworzeniem i obsługą kontenerów.
+\href{https://www.opencontainers.org/about}{\passthrough{\lstinline!Open Container Initiative!}}
+jest inicjatywą tworzenia i utrzymywania publicznych standardów
+związanych z tworzeniem i obsługą kontenerów.
 
 Większość projektów związanych z konteneryzacją dąży do kompatybilności
-ze standardami \emph{OCI}, m. in.:
+ze standardami \passthrough{\lstinline!OCI!}, m. in.:
 
 \begin{itemize}
 \tightlist
 \item
-  \href{https://blog.docker.com/2017/07/demystifying-open-container-initiative-oci-specifications/}{\emph{Docker}}
+  \href{https://blog.docker.com/2017/07/demystifying-open-container-initiative-oci-specifications/}{\passthrough{\lstinline!Docker!}}
 \item
-  \href{https://github.com/kubernetes-incubator/cri-o}{\emph{Kubernetes}
-  CRI-O}
+  \href{https://github.com/kubernetes-incubator/cri-o}{\passthrough{\lstinline!Kubernetes CRI-O!}}
 \item
-  \href{https://wiki.freebsd.org/Docker}{\emph{Docker on FreeBSD}}
+  \href{https://wiki.freebsd.org/Docker}{\passthrough{\lstinline!Docker on FreeBSD!}}
 \item
-  \href{https://www.youtube.com/watch?v=akLa9L5O0NY}{\emph{Running
-  CloudABI applications on a FreeBSD based Kubernetes cluster, by Ed
-  Schouten (EuroBSDcon '17)}}
+  \href{https://www.youtube.com/watch?v=akLa9L5O0NY}{\passthrough{\lstinline!Running CloudABI applications on a FreeBSD based Kubernetes cluster, by Ed Schouten (EuroBSDcon '17)!}}
 \end{itemize}
 
 \hypertarget{docker}{%
-\section{\texorpdfstring{\emph{Docker}}{Docker}}\label{docker}}
+\section{Docker}\label{docker}}
 
-\emph{Docker} jest najstarszym i w związku z tym aktualnie
-najpopularniejszym rozwiązaniem problemu konteneryzacji.
+\passthrough{\lstinline!Docker!} jest najstarszym i w związku z tym
+aktualnie najpopularniejszym rozwiązaniem problemu konteneryzacji.
 
-Dobrym przeglądem alternatyw dla \emph{Dockera} jest
+Dobrym przeglądem alternatyw dla \passthrough{\lstinline!Dockera!} jest
 \href{https://coreos.com/rkt/docs/latest/rkt-vs-other-projects.html}{porównianie
-\emph{rkt} z innymi rozwiązaniami} na oficjalnej stronie \emph{CoreOS}.
+\passthrough{\lstinline!rkt!} z innymi rozwiązaniami} na oficjalnej
+stronie \passthrough{\lstinline!CoreOS!}.
 
 Domyślnie obrazy są pobierane przez internet z
-\href{https://hub.docker.com/}{\emph{Docker Huba}}, co jest ograniczone
-przepustowością łącza. Na wolne łącze możemy zaradzić kieszeniując
-zapytania HTTP ub uruchamiając
+\href{https://hub.docker.com/}{\passthrough{\lstinline!Docker Huba!}},
+co jest ograniczone przepustowością łącza. Na wolne łącze możemy
+zaradzić kieszeniując zapytania HTTP ub uruchamiając
 \href{https://docs.docker.com/registry/deploying/}{rejestr obrazów} w
 sieci lokalnej. Lokalny rejestr może być ograniczony do obrazów ręcznie
 w nim umieszczonych lub udostępniać i kieszeniować~obrazy z zewnętrznego
-rejestru (np. \emph{Docker Hub}). Pierwsze rozwiązanie w połączeniu z
-zablokowaniem dostępu do zewnętrznych rejestrów daje prawie pełną
-kontrolę nad obrazami uruchamianymi wewnątrz sieci.
+rejestru (np. \passthrough{\lstinline!Docker Hub!}). Pierwsze
+rozwiązanie w połączeniu z zablokowaniem dostępu do zewnętrznych
+rejestrów daje prawie pełną kontrolę nad obrazami uruchamianymi wewnątrz
+sieci.
 
 \hypertarget{dostux119pne-rozwiux105zania-zarzux105dzania-kontenerami}{%
 \section{Dostępne rozwiązania zarządzania
 kontenerami}\label{dostux119pne-rozwiux105zania-zarzux105dzania-kontenerami}}
 
 \hypertarget{kubernetes}{%
-\subsubsection{\texorpdfstring{\emph{Kubernetes}}{Kubernetes}}\label{kubernetes}}
+\subsubsection{Kubernetes}\label{kubernetes}}
 
-\href{https://kubernetes.io/}{\emph{Kubernetes}} (w skrócie \emph{k8s})
-jest obecnie najpopularniejszym narzędziem orkiestracji kontenerami, a
-przez to tematem przewodnim tego dokumentu.
+\href{https://kubernetes.io/}{Kubernetes} (dalej jako
+\passthrough{\lstinline!k8s!}) jest obecnie najpopularniejszym
+narzędziem orkiestracji kontenerami, a przez to tematem przewodnim tego
+dokumentu.
 
-Został stworzony przez \emph{Google} na bazie ich wewnętrznego systemu
-Borg.
+Został stworzony przez \passthrough{\lstinline!Google!} na bazie ich
+wewnętrznego systemu Borg.
 
-W porównaniu do innych narzędzi \emph{Kubernetes} oferuje najlepszy
-kompromis między oferowanymi możliwościami, a kosztem zarządzania.
+W porównaniu do innych narzędzi \passthrough{\lstinline!k8s!} oferuje
+najlepszy kompromis między oferowanymi możliwościami, a kosztem
+zarządzania.
 
-Dobrym przeglądem alternatyw \emph{Kubernetes} jest artykuł pt.
-\href{https://dzone.com/articles/choosing-the-right-containerization-and-cluster-management-tool}{\emph{Choosing
-the Right Containerization and Cluster Management Tool}}.
+Dobrym przeglądem alternatyw \passthrough{\lstinline!k8s!} jest artykuł
+pt.
+\href{https://dzone.com/articles/choosing-the-right-containerization-and-cluster-management-tool}{\passthrough{\lstinline!Choosing the Right Containerization and Cluster Management Tool!}}.
 
 \hypertarget{fleet}{%
-\subsubsection{\texorpdfstring{\emph{Fleet}}{Fleet}}\label{fleet}}
+\subsubsection{Fleet}\label{fleet}}
 
-\href{https://github.com/coreos/fleet}{\emph{Fleet}} jest nakładką~na
-\href{https://www.freedesktop.org/wiki/Software/systemd/}{\emph{systemd}}
+\href{https://github.com/coreos/fleet}{\passthrough{\lstinline!Fleet!}}
+jest nakładką~na
+\href{https://www.freedesktop.org/wiki/Software/systemd/}{\passthrough{\lstinline!systemd!}}
 realizująca rozproszony system inicjalizacji systemów w systemie
-operacyjnym \emph{CoreOS}.
+operacyjnym \passthrough{\lstinline!CoreOS!}.
 
-Kontenery są~uruchamiane i zarządzane przez \emph{systemd}, a stan
-przechowywany jest w etcd.
+Kontenery są~uruchamiane i zarządzane przez
+\passthrough{\lstinline!systemd!}, a stan przechowywany jest w etcd.
 
-Aktualnie projekt kończy swój żywot na rzecz \emph{Kubernetes} i w dniu
-1 lutego 2018, został wycofany z domyślnej dystrybucji \emph{CoreOS}.
-Nadal będzie dostępny w rejestrze pakietów \emph{CoreOS}.
+Aktualnie projekt kończy swój żywot na rzecz
+\passthrough{\lstinline!k8s!} i w dniu 1 lutego 2018, został wycofany z
+domyślnej dystrybucji \passthrough{\lstinline!CoreOS!}. Nadal będzie
+dostępny w rejestrze pakietów \passthrough{\lstinline!CoreOS!}.
 
 \hypertarget{docker-swarm}{%
-\subsubsection{\texorpdfstring{\emph{Docker
-Swarm}}{Docker Swarm}}\label{docker-swarm}}
+\subsubsection{Docker Swarm}\label{docker-swarm}}
 
-\href{https://docs.docker.com/engine/swarm/}{\emph{Docker Swarm}} jest
-rozwiązaniem orkiestracji kontenerami od twórców samego \emph{Dockera}.
-Proste w obsłudze, ale nie oferuje tak dużych możliwości jak inne
-rozwiązania.
+\href{https://docs.docker.com/engine/swarm/}{\passthrough{\lstinline!Docker Swarm!}}
+jest rozwiązaniem orkiestracji kontenerami od twórców samego
+\passthrough{\lstinline!Dockera!}. Proste w obsłudze, ale nie oferuje
+tak dużych możliwości jak inne rozwiązania.
 
 \hypertarget{nomad}{%
-\subsubsection{\texorpdfstring{\emph{Nomad}}{Nomad}}\label{nomad}}
+\subsubsection{Nomad}\label{nomad}}
 
-\href{https://www.nomadproject.io/intro/index.html}{\emph{Nomad}} od
-\emph{HashiCorp} jest narzędziem do zarządzania klastrem, które również
-oferuje zarządzanie kontenerami.
+\href{https://www.nomadproject.io/intro/index.html}{\passthrough{\lstinline!Nomad!}}
+od \passthrough{\lstinline!HashiCorp!} jest narzędziem do zarządzania
+klastrem, które również oferuje zarządzanie kontenerami.
 
-Przy jego tworzeniu twórcy kierują się filozofią \emph{Unix}. W związku
-z tym Nomad jest prosty w obsłudze, wyspecjalizowany i rozszerzalny.
-Zwykle działa w tandemie z innymi produktami HashiCorp jak Consul i
-Vault.
+Przy jego tworzeniu twórcy kierują się filozofią
+\passthrough{\lstinline!Unix!}. W związku z tym Nomad jest prosty w
+obsłudze, wyspecjalizowany i rozszerzalny. Zwykle działa w tandemie z
+innymi produktami HashiCorp jak Consul i Vault.
 
 Porównanie z innymi rozwiązaniami możemy znaleźć na oficjalnej stronie
-\emph{Nomada}:
-\href{https://www.nomadproject.io/intro/vs/index.html}{\emph{HashiCorp
-Nomad vs Other Software}}
+\passthrough{\lstinline!Nomada!}:
+\href{https://www.nomadproject.io/intro/vs/index.html}{\passthrough{\lstinline!HashiCorp Nomad vs Other Software!}}
 
 \hypertarget{mesos}{%
-\subsubsection{\texorpdfstring{\emph{Mesos}}{Mesos}}\label{mesos}}
+\subsubsection{Mesos}\label{mesos}}
 
-\href{http://mesos.apache.org/}{\emph{Apache Mesos}} jest najbardziej
-zaawansowanym i najlepiej skalującym się rozwiązaniem orkiestracji
-kontenerami. Jest również najbardziej skomplikowanym i trudnym w
-zarządzaniu rozwiązaniem, w związku z tym znajduje swoje zastosowanie
-tylko w największych systemach komputerowych.
+\href{http://mesos.apache.org/}{\passthrough{\lstinline!Apache Mesos!}}
+jest najbardziej zaawansowanym i najlepiej skalującym się rozwiązaniem
+orkiestracji kontenerami. Jest również najbardziej skomplikowanym i
+trudnym w zarządzaniu rozwiązaniem, w związku z tym znajduje swoje
+zastosowanie tylko w największych systemach komputerowych.
 
 Dobrym wstępem do zagadnienia jest ten artykuł:
-\href{https://www.digitalocean.com/community/tutorials/an-introduction-to-mesosphere}{\emph{An
-Introduction to Mesosphere}}.
+\href{https://www.digitalocean.com/community/tutorials/an-introduction-to-mesosphere}{\passthrough{\lstinline!An Introduction to Mesosphere!}}.
 
 \hypertarget{kubernetes-1}{%
-\chapter{\texorpdfstring{\emph{Kubernetes}}{Kubernetes}}\label{kubernetes-1}}
+\chapter{Kubernetes}\label{kubernetes-1}}
 
 W tym rozdziale opiszę zagadnienia związane z samym systemem
-\emph{Kubernetes}.
+\passthrough{\lstinline!k8s!}.
 
 \hypertarget{administracja-a-korzystanie-z-klastra}{%
 \section{Administracja, a korzystanie z
 klastra}\label{administracja-a-korzystanie-z-klastra}}
 
-Przez zwrot \emph{administracja~klastrem} (lub zarządzanie nim) rozumiem
-zbiór czynności i procesów polegających na przygotowaniu klastra do
-użytku i zarządzanie jego infrastrukturą. Na przykład: tworzenie
-klastra, dodawanie i usuwanie węzłów oraz nadawanie uprawnień innym
-użytkownikom.
+Przez zwrot \passthrough{\lstinline!administracja klastrem!} (lub
+zarządzanie nim) rozumiem zbiór czynności i procesów polegających na
+przygotowaniu klastra do użytku i zarządzanie jego infrastrukturą. Na
+przykład: tworzenie klastra, dodawanie i usuwanie węzłów oraz nadawanie
+uprawnień innym użytkownikom.
 
-Przez zwrot \emph{korzystanie z klastra} rozumiem uruchamianie aplikacji
-na działającym klastrze.
+Przez zwrot \passthrough{\lstinline!korzystanie z klastra!} rozumiem
+uruchamianie aplikacji na działającym klastrze.
 
 Ze względu na ograniczone zasoby czasu w tej pracy inżynierskiej skupiam
 się na kwestiach związanych z administracją klastrem.
@@ -407,8 +424,8 @@ się na kwestiach związanych z administracją klastrem.
 \section{Konfiguracja klastra}\label{konfiguracja-klastra}}
 
 Ważną~kwestią jest zrozumienie pojęcia stanu w klastrze
-\emph{Kubernetes}. Jest to stan do którego klaster dąży, a nie w jakim
-się w danej chwili znajduje.
+\passthrough{\lstinline!k8s!}. Jest to stan do którego klaster dąży, a
+nie w jakim się w danej chwili znajduje.
 
 Zwykle stan docelowy i aktywny szybko się ze sobą~zbiegają, ale nie jest
 to regułą. Najczęstszymi scenariuszami jest brak zasobów do uruchomienia
@@ -431,8 +448,7 @@ klaster zauważy braki aktywny stan 6 nie będzie się zgadzał z docelowym
 węzłach.
 
 \hypertarget{infrastruktura-kubernetesa}{%
-\section{\texorpdfstring{Infrastruktura
-\emph{Kubernetesa}}{Infrastruktura Kubernetesa}}\label{infrastruktura-kubernetesa}}
+\section{Infrastruktura Kubernetesa}\label{infrastruktura-kubernetesa}}
 
 Infrastrukturę definiuję jako część~odpowiadającą za funkcjonowanie
 klastra, a nie za aplikacje na nim działające. Z infrastrukturą wiążę
@@ -450,50 +466,53 @@ Na ilustracji możemy wyróżnić 5 grup funkcjonalnych:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \emph{Developer/Operator}, czyli administrator lub programista
-  korzystający z klastra,
+  \passthrough{\lstinline!Developer/Operator!}, czyli administrator lub
+  programista korzystający z klastra,
 \item
-  \emph{Users}, czyli użytkowników aplikacji działających w klastrze,
+  \passthrough{\lstinline!Users!}, czyli użytkowników aplikacji
+  działających w klastrze,
 \item
-  \emph{Kubernetes Master}, czyli węzeł zarządzający (zwykle więcej
-  niż~jeden),
+  \passthrough{\lstinline!Kubernetes Master!}, czyli węzeł zarządzający
+  (zwykle więcej niż~jeden),
 \item
-  \emph{Kubernetes Node}, czyli jeden z wielu węzłów roboczych, na
-  których działają aplikacje,
+  \passthrough{\lstinline!Kubernetes Node!}, czyli jeden z wielu węzłów
+  roboczych, na których działają aplikacje,
 \item
-  \emph{Plugin Network}, czyli wtyczka sieciowa realizująca lub
-  konfigurująca połączenia pomiędzy kontenerami działającymi w ramach
-  klastra,
+  \passthrough{\lstinline!Plugin Network!}, czyli wtyczka sieciowa
+  realizująca lub konfigurująca połączenia pomiędzy kontenerami
+  działającymi w ramach klastra,
 \end{enumerate}
 
 \hypertarget{wux119zeux142-zarzux105dzajux105cy}{%
 \subsubsection{Węzeł
 zarządzający}\label{wux119zeux142-zarzux105dzajux105cy}}
 
-Stan \emph{Kubernetes} jest przechowywany w
-\href{https://coreos.com/etcd/}{\emph{etcd}}. Nazwa wzięła się od
-Unixowego folderu \emph{/etc} przechowującego konfigurację systemu
-operacyjnego i litery \emph{d} oznaczającej system rozproszony (ang.
+Stan \passthrough{\lstinline!k8s!} jest przechowywany w
+\href{https://coreos.com/etcd/}{\passthrough{\lstinline!etcd!}}. Nazwa
+wzięła się od Unixowego folderu \passthrough{\lstinline!/etc!}
+przechowującego konfigurację systemu operacyjnego i litery
+\passthrough{\lstinline!d!} oznaczającej system rozproszony (ang.
 distributed system). Jest to baza danych przechowująca jedynie klucze i
 wartości (ang. key-value store). Koncepcyjnie jest prosta, żeby
 umożliwić skupienie się na jej wydajności, stabilności i skalowaniu.
 
-Jedynym sposobem zmiany stanu \emph{etcd} (zakładając, że nie jest
-wykorzystywane do innych celów) jest komunikacja z
-\href{https://kubernetes.io/docs/reference/generated/kube-apiserver/}{\emph{kube-apiserver}}.
+Jedynym sposobem zmiany stanu \passthrough{\lstinline!etcd!}
+(zakładając, że nie jest wykorzystywane do innych celów) jest
+komunikacja z
+\href{https://kubernetes.io/docs/reference/generated/kube-apiserver/}{\passthrough{\lstinline!kube-apiserver!}}.
 Zarówno zewnętrzni użytkownicy jak i wewnętrzne procesy klastra
 korzystają z interfejsu aplikacyjnego REST (ang. REST API) klastra w
 celu uzyskania informacji i zmiany jego stanu.
 
 Głównym modułem zarządzającym, który dba o doprowadzenia klastra do
 oczekiwanego stanu jest
-\href{https://kubernetes.io/docs/reference/generated/kube-controller-manager/}{\emph{kube-controller-manager}}.
+\href{https://kubernetes.io/docs/reference/generated/kube-controller-manager/}{\passthrough{\lstinline!kube-controller-manager!}}.
 Uruchamia on pętle kontrolujące klaster, na której bazuje wiele procesów
 kontrolnych jak na przykład kontroler replikacji i kontroler kont
 serwisowych.
 
 Modułem zarządzającym zasobami klastra jest
-\href{https://kubernetes.io/docs/reference/generated/kube-scheduler/}{\emph{kube-scheduler}}.
+\href{https://kubernetes.io/docs/reference/generated/kube-scheduler/}{\passthrough{\lstinline!kube-scheduler!}}.
 Decyduje on na których węzłach uruchamiać aplikacje, żeby zaspokoić
 popyt na zasoby jednocześnie nie przeciążając pojedynczych węzłów
 klastra.
@@ -502,34 +521,34 @@ klastra.
 \subsubsection{Węzeł roboczy}\label{wux119zeux142-roboczy}}
 
 Podstawowym procesem działającym na węzłach roboczych jest
-\href{https://kubernetes.io/docs/reference/generated/kubelet/}{\emph{kubelet}}.
+\href{https://kubernetes.io/docs/reference/generated/kubelet/}{\passthrough{\lstinline!kubelet!}}.
 Monitoruje i kontroluje kontenery działające w ramach jednego węzła. Na
 przykład wiedząc, że na węźle mają działać 2 instancje aplikacji dba o
 to, żeby restartować instancje działające nieprawidłowo~i/lub
 dodawać~nowe.
 
-Drugim najważniejszym procesem węzła roboczego jest \emph{kube-proxy}
-odpowiadające za przekierowywanie ruchu sieciowego do odpowiednich
-kontenerów w ramach klastra.
+Drugim najważniejszym procesem węzła roboczego jest
+\passthrough{\lstinline!kube-proxy!} odpowiadające za przekierowywanie
+ruchu sieciowego do odpowiednich kontenerów w ramach klastra.
 
 Ostatnim opcjonalnym elementem węzła roboczego jest
-\href{https://github.com/google/cadvisor}{\emph{cAdvisor}} (Container
-Advisor), który monitoruje zużycie zasobów i wydajność kontenerów w
-ramach jednego klastra.
+\href{https://github.com/google/cadvisor}{\passthrough{\lstinline!cAdvisor!}}
+(Container Advisor), który monitoruje zużycie zasobów i wydajność
+kontenerów w ramach jednego klastra.
 
 \hypertarget{wtyczka-sieciowa}{%
 \subsubsection{Wtyczka sieciowa}\label{wtyczka-sieciowa}}
 
-Podstawowym założeniem \emph{Kubernetesa} jest posiadanie własnego
-adresu IP przez każdą aplikację działającą w klastrze, ale nie narzuca
-żadnego rozwiązania je realizującego.
+Podstawowym założeniem \passthrough{\lstinline!k8s!} jest posiadanie
+własnego adresu IP przez każdą aplikację działającą w klastrze, ale nie
+narzuca żadnego rozwiązania je realizującego.
 
 Administrator (lub skrypt konfigurujący) klastra musi zadbać o to, żeby
 skonfigurować wtyczkę sieciową realizującą to założenie.
 
 Najprostszym koncepcyjnie rozwiązaniem jest stworzenie na każdym węźle
-wpisów \emph{iptables} przekierowujących adresy IP na wszystkie inne
-węzły.
+wpisów \passthrough{\lstinline!iptables!} przekierowujących adresy IP na
+wszystkie inne węzły.
 
 Jednymi z najpopularniejszymi rozwiązaniami są:
 \href{https://github.com/coreos/flannel\#flannel}{Flannel} i
@@ -570,18 +589,20 @@ W skrócie:
 \begin{itemize}
 \tightlist
 \item
-  \emph{Kubernetes} uruchamia \emph{Pody}, które implementują~Serwisy,
+  \passthrough{\lstinline!k8s!} uruchamia
+  \passthrough{\lstinline!Pody!}, które implementują~Serwisy,
 \item
-  \emph{Pody} potrzebują~\emph{Sieci Podów} - trasowanych lub nakładkę
-  sieciową,
+  \passthrough{\lstinline!Pody!}
+  potrzebują~\passthrough{\lstinline!Sieci Pod!}ów - trasowanych lub
+  nakładkę sieciową,
 \item
-  \emph{Sieć Podów} jest sterowana przez \emph{CNI} (Container Network
-  Interface),
+  Sieć \passthrough{\lstinline!Pod!}ów jest sterowana przez
+  \passthrough{\lstinline!CNI!} (Container Network Interface),
 \item
   Klient łączy się~do Serwisów przez wirtualne IP Klastra,
 \item
-  \emph{Kubernetes} ma wiele sposobów na wystawienie Serwisów poza
-  klaster,
+  \passthrough{\lstinline!k8s!} ma wiele sposobów na wystawienie
+  Serwisów poza klaster,
 \end{itemize}
 
 \hypertarget{zarzux105dzanie-dostux119pami}{%
@@ -589,7 +610,8 @@ W skrócie:
 dostępami}\label{zarzux105dzanie-dostux119pami}}
 
 Podstawowymi pojęciami związanymi z zarządzaniem dostępami w
-\emph{Kubernetesie} są uwierzytelnianie, autoryzacja i \emph{Namespace}.
+\passthrough{\lstinline!k8s!} są uwierzytelnianie, autoryzacja i
+\passthrough{\lstinline!Namespace!}.
 
 \hypertarget{uwierzytelnianie}{%
 \paragraph{Uwierzytelnianie}\label{uwierzytelnianie}}
@@ -603,13 +625,15 @@ podaje. Podstawowymi sposobami uwierzytelniania są:
 \item
   certyfikaty klienckie X509,
 \item
-  statyczne przepustki (ang. \emph{token}),
+  statyczne przepustki (ang. \passthrough{\lstinline!token!}),
 \item
-  przepustki rozruchowe (ang. \emph{bootstrap tokens}),
+  przepustki rozruchowe (ang.
+  \passthrough{\lstinline!bootstrap tokens!}),
 \item
   statyczny plik z hasłami,
 \item
-  przepustki kont serwisowych (ang. \emph{ServiceAccount} tokens),
+  przepustki kont serwisowych (ang.
+  \passthrough{\lstinline!ServiceAccount!} tokens),
 \item
   przepustki OpenID Connect,
 \item
@@ -619,7 +643,7 @@ podaje. Podstawowymi sposobami uwierzytelniania są:
 \end{itemize}
 
 Ze względu na prostotę i uniwersalność~rozwiązania w tej pracy będę
-korzystał z \emph{ServiceAccount}.
+korzystał z \passthrough{\lstinline!ServiceAccount!}.
 
 \hypertarget{autoryzacja}{%
 \paragraph{Autoryzacja}\label{autoryzacja}}
@@ -629,24 +653,27 @@ uprawniony do korzystania z danego zasobu.
 
 Najpopularniejszym sposobem autoryzacji jest
 \href{https://kubernetes.io/docs/admin/authorization/rbac/}{RBAC (Role
-Based Access Control)}. Odbywa się ona na podstawie ról (\emph{Role} i
-\emph{ClusterRole}), które nadają uprawnienia i są przypisywane
-konkretnym użytkownikom lub kontom przez \emph{RoleBinding} i
-\emph{ClusterRoleBinding}.
+Based Access Control)}. Odbywa się ona na podstawie ról
+(\passthrough{\lstinline!Role!} i
+\passthrough{\lstinline!ClusterRole!}), które nadają uprawnienia i są
+przypisywane konkretnym użytkownikom lub kontom przez
+\passthrough{\lstinline!RoleBinding!} i
+\passthrough{\lstinline!ClusterRoleBinding!}.
 
-\emph{Namespace} (przestrzeń nazw) jest logicznie odseparowaną
-częścią~klastra \emph{Kubernetes}. Pozwala na współdzielenie jednego
-klastra przez wielu niezaufanych użytkowników. Standardowym
-zastosowaniem jest wydzielanie środowisk produkcyjnych, QA i
-deweloperskich.
+\passthrough{\lstinline!Namespace!} (przestrzeń nazw) jest logicznie
+odseparowaną częścią~klastra \passthrough{\lstinline!k8s!}. Pozwala na
+współdzielenie jednego klastra przez wielu niezaufanych użytkowników.
+Standardowym zastosowaniem jest wydzielanie środowisk produkcyjnych, QA
+i deweloperskich.
 
-Jak nazwa wskazuje role z dopiskiem \emph{Cluster} mogą dać dostęp do
-wszystkich przestrzeni nazw jednocześnie oraz zasobów takowych nie
-posiadających. Przykładem zasobu nie posiadającego swojej przestrzeni
-nazw jest węzeł (\emph{Node}) lub zakończenie API \emph{/healthz}.
+Jak nazwa wskazuje role z dopiskiem \passthrough{\lstinline!Cluster!}
+mogą dać dostęp do wszystkich przestrzeni nazw jednocześnie oraz zasobów
+takowych nie posiadających. Przykładem zasobu nie posiadającego swojej
+przestrzeni nazw jest węzeł (\passthrough{\lstinline!Node!}) lub
+zakończenie API \passthrough{\lstinline!/healthz!}.
 
-Role bez dopisku \emph{Cluster} operują w ramach jednej przestrzeni
-nazw.
+Role bez dopisku \passthrough{\lstinline!Cluster!} operują w ramach
+jednej przestrzeni nazw.
 
 \hypertarget{architektura}{%
 \section{Architektura}\label{architektura}}
@@ -654,15 +681,15 @@ nazw.
 Architekturę klastra definiuję jako część aplikacyjną, czyli wszystkie
 funkcjonalności dostępne po przeprowadzeniu prawidłowej konfiguracji
 klastra i oddaniu węzłów do użytku. Z architekturą wiążę pojęcia
-korzystania z klastra, stanu i obiektów \emph{Kubernetesa}.
+korzystania z klastra, stanu i obiektów \passthrough{\lstinline!k8s!}.
 
 \hypertarget{obiekty-kubernetes-api}{%
 \subsubsection{Obiekty Kubernetes API}\label{obiekty-kubernetes-api}}
 
-\href{https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/}{\emph{Obiekty
-Kubernetesa}} są trwale przechowywane w \emph{etcd} i definiują, jak
-wcześniej wyjaśniłem, pożądany stan klastra. Szczegółowy opis konwencji
-API obiektów możemy znaleźć~w
+\href{https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/}{\passthrough{\lstinline!Obiekty Kubernetesa!}}
+są trwale przechowywane w \passthrough{\lstinline!etcd!} i definiują,
+jak wcześniej wyjaśniłem, pożądany stan klastra. Szczegółowy opis
+konwencji API obiektów możemy znaleźć~w
 \href{https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md}{odnośniku}.
 
 Jako użytkownicy klastra operujemy na ich reprezentacji w formacie YAML,
@@ -696,35 +723,39 @@ pola:
 \begin{itemize}
 \tightlist
 \item
-  \emph{apiVersion}: obowiązkowa wersja API \emph{Kubernetes},
+  \passthrough{\lstinline!apiVersion!}: obowiązkowa wersja API
+  \passthrough{\lstinline!k8s!},
 \item
-  \emph{kind}: obowiązkowy typ obiektu zdefiniowanego w specyfikacji
-  \emph{apiVersion},
+  \passthrough{\lstinline!kind!}: obowiązkowy typ obiektu zdefiniowanego
+  w specyfikacji \passthrough{\lstinline!apiVersion!},
 \item
-  \emph{metadata}
+  \passthrough{\lstinline!metadata!}
 
   \begin{itemize}
   \tightlist
   \item
-    \emph{namespace}: opcjonalna (domyślna \emph{default}) przestrzeń
-    nazw do której należy obiekt,
+    \passthrough{\lstinline!namespace!}: opcjonalna (domyślna
+    \passthrough{\lstinline!default!}) przestrzeń nazw do której należy
+    obiekt,
   \item
-    \emph{name}: obowiązkowa i unikalna w ramach przestrzeni nazw nazwa
-    obiektu,
+    \passthrough{\lstinline!name!}: obowiązkowa i unikalna w ramach
+    przestrzeni nazw nazwa obiektu,
   \item
-    \emph{uid}: unikalny identyfikator obiektu tylko do odczytu,
+    \passthrough{\lstinline!uid!}: unikalny identyfikator obiektu tylko
+    do odczytu,
   \item
-    \emph{labels}: opcjonalny zbiór kluczy i wartości ułatwiających
-    identyfikację i grupowanie obiektów,
+    \passthrough{\lstinline!labels!}: opcjonalny zbiór kluczy i wartości
+    ułatwiających identyfikację i grupowanie obiektów,
   \item
-    \emph{annotations}: opcjonalny zbiór kluczy i wartości
-    wykorzystywanych przez zewnętrzne lub własne narzędzia,\\
+    \passthrough{\lstinline!annotations!}: opcjonalny zbiór kluczy i
+    wartości wykorzystywanych przez zewnętrzne lub własne narzędzia,\\
   \end{itemize}
 \item
-  \emph{spec}: z definicji opcjonalna, ale zwykle wymagana specyfikacja
-  obiektu wpływająca na jego funkcjonowanie,
+  \passthrough{\lstinline!spec!}: z definicji opcjonalna, ale zwykle
+  wymagana specyfikacja obiektu wpływająca na jego funkcjonowanie,
 \item
-  \emph{status}: opcjonalny aktualny stan obiektu tylko do odczytu,
+  \passthrough{\lstinline!status!}: opcjonalny aktualny stan obiektu
+  tylko do odczytu,
 \end{itemize}
 
 \hypertarget{podstawowe-rodzaje-obiektuxf3w-aplikacyjnych}{%
@@ -736,84 +767,98 @@ Obiekty imperatywne reprezentują wykonanie akcji, a deklaratywne
 określają stan w jakim klaster powinien się znaleźć.
 
 \hypertarget{pod}{%
-\paragraph{\texorpdfstring{\emph{Pod}}{Pod}}\label{pod}}
+\paragraph{Pod`}\label{pod}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/}{\emph{Pod}}
-jest najmniejszą jednostką aplikacyjną~w \emph{Kubernetesie}.
+\href{https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/}{\passthrough{\lstinline!Pod!}}
+jest najmniejszą jednostką aplikacyjną~w \passthrough{\lstinline!k8s!}.
 Reprezentuje nierozłącznie powiązaną~(np. współdzielonymi zasobami)
 grupę jednego lub więcej kontenerów.
 
-\emph{Pod} w odróżnieniu od innych obiektów reprezentuje aktualnie
-działającą aplikację. Są bezustannie uruchamiane i wyłączane przez
-kontrolery. Trwałość danych można uzyskać jedynie~przydzielając im
-zasoby dyskowe.
+\passthrough{\lstinline!Pod!} w odróżnieniu od innych obiektów
+reprezentuje aktualnie działającą aplikację. Są bezustannie uruchamiane
+i wyłączane przez kontrolery. Trwałość danych można uzyskać
+jedynie~przydzielając im zasoby dyskowe.
 
-\emph{Pody} nie powinny być zarządzane bezpośrednio, jedynie przez
-kontrolery. Najczęściej konfigurowane są przez \emph{PodTemplateSpec},
-czyli szablony ich specyfikacji.
+\passthrough{\lstinline!Pody!} nie powinny być zarządzane bezpośrednio,
+jedynie przez kontrolery. Najczęściej konfigurowane są przez
+\passthrough{\lstinline!PodTemplateSpec!}, czyli szablony ich
+specyfikacji.
 
-Kontenery wewnątrz \emph{Poda} współdzielą~adres IP i mogą komunikować
-się przez \emph{localhost} i standardowe metody komunikacji
-międzyprocesowej.
+Kontenery wewnątrz \passthrough{\lstinline!Poda!} współdzielą~adres IP i
+mogą komunikować się przez \passthrough{\lstinline!localhost!} i
+standardowe metody komunikacji międzyprocesowej.
 
-Dodatkowo kontenery wewnątrz \emph{Podów} obsługują 2 rodzaje
+Dodatkowo kontenery wewnątrz \passthrough{\lstinline!Pod!}ów obsługują 2
+rodzaje
 \href{https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/\#container-probes}{próbników}:
-\emph{livenessProbe} i \emph{readinessProbe}. Pierwszy określa, czy
-kontener działa, jeżeli nie to powinien być zrestartowany. Drugi określa
-czy kontener jest gotowy do obsługi zapytań, kontener jest
-wyrejestrowywany z \emph{Service} na czas nieprzechodzenia
-\emph{readinessProbe}.
+\passthrough{\lstinline!livenessProbe!} i
+\passthrough{\lstinline!readinessProbe!}. Pierwszy określa, czy kontener
+działa, jeżeli nie to powinien być zrestartowany. Drugi określa czy
+kontener jest gotowy do obsługi zapytań, kontener jest wyrejestrowywany
+z \passthrough{\lstinline!Service!} na czas nieprzechodzenia
+\passthrough{\lstinline!readinessProbe!}.
 
 \hypertarget{replicaset}{%
-\paragraph{\texorpdfstring{\emph{ReplicaSet}}{ReplicaSet}}\label{replicaset}}
+\paragraph{ReplicaSet`}\label{replicaset}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/}{\emph{ReplicaSet}}
-jest następcą \emph{ReplicaControllera}, czyli imperatywnym kontrolerem
-dbającym o działanie określonej liczby \emph{Podów} w klastrze.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/}{\passthrough{\lstinline!ReplicaSet!}}
+jest następcą \passthrough{\lstinline!ReplicaControllera!}, czyli
+imperatywnym kontrolerem dbającym o działanie określonej liczby
+\passthrough{\lstinline!Pod!}ów w klastrze.
 
 Jest to bardzo prosty kontroler i nie powinien być~używany bezpośrednio.
 
 \hypertarget{deployment}{%
-\paragraph{\texorpdfstring{\emph{Deployment}}{Deployment}}\label{deployment}}
+\paragraph{Deployment`}\label{deployment}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/deployment/}{\emph{Deployment}}
-pozwala na deklaratywne aktualizacje \emph{Podów} i \emph{ReplicaSetów}.
-Korzystanie z ww. bezpośrednio nie jest zalecane.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/deployment/}{\passthrough{\lstinline!Deployment!}}
+pozwala na deklaratywne aktualizacje \passthrough{\lstinline!Pod!}ów i
+\passthrough{\lstinline!ReplicaSet!}ów. Korzystanie z ww. bezpośrednio
+nie jest zalecane.
 
-Zmiany \emph{Deploymentów} wprowadzane są przez tak zwane
-\emph{rollouty}. Każdy ma swój status i może zostać wstrzymany lub
-przerwany. \emph{Rollouty} mogą zostać aktywowane automatycznie przez
-zmianę specyfikacji \emph{Pod\_a przez }.spec.template\_.
+Zmiany \passthrough{\lstinline!Deployment!}ów wprowadzane są przez tak
+zwane \passthrough{\lstinline!rollouty!}. Każdy ma swój status i może
+zostać wstrzymany lub przerwany. \passthrough{\lstinline!Rollouty!} mogą
+zostać aktywowane automatycznie przez zmianę specyfikacji
+\passthrough{\lstinline!Pod!}a przez
+\passthrough{\lstinline!.spec.template!}.
 
-Rewizje \_Deployment\_u są zmieniane tylko w momencie \_rollout\_u.
-Operacja operacja skalowania nie uruchamia \_rollout\_u, a więc nie
+Rewizje \passthrough{\lstinline!Deployment!}u są zmieniane tylko w
+momencie \passthrough{\lstinline!rollout!}u. Operacja operacja
+skalowania nie uruchamia \passthrough{\lstinline!rollout!}u, a więc nie
 zmienia rewizji.
 
-Podstawowe przypadki użycia \emph{Deployment} to:
+Podstawowe przypadki użycia \passthrough{\lstinline!Deployment!} to:
 
 \begin{itemize}
 \tightlist
 \item
-  uruchamianie \emph{ReplicaSetów} w tle przez \emph{.spec.replicas},
+  uruchamianie \passthrough{\lstinline!ReplicaSet!}ów w tle przez
+  \passthrough{\lstinline!.spec.replicas!},
 \item
-  deklarowanie nowego stanu \emph{Podów} zmieniając
-  \emph{.spec.template},
+  deklarowanie nowego stanu \passthrough{\lstinline!Pod!}ów zmieniając
+  \passthrough{\lstinline!.spec.template!},
 \item
-  cofanie zmian do poprzednich rewizji \_Deployment\_u (poprzednie
-  wersje \emph{Podów}) komendą \emph{kubectl rollout undo},
+  cofanie zmian do poprzednich rewizji
+  \passthrough{\lstinline!Deployment!}u (poprzednie wersje
+  \passthrough{\lstinline!Pod!}ów) komendą
+  \passthrough{\lstinline!kubectl rollout undo!},
 \item
-  skalowanie \_Deployment\_u w celu obsługi większego obciążenia
-  przykładową komendą \emph{kubectl autoscale deployment
-  nginx-deployment --min=10 --max=15 --cpu-percent=80},
+  skalowanie \passthrough{\lstinline!Deployment!}u w celu obsługi
+  większego obciążenia przykładową komendą
+  \passthrough{\lstinline!kubectl autoscale deployment nginx-deployment --min=10 --max=15 --cpu-percent=80!},
 \item
-  wstrzymywanie \emph{Deployment} w celu wprowadzenia poprawek komendą
-  \emph{kubectl rollout pause deployment/nginx-deployment},
+  wstrzymywanie \passthrough{\lstinline!Deployment!} w celu wprowadzenia
+  poprawek komendą
+  \passthrough{\lstinline!kubectl rollout pause deployment/nginx-deployment!},
 \item
-  czyszczenie historii \emph{ReplicaSetów} przez ograniczanie liczby
-  wpisów w \emph{.spec.revisionHistoryLimit},
+  czyszczenie historii \passthrough{\lstinline!ReplicaSet!}ów przez
+  ograniczanie liczby wpisów w
+  \passthrough{\lstinline!.spec.revisionHistoryLimit!},
 \end{itemize}
 
-Przykładowy \emph{Deployment} tworzący 3 repliki serwera \emph{nginx}:
+Przykładowy \passthrough{\lstinline!Deployment!} tworzący 3 repliki
+serwera \passthrough{\lstinline!nginx!}:
 
 \begin{lstlisting}
 apiVersion: apps/v1
@@ -839,21 +884,24 @@ spec:
         - containerPort: 80
 \end{lstlisting}
 
-Pole \emph{.spec.selector} definiuje w jaki sposób \emph{Deployment} ma
-znaleźć \emph{Pody}, którymi ma zarządzać. Selektor powinien zgadzać się
-ze zdefiniowanym szablonem.
+Pole \passthrough{\lstinline!.spec.selector!} definiuje w jaki sposób
+\passthrough{\lstinline!Deployment!} ma znaleźć
+\passthrough{\lstinline!Pod!}y, którymi ma zarządzać. Selektor powinien
+zgadzać się ze zdefiniowanym szablonem.
 
 \hypertarget{statefulset}{%
 \paragraph{StatefulSet}\label{statefulset}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/}{\emph{StatefulSet}}
-jest kontrolerem podobnym do \_Deployment\_u, ale umożliwiającym
-zachowanie stanu \emph{Podów}.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/}{\passthrough{\lstinline!StatefulSet!}}
+jest kontrolerem podobnym do \passthrough{\lstinline!Deployment!}u, ale
+umożliwiającym zachowanie stanu \passthrough{\lstinline!Pod!}ów.
 
-W przeciwieństwie do \_Deployment\_u \emph{StatefulSet} nadaje każdemu
-uruchomionemu \_Pod\_owi stały unikalny identyfikator, który zostają
-zachowane mimo restartów i przenoszenia \emph{Podów}. Identyfikatory
-można zastosować między innymi do:
+W przeciwieństwie do \passthrough{\lstinline!Deployment!}
+\passthrough{\lstinline!StatefulSet!} nadaje każdemu uruchomionemu
+\passthrough{\lstinline!Pod!}owi stały unikalny identyfikator, który
+zostają zachowane mimo restartów i przenoszenia
+\passthrough{\lstinline!Pod!}ów. Identyfikatory można zastosować między
+innymi do:
 
 \begin{itemize}
 \tightlist
@@ -872,9 +920,10 @@ można zastosować między innymi do:
 \hypertarget{daemonset}{%
 \paragraph{DaemonSet}\label{daemonset}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/}{\emph{DaemonSet}}
-jest kontrolerem upewniającym się, że przynajmniej jeden \emph{Pod}
-działa na każdym lub wybranych węzłach klastra.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/}{\passthrough{\lstinline!DaemonSet!}}
+jest kontrolerem upewniającym się, że przynajmniej jeden
+\passthrough{\lstinline!Pod!} działa na każdym lub wybranych węzłach
+klastra.
 
 Do jego typowych zastosowań należy implementacja narzędzi wymagających
 agenta na każdym z węzłów:
@@ -882,45 +931,47 @@ agenta na każdym z węzłów:
 \begin{itemize}
 \tightlist
 \item
-  rozproszone systemy dyskowe, np. \emph{glusterd}, \emph{ceph},
+  rozproszone systemy dyskowe, np. \passthrough{\lstinline!glusterd!},
+  \passthrough{\lstinline!ceph!},
 \item
-  zbieracze logów, np. \emph{fluentd}, \emph{logstash},
+  zbieracze logów, np. \passthrough{\lstinline!fluentd!},
+  \passthrough{\lstinline!logstash!},
 \item
-  monitorowanie węzłów, np. \emph{Prometheus Node Exporter},
-  \emph{collectd},
+  monitorowanie węzłów, np.
+  \passthrough{\lstinline!Prometheus Node Exporter!},
+  \passthrough{\lstinline!collectd!},
 \end{itemize}
 
 \hypertarget{job-i-cronjob}{%
 \paragraph{Job i CronJob}\label{job-i-cronjob}}
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/}{\emph{Job}}
-pozwala na jednorazowe uruchomienie \emph{Podów}, które wykonują akcję i
-się kończą. Istnieją~3 tryby wykonania: niezrównoleglony, równoległy i
-równoległy z zewnętrzną kolejką zadań.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/}{\passthrough{\lstinline!Job!}}
+pozwala na jednorazowe uruchomienie \passthrough{\lstinline!Pod!}ów,
+które wykonują akcję i się kończą. Istnieją~3 tryby wykonania:
+niezrównoleglony, równoległy i równoległy z zewnętrzną kolejką zadań.
 
-Domyślnie przy niepowodzeniu uruchamiane są~kolejne \emph{Pody}
-aż~zostanie uzyskana odpowiednia liczba sukcesów.
+Domyślnie przy niepowodzeniu uruchamiane są~kolejne
+\passthrough{\lstinline!Pody!} aż~zostanie uzyskana odpowiednia liczba
+sukcesów.
 
-\href{https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/}{\emph{CronJob}}
-pozwala na tworzenie \emph{Jobów} jednorazowo o określonym czasie lub je
-powtarzać zgodnie ze
-specyfikacją~\href{https://en.wikipedia.org/wiki/Cron}{\emph{cron}}.
+\href{https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/}{\passthrough{\lstinline!CronJob!}}
+pozwala na tworzenie \passthrough{\lstinline!Job!}ów jednorazowo o
+określonym czasie lub je powtarzać zgodnie ze
+specyfikacją~\href{https://en.wikipedia.org/wiki/Cron}{\passthrough{\lstinline!cron!}}.
 
 \hypertarget{kubernetes-dashboard}{%
-\section{\texorpdfstring{\emph{Kubernetes
-Dashboard}}{Kubernetes Dashboard}}\label{kubernetes-dashboard}}
+\section{Kubernetes Dashboard}\label{kubernetes-dashboard}}
 
-\href{https://github.com/kubernetes/dashboard}{\emph{Kubernetes
-Dashboard}} jest wbudowanym interfejsem graficznym klastra
-\emph{Kubernetes}. Umożliwia monitorowanie i zarządzanie klastrem w
-ramach funkcjonalności samego \emph{Kubernetesa}.
+\href{https://github.com/kubernetes/dashboard}{\passthrough{\lstinline!Kubernetes Dashboard!}}
+jest wbudowanym interfejsem graficznym klastra
+\passthrough{\lstinline!k8s!}. Umożliwia monitorowanie i zarządzanie
+klastrem w ramach funkcjonalności samego \passthrough{\lstinline!k8s!}.
 
 \hypertarget{kubernetes-incubator}{%
-\section{\texorpdfstring{\emph{Kubernetes
-Incubator}}{Kubernetes Incubator}}\label{kubernetes-incubator}}
+\section{Kubernetes Incubator}\label{kubernetes-incubator}}
 
-\href{https://github.com/kubernetes/community/blob/master/incubator.md}{\emph{Kubernetes
-Incubator}} gromadzi projekty rozszerzające \emph{Kubernetes}, ale nie
+\href{https://github.com/kubernetes/community/blob/master/incubator.md}{\passthrough{\lstinline!Kubernetes Incubator!}}
+gromadzi projekty rozszerzające \passthrough{\lstinline!k8s!}, ale nie
 będące częścią oficjalnej dystrybucji. Został stworzony, aby opanować
 bałagan w głównym repozytorium oraz ujednolicić proces tworzenia
 rozszerzeń.
@@ -932,12 +983,13 @@ opuszczenia inkubatora to:
 \begin{itemize}
 \tightlist
 \item
-  awansować do rangi oficjalnego projektu \emph{Kubernetesa},
+  awansować do rangi oficjalnego projektu \passthrough{\lstinline!k8s!},
 \item
   połączyć się z istniejącym oficjalnym projektem,
 \item
   po 12 miesiącach przejść w stan spoczynku, a po kolejnych 6 miesiącach
-  zostać przeniesiony do \emph{kubernetes-incubator-retired}
+  zostać przeniesiony do
+  \passthrough{\lstinline!kubernetes-incubator-retired!}
 \end{itemize}
 
 \hypertarget{administracja-klastrem-z-linii-komend}{%
@@ -945,12 +997,12 @@ opuszczenia inkubatora to:
 komend}\label{administracja-klastrem-z-linii-komend}}
 
 \hypertarget{kubeadm}{%
-\subsubsection{\texorpdfstring{\emph{kubeadm}}{kubeadm}}\label{kubeadm}}
+\subsubsection{kubeadm}\label{kubeadm}}
 
 \href{https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/}{kubeadm}
 jest narzędziem pozwalającym na niskopoziomowe zarządzanie klastrem
-\emph{Kubernetesa}. Stąd trendem jest bazowanie na kubeadm przy
-tworzeniu narzędzi z wyższym poziomem abstrakcji.
+\passthrough{\lstinline!k8s!}. Stąd trendem jest bazowanie na kubeadm
+przy tworzeniu narzędzi z wyższym poziomem abstrakcji.
 
 \begin{itemize}
 \tightlist
@@ -960,7 +1012,7 @@ tworzeniu narzędzi z wyższym poziomem abstrakcji.
 \end{itemize}
 
 \hypertarget{kubespray}{%
-\subsubsection{\texorpdfstring{\emph{Kubespray}}{Kubespray}}\label{kubespray}}
+\subsubsection{Kubespray}\label{kubespray}}
 
 \href{https://github.com/kubernetes-incubator/kubespray}{kubespray} jest
 zbiorem skryptów Ansibla konfigurujących klaster na różnych systemach
@@ -971,8 +1023,7 @@ Projekt na dzień dzisiejszy znajduje się w inkubatorze i jest aktywnie
 rozwijany.
 
 \hypertarget{openshift-ansible}{%
-\subsubsection{\texorpdfstring{\emph{OpenShift
-Ansible}}{OpenShift Ansible}}\label{openshift-ansible}}
+\subsubsection{OpenShift Ansible}\label{openshift-ansible}}
 
 Konfiguracja \protect\hyperlink{openshift-origin}{OpenShift Origin}
 realizowana jest zestawem skryptów Ansible'owych rozwijanych jako
@@ -980,15 +1031,16 @@ projekt
 \href{https://github.com/openshift/openshift-ansible}{openshift-ansible}.
 
 \hypertarget{canonical-distribution-of-kubernetes}{%
-\subsubsection{\texorpdfstring{\emph{Canonical distribution of
-Kubernetes}}{Canonical distribution of Kubernetes}}\label{canonical-distribution-of-kubernetes}}
+\subsubsection{Canonical distribution of
+Kubernetes}\label{canonical-distribution-of-kubernetes}}
 
-Jest to prosta w instalacji dystrybucja \emph{Kubernetesa}. Niestety
-wymaga infrastruktury chmurowej do uruchomienia klastra składającego się
-z więcej niż jednego węzła.
+Jest to prosta w instalacji dystrybucja \passthrough{\lstinline!k8s!}.
+Niestety wymaga infrastruktury chmurowej do uruchomienia klastra
+składającego się z więcej niż jednego węzła.
 
-Opcja \emph{bare metal}, która by mnie interesowała nadal wymaga
-działającego środowiska \href{https://maas.io/}{Metal as a Service}.
+Opcja \passthrough{\lstinline!bare metal!}, która by mnie interesowała
+nadal wymaga działającego środowiska \href{https://maas.io/}{Metal as a
+Service}.
 
 W związku z powyższym nie będę dalej zajmował się tym narzędziem.
 
@@ -998,29 +1050,30 @@ Materiały źródłowe:
 \tightlist
 \item
   \href{https://jujucharms.com/canonical-kubernetes/}{pakiet
-  (\emph{Charm}) w oficjalnym repozytorium \emph{Juju}}
+  (\passthrough{\lstinline!Charm!}) w oficjalnym repozytorium
+  \passthrough{\lstinline!Juju!}}
 \item
   \href{https://tutorials.ubuntu.com/tutorial/install-kubernetes-with-conjure-up}{materiał
-  szkoleniowy dot. uruchamiania \emph{Kubernetes}}
+  szkoleniowy dot. uruchamiania \passthrough{\lstinline!k8s!}}
 \item
   \href{https://insights.ubuntu.com/2017/10/12/kubernetes-the-not-so-easy-way/}{opis
   instalacji lokalnego klastra}
 \end{itemize}
 
 \hypertarget{bootkube-i-typhoon}{%
-\subsubsection{\texorpdfstring{\emph{Bootkube} i
-\emph{Typhoon}}{Bootkube i Typhoon}}\label{bootkube-i-typhoon}}
+\subsubsection{Bootkube i Typhoon}\label{bootkube-i-typhoon}}
 
-\href{https://github.com/kubernetes-incubator/bootkube}{\emph{Bootkube}}
-jest narzędziem napisanym w języku \emph{Go} pozwalającym skonfigurować
-\emph{Kubernetes} na własnych maszynach.
+\href{https://github.com/kubernetes-incubator/bootkube}{\passthrough{\lstinline!Bootkube!}}
+jest narzędziem napisanym w języku \passthrough{\lstinline!Go!}
+pozwalającym skonfigurować \passthrough{\lstinline!k8s!} na własnych
+maszynach.
 
 W instalacji
-\href{https://github.com/coreos/matchbox/tree/master/examples/terraform/bootkube-install}{\emph{bare
-metal}} proponowane jest wykorzystanie \emph{Terraform} i
-\href{https://github.com/poseidon/typhoon}{\emph{Typhoon}} do realizacji
-automatycznej konfiguracji klastra w trakcie procesu uruchamiania węzłów
-\emph{CoreOS}.
+\href{https://github.com/coreos/matchbox/tree/master/examples/terraform/bootkube-install}{\passthrough{\lstinline!bare metal!}}
+proponowane jest wykorzystanie \passthrough{\lstinline!Terraform!} i
+\href{https://github.com/poseidon/typhoon}{\passthrough{\lstinline!Typhoon!}}
+do realizacji automatycznej konfiguracji klastra w trakcie procesu
+uruchamiania węzłów \passthrough{\lstinline!CoreOS!}.
 
 Domyślnie ww. narzędzia konfigurują instalację CoreOS na dysku, a
 następnie restartują maszynę.
@@ -1037,22 +1090,22 @@ rozwiązania}\label{eksperymentalne-i-deprekowane-rozwiux105zania}}
 \begin{itemize}
 \tightlist
 \item
-  \href{https://kubernetes.io/docs/getting-started-guides/fedora/fedora_ansible_config/}{\emph{Fedora
-  via Ansible}} deprekowane na rzecz \emph{kubespray}
+  \href{https://kubernetes.io/docs/getting-started-guides/fedora/fedora_ansible_config/}{\passthrough{\lstinline!Fedora via Ansible!}}
+  deprekowane na rzecz \passthrough{\lstinline!kubespray!}
 \item
-  \href{http://rancher.com/announcing-rke-lightweight-kubernetes-installer/}{\emph{Rancher
-  Kubernetes Installer}} jest eksperymentalnym rozwiązaniem
-  wykorzystywanym w Rancher 2.0,
+  \href{http://rancher.com/announcing-rke-lightweight-kubernetes-installer/}{\passthrough{\lstinline!Rancher Kubernetes Installer!}}
+  jest eksperymentalnym rozwiązaniem wykorzystywanym w Rancher 2.0,
 \end{itemize}
 
 \hypertarget{kubespray-cli}{%
 \paragraph{kubespray-cli}\label{kubespray-cli}}
 
-Jest to narzędzie ułatwiające korzystanie z \emph{kubespray}. Według
-użytkowników
+Jest to narzędzie ułatwiające korzystanie z
+\passthrough{\lstinline!kubespray!}. Według użytkowników
 \href{https://kubernetes.slack.com/messages/kubespray}{oficjalnego
-\emph{Slacka} \emph{kubespray}} \emph{kubespray-cli} jest deprekowane i
-powinno się~korzystać~z czystego \emph{kubespray}.
+\passthrough{\lstinline!Slacka!} \passthrough{\lstinline!kubespray!}}
+\passthrough{\lstinline!kubespray-cli!} jest deprekowane i powinno
+się~korzystać~z czystego \passthrough{\lstinline!kubespray!}.
 
 \hypertarget{administracja-klastrem-za-pomocux105-narzux119dzi-graficznych}{%
 \section{Administracja klastrem za pomocą narzędzi
@@ -1063,15 +1116,16 @@ graficznych}\label{administracja-klastrem-za-pomocux105-narzux119dzi-graficznych
 
 \href{https://rancher.com/}{Rancher} jest platformą~zarządzania
 kontenerami umożliwiającą między innymi zarządzanie klastrem
-\emph{Kubernetesa}. Od wersji 2.0 twórcy skupiają się wyłącznie na
-zarządzaniu \emph{Kubernetesem} porzucając wsparcie innych rozwiązań.
+\passthrough{\lstinline!k8s!}. Od wersji 2.0 twórcy skupiają się
+wyłącznie na zarządzaniu \passthrough{\lstinline!k8s!} porzucając
+wsparcie innych rozwiązań.
 
 \hypertarget{openshift-origin}{%
 \subsubsection{OpenShift by Red Hat}\label{openshift-origin}}
 
-OpenShift jest komercyjną~usługą typu \emph{PaaS} (Platform as a
-Service), od wersji 3 skupia się na zarządzaniu klastrem
-\emph{Kubernetesa}.
+OpenShift jest komercyjną~usługą typu \passthrough{\lstinline!PaaS!}
+(Platform as a Service), od wersji 3 skupia się na zarządzaniu klastrem
+\passthrough{\lstinline!k8s!}.
 
 Rdzeniem projektu jest open sourcowy
 \href{https://github.com/openshift/origin}{OpenShift Origin}
@@ -1084,10 +1138,12 @@ Materiały źródłowe:
 \tightlist
 \item
   \href{https://www.reddit.com/r/devops/comments/59ql4r/openshift_origin_vs_kubernetes/}{dyskusja
-  o wykorzystaniu \emph{OpenShift Origin} i \emph{Kubernetes}}
+  o wykorzystaniu \passthrough{\lstinline!OpenShift Origin!} i
+  \passthrough{\lstinline!k8s!}}
 \item
   \href{https://medium.com/levvel-consulting/the-differences-between-kubernetes-and-openshift-ae778059a90e}{opis
-  różnic między \emph{OpenShift Origin} i \emph{Kubernetes}}
+  różnic między \passthrough{\lstinline!OpenShift Origin!} i
+  \passthrough{\lstinline!k8s!}}
 \item
   \href{https://youtu.be/-mFovK19aB4?t=6m54s}{materiał wideo
   przedstawiający interfejs OpenShift} (po hebrajsku)
@@ -1099,10 +1155,10 @@ Materiały źródłowe:
 \href{https://dcos.io/}{Datacenter Operating System} jest częścią
 \href{https://mesosphere.com/}{Mesosphere} i Mesosa. Niedawno został
 rozszerzony o
-\href{https://mesosphere.com/blog/kubernetes-dcos/}{\emph{Kubernetesa}}
+\href{https://mesosphere.com/blog/kubernetes-dcos/}{\passthrough{\lstinline!k8s!}}
 jako alternatywny (w stosunku do
-\href{https://mesosphere.github.io/marathon/}{\emph{Marathon}}) system
-orkiestracji kontenerami.
+\href{https://mesosphere.github.io/marathon/}{\passthrough{\lstinline!Marathon!}})
+system orkiestracji kontenerami.
 
 \hypertarget{lista-materiaux142uxf3w-dodatkowych}{%
 \section{Lista materiałów
@@ -1115,13 +1171,13 @@ materiałów dodatkowych:
 \tightlist
 \item
   \href{https://jvns.ca/categories/kubernetes/}{blog Julii Evans o
-  \emph{Kubernetes}},
+  \passthrough{\lstinline!k8s!}},
 \item
   \href{https://github.com/kelseyhightower/kubernetes-the-hard-way}{dokument
-  o uruchamianiu \emph{Kubernetes} od podstaw},
+  o uruchamianiu \passthrough{\lstinline!k8s!} od podstaw},
 \item
   \href{https://www.youtube.com/watch?v=4-pawkiazEg}{materiał wideo o
-  skalowaniu \emph{Kubernetes}},
+  skalowaniu \passthrough{\lstinline!k8s!}},
 \end{itemize}
 
 \hypertarget{systemy-bezdyskowe}{%
@@ -1188,8 +1244,9 @@ repozytorium \href{https://github.com/nazarewk/ipxe-boot}{ipxe-boot}.
 \chapter{Przegląd systemów
 operacyjnych}\label{przeglux105d-systemuxf3w-operacyjnych}}
 
-Wszystkie moduły \emph{Kubernetes} są uruchamiane w kontenerach, więc
-dwoma podstawowymi wymaganiami systemu operacyjnego są:
+Wszystkie moduły \passthrough{\lstinline!k8s!} są uruchamiane w
+kontenerach, więc dwoma podstawowymi wymaganiami systemu operacyjnego
+są:
 
 \begin{itemize}
 \tightlist
@@ -1197,7 +1254,7 @@ dwoma podstawowymi wymaganiami systemu operacyjnego są:
   możliwość instalacji i uruchomienia Dockera,
 \item
   wsparcie wybranego narzędzia konfigurującego system do działania w
-  klastrze \emph{Kubernetes},
+  klastrze \passthrough{\lstinline!k8s!},
 \end{itemize}
 
 Dodatkowe wymagania związane z opisywanym w tej pracy przypadkiem
@@ -1207,7 +1264,7 @@ użycia:
 \tightlist
 \item
   zdalny dostęp SSH lub możliwość konfiguracji automatycznego dołączania
-  do klastra \emph{Kubernetesa},
+  do klastra \passthrough{\lstinline!k8s!},
 \item
   wsparcie dla środowiska bezdyskowego,
 \item
@@ -1250,14 +1307,15 @@ czyli częstego podnoszenia nowych maszyn.
 implementacje}\label{dostux119pne-implementacje}}
 
 \hypertarget{cloud-init}{%
-\paragraph{\texorpdfstring{\emph{cloud-init}}{cloud-init}}\label{cloud-init}}
+\paragraph{cloud-init}\label{cloud-init}}
 
-Referencyjny \emph{cloud-init} zaimplementowany jest w Pythonie, co
-częściowo tłumaczy duży rozmiar obrazów przeznaczonych dla chmury. Po
-najmniejszych obrazach
-\href{https://hub.docker.com/_/python/}{\emph{Pythona} dla
-\emph{Dockera}} (python:alpine - 89MB i python2:alpine - 72 MB)
-wnioskuję, że nie istnieje mniejsza dystrybucja Pythona.
+Referencyjny \passthrough{\lstinline!cloud-init!} zaimplementowany jest
+w Pythonie, co częściowo tłumaczy duży rozmiar obrazów przeznaczonych
+dla chmury. Po najmniejszych obrazach
+\href{https://hub.docker.com/_/python/}{\passthrough{\lstinline!Pythona!}
+dla \passthrough{\lstinline!Dockera!}} (python:alpine - 89MB i
+python2:alpine - 72 MB) wnioskuję, że nie istnieje mniejsza dystrybucja
+Pythona.
 
 \begin{lstlisting}[language=bash]
 docker pull python:2-alpine > /dev/null
@@ -1275,40 +1333,42 @@ Dodatkowe materiały:
 \end{itemize}
 
 \hypertarget{coreos-cloudinit}{%
-\paragraph{\texorpdfstring{\emph{coreos-cloudinit}}{coreos-cloudinit}}\label{coreos-cloudinit}}
+\paragraph{coreos-cloudinit}\label{coreos-cloudinit}}
 
-\href{https://github.com/coreos/coreos-cloudinit}{\emph{coreos-cloudinit}}
+\href{https://github.com/coreos/coreos-cloudinit}{\passthrough{\lstinline!coreos-cloudinit!}}
 jest częściową implementacją~standardu w języku Go udostępnioną przez
-twórców \protect\hyperlink{coreos}{\emph{CoreOS}}
+twórców \protect\hyperlink{coreos}{\passthrough{\lstinline!CoreOS!}}
 \href{https://github.com/coreos/coreos-cloudinit/commit/3460ca4414fd91de66cd581d997bf453fd895b67}{Rok
 temu przestał być~rozwijany} i wychodzi z użytku.
 
 \hypertarget{rancheros-coreos-cloudinit}{%
-\paragraph{\texorpdfstring{\emph{RancherOS} +
-\emph{coreos-cloudinit}}{RancherOS + coreos-cloudinit}}\label{rancheros-coreos-cloudinit}}
+\paragraph{RancherOS +
+coreos-cloudinit}\label{rancheros-coreos-cloudinit}}
 
-\href{http://rancher.com/docs/os/latest/en/configuration/}{\emph{Rancher
-cloud-init}} jest jest
+\href{http://rancher.com/docs/os/latest/en/configuration/}{\passthrough{\lstinline!Rancher cloud-init!}}
+jest jest
 \href{https://github.com/rancher/os/commit/e2ed97648ad63455743ebc16080a82ee47f8bb0c}{przejętym}
-\protect\hyperlink{coreos-cloudinit}{\emph{coreos-cloudinit}} przez
-zespół \protect\hyperlink{rancheros}{\emph{RancherOS}}.
+\protect\hyperlink{coreos-cloudinit}{\passthrough{\lstinline!coreos-cloudinit!}}
+przez zespół
+\protect\hyperlink{rancheros}{\passthrough{\lstinline!RancherOS!}}.
 
 \hypertarget{clr-cloud-init}{%
-\paragraph{\texorpdfstring{\emph{clr-cloud-init}}{clr-cloud-init}}\label{clr-cloud-init}}
+\paragraph{clr-cloud-init}\label{clr-cloud-init}}
 
-\href{https://clearlinux.org/blogs/announcing-clr-cloud-init}{\emph{clr-cloud-init}}
+\href{https://clearlinux.org/blogs/announcing-clr-cloud-init}{\passthrough{\lstinline!clr-cloud-init!}}
 jest wewnętrzną~implementacją~standardu dla systemu
-\protect\hyperlink{clearlinux}{\emph{ClearLinux}}. Powstała z chęci
-optymalizacji standardu pod \emph{ClearLinux} oraz pozbycia się
-zależności referencyjnej implementacji od \emph{Pythona}.
+\protect\hyperlink{clearlinux}{\passthrough{\lstinline!ClearLinux!}}.
+Powstała z chęci optymalizacji standardu pod
+\passthrough{\lstinline!ClearLinux!} oraz pozbycia się zależności
+referencyjnej implementacji od \passthrough{\lstinline!Pythona!}.
 
 \hypertarget{coreos}{%
-\section{\texorpdfstring{\emph{CoreOS}}{CoreOS}}\label{coreos}}
+\section{CoreOS}\label{coreos}}
 
-\href{https://coreos.com/}{\emph{CoreOS}} jest pierwszą dystrybucją
-\emph{Linuxa} przeznaczoną do zarządzania kontenerami. Zawiera dużo
-narzędzi dedykowanych klastrowaniu i obsłudze kontenerów, w związku z
-tym zajmuje 342 MB.
+\href{https://coreos.com/}{\passthrough{\lstinline!CoreOS!}} jest
+pierwszą dystrybucją \passthrough{\lstinline!Linuxa!} przeznaczoną do
+zarządzania kontenerami. Zawiera dużo narzędzi dedykowanych klastrowaniu
+i obsłudze kontenerów, w związku z tym zajmuje 342 MB.
 
 Czysta instalacja zajmuje około 600 MB pamięci RAM i posiada najnowsze
 wersje Dockera i OverlayFS.
@@ -1326,7 +1386,7 @@ Linux Config} transpilowany do
 \href{https://coreos.com/ignition/docs/latest/}{Ignition}. Transpiler
 konwertuje ogólną konfigurację na przygotowaną~pod konkretne chmury
 (AWS, GCE, Azure itp.). Minusem jest brak dystrybucji transpilatora pod
-\emph{FreeBSD}.
+\passthrough{\lstinline!FreeBSD!}.
 
 Poprzednikiem~Ignition jest
 \protect\hyperlink{coreos-cloudinit}{coreos-cloudinit}.
@@ -1342,14 +1402,15 @@ poziomami Dockera}:
 \begin{itemize}
 \tightlist
 \item
-  \emph{bootstrap\_docker} - działający w initramie, czyli przygotowuje
-  system,
+  \passthrough{\lstinline!bootstrap\_docker!} - działający w initramie,
+  czyli przygotowuje system,
 \item
-  \emph{system-docker} - zastępuje tradycyjny init, zarządza wszystkimi
-  programami systemowymi,
+  \passthrough{\lstinline!system-docker!} - zastępuje tradycyjny init,
+  zarządza wszystkimi programami systemowymi,
 \item
-  \emph{docker} - standardowy \emph{Docker}, interakcja z nim nie może
-  uszkodzić działającego systemu.
+  \passthrough{\lstinline!docker!} - standardowy
+  \passthrough{\lstinline!Docker!}, interakcja z nim nie może uszkodzić
+  działającego systemu.
 \end{itemize}
 
 Jego głównymi zaletami są mały rozmiar plików startowych (45 MB) oraz
@@ -1357,7 +1418,8 @@ prostota konfiguracji.
 
 Czysta instalacja zajmuje około 700 MB pamięci RAM. Niestety nie jest
 często aktualizowany i posiada stare wersje zarówno Dockera (17.06
-sprzed pół roku) jak i \emph{overlay} (zamiast \emph{overlay2}).
+sprzed pół roku) jak i \passthrough{\lstinline!overlay!} (zamiast
+\passthrough{\lstinline!overlay2!}).
 
 W związku z bugiem w systemie RancherOS
 \href{https://github.com/rancher/os/issues/2204}{nie zawsze czyta
@@ -1367,7 +1429,7 @@ rozważaniach.
 \hypertarget{ros-config}{%
 \subsubsection{Konfiguracja}\label{ros-config}}
 
-\emph{RancherOS} jest konfigurowany przez
+\passthrough{\lstinline!RancherOS!} jest konfigurowany przez
 \protect\hyperlink{rancheros-+-coreos-cloudinit}{własną~wersję}
 coreos-cloudinit.
 
@@ -1379,10 +1441,11 @@ Minimalna konfiguracja pozwalająca na zalogowanie:
 \begin{lstlisting}
 #cloud-config
 ssh_authorized_keys:
-  - ssh-rsa AAAAB3N...
+  - ssh-rsa <klucz RSA>
 \end{lstlisting}
 
-Generuję ją poniższym skryptem na podstawie komendy \emph{ssh-add -L}:
+Generuję ją poniższym skryptem na podstawie komendy
+\passthrough{\lstinline!ssh-add -L!}:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -1395,19 +1458,18 @@ EOF
 \end{lstlisting}
 
 Przydatne jest wyświetlenie kompletnej konfiguracji komendą
-\href{https://forums.rancher.com/t/good-cloud-config-reference/5238/3}{\emph{ros
-config export --full}}.
+\href{https://forums.rancher.com/t/good-cloud-config-reference/5238/3}{\passthrough{\lstinline!ros config export --full!}}.
 
 \hypertarget{project-atomic}{%
-\section{\texorpdfstring{\emph{Project
-Atomic}}{Project Atomic}}\label{project-atomic}}
+\section{Project Atomic}\label{project-atomic}}
 
-\href{https://www.projectatomic.io/}{\emph{Project Atomic}} jest
-grupą~podobnie skonfigurowanych systemów operacyjnych dedykowaną
+\href{https://www.projectatomic.io/}{\passthrough{\lstinline!Project Atomic!}}
+jest grupą~podobnie skonfigurowanych systemów operacyjnych dedykowaną
 środowiskom cloud i kontenerom.
 
-Dystrybucje \emph{Project Atomic} nazywają~się \emph{Atomic Host}.
-Dostępne są ich następujące warianty:
+Dystrybucje \passthrough{\lstinline!Project Atomic!} nazywają~się
+\passthrough{\lstinline!Atomic Host!}. Dostępne są ich następujące
+warianty:
 
 \begin{itemize}
 \tightlist
@@ -1424,8 +1486,8 @@ Dostępne są ich następujące warianty:
 Żadna z dystrybucji domyślnie nie wspiera rozruchu bezdyskowego, więc
 nie zgłębiam dalej tematu.
 
-\emph{Atomic Host} są konfigurowane oficjalną
-implementacją~\emph{cloud-inita}.
+\passthrough{\lstinline!Atomic Host!} są konfigurowane oficjalną
+implementacją~\passthrough{\lstinline!cloud-inita!}.
 
 \hypertarget{alpine-linux}{%
 \section{Alpine Linux}\label{alpine-linux}}
@@ -1447,14 +1509,15 @@ Configuration Framework}.
 \section{ClearLinux}\label{clearlinux}}
 
 \href{https://clearlinux.org/}{ClearLinux} jest dystrybucją
-\emph{Linuxa} wysoko zoptymalizowaną pod procesory Intel.
+\passthrough{\lstinline!Linuxa!} wysoko zoptymalizowaną pod procesory
+Intel.
 
 Poza intensywną optymalizacją ciekawy w tej dystrybucji jest koncept
-\emph{bundle} zamiast standardowych pakietów systemowych. Żaden z bundli
-nie może zostać zaktualizowany oddzielnie, w zamian cały system
-operacyjny jest aktualizowany na raz ze wszystkimi bundlami. Znacznie
-ułatwia to zarządzanie wersjami oprogramowania i stanem poszczególnych
-węzłów sieci komputerowej.
+\passthrough{\lstinline!bundle!} zamiast standardowych pakietów
+systemowych. Żaden z bundli nie może zostać zaktualizowany oddzielnie, w
+zamian cały system operacyjny jest aktualizowany na raz ze wszystkimi
+bundlami. Znacznie ułatwia to zarządzanie wersjami oprogramowania i
+stanem poszczególnych węzłów sieci komputerowej.
 
 Czysta instalacja z Dockerem i serwerem SSH również zajmuje 700 MB
 pamięci RAM więc nie odbiega od innych dystrybucji.
@@ -1482,29 +1545,31 @@ Najczęściej aktualizowanym z powyższych systemów jest CoreOS, więc na
 nim skupię się w dalszej części pracy.
 
 \hypertarget{praktyczne-rozeznanie-w-narzux119dziach-administracji-klastrem-kubernetesa}{%
-\chapter{\texorpdfstring{Praktyczne rozeznanie w narzędziach
-administracji klastrem
-\emph{Kubernetesa}}{Praktyczne rozeznanie w narzędziach administracji klastrem Kubernetesa}}\label{praktyczne-rozeznanie-w-narzux119dziach-administracji-klastrem-kubernetesa}}
+\chapter{Praktyczne rozeznanie w narzędziach administracji klastrem
+Kubernetesa}\label{praktyczne-rozeznanie-w-narzux119dziach-administracji-klastrem-kubernetesa}}
 
-Najpopularniejszym rozwiązaniem konfiguracji klastra \emph{Kubernetes}
-jest \href{https://github.com/kubernetes/kops}{\emph{kops}}, ale jak
-większość rozwiązań zakłada uruchomienie w środowiskach chmurowych,
-\emph{PaaS} lub \emph{IaaS}. W związku z tym nie ma żadnego zastosowania
-w tej pracy inżynierskiej.
+Najpopularniejszym rozwiązaniem konfiguracji klastra
+\passthrough{\lstinline!k8s!} jest
+\href{https://github.com/kubernetes/kops}{\passthrough{\lstinline!kops!}},
+ale jak większość rozwiązań zakłada uruchomienie w środowiskach
+chmurowych, \passthrough{\lstinline!PaaS!} lub
+\passthrough{\lstinline!IaaS!}. W związku z tym nie ma żadnego
+zastosowania w tej pracy inżynierskiej.
 
 \hypertarget{kubespray-cli-1}{%
 \section{kubespray-cli}\label{kubespray-cli-1}}
 
 Z powodu
 \href{https://github.com/kubespray/kubespray-cli/issues/120}{błędu}
-logiki narzędzie nie radzi sobie z brakiem \emph{Pythona} na domyślnej
-dystrybucji \emph{CoreOSa}, mimo że sam \emph{kubespray} radzi sobie z
-nim świetnie.
+logiki narzędzie nie radzi sobie z brakiem
+\passthrough{\lstinline!Pythona!} na domyślnej dystrybucji
+\passthrough{\lstinline!CoreOSa!}, mimo że sam
+\passthrough{\lstinline!kubespray!} radzi sobie z nim świetnie.
 
 Do uruchomienia na tym systemie potrzebne jest ręczne wywołanie roli
-\href{https://github.com/kubernetes-incubator/kubespray/blob/master/roles/bootstrap-os/tasks/main.yml}{\emph{bootstrap-os}}
-z \emph{kubespray} zanim przystąpi się do właściwego deployment'u.
-Skrypt uruchamiający:
+\href{https://github.com/kubernetes-incubator/kubespray/blob/master/roles/bootstrap-os/tasks/main.yml}{\passthrough{\lstinline!bootstrap-os!}}
+z \passthrough{\lstinline!kubespray!} zanim przystąpi się do właściwego
+deployment'u. Skrypt uruchamiający:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -1546,31 +1611,34 @@ kubespray deploy -y --coreos
 \subsubsection{Napotkane problemy}\label{napotkane-problemy}}
 
 Narzędzie kończy się błędem na kroku czekania na uruchomienie
-\emph{etcd}, ponieważ oczekuje połączenia na NATowym interfejsie z
-adresem \emph{10.0.3.15} zamiast host network z adresem
-\emph{192.168.56.10}, stąd ręczne podawanie
-\emph{ansible\_default\_ipv4.address}.
+\passthrough{\lstinline!etcd!}, ponieważ oczekuje połączenia na NATowym
+interfejsie z adresem \passthrough{\lstinline!10.0.3.15!} zamiast host
+network z adresem \passthrough{\lstinline!192.168.56.10!}, stąd ręczne
+podawanie \passthrough{\lstinline!ansible\_default\_ipv4.address!}.
 
 \hypertarget{wnioski-1}{%
 \subsubsection{Wnioski}\label{wnioski-1}}
 
-W trakcie testowania okazało się, że \emph{kubespray-cli} nie jest
-aktywnie rozwiązane i stało się niekompatybilne z samym projektem
-\emph{Kubespray}. W związku z tym uznaję \emph{kubespray-cli} za nie
-mające zastosowania w tej pracy inżynierskiej.
+W trakcie testowania okazało się, że
+\passthrough{\lstinline!kubespray-cli!} nie jest aktywnie rozwiązane i
+stało się niekompatybilne z samym projektem
+\passthrough{\lstinline!Kubespray!}. W związku z tym uznaję
+\passthrough{\lstinline!kubespray-cli!} za nie mające zastosowania w tej
+pracy inżynierskiej.
 
 \hypertarget{rancher-kubernetes}{%
 \section{Rancher 2.0}\label{rancher-kubernetes}}
 
 Jest to wygodne narzędzie do uruchamiania i monitorowania klastra
-\emph{Kubernetesa}, ale wymaga interakcji użytkownika. Wersja 2.0
-(obecnie w fazie alpha) oferuje lepszą integrację z \emph{Kubernetesem}
-całkowicie porzucając inne platformy.
+\passthrough{\lstinline!k8s!}, ale wymaga interakcji użytkownika. Wersja
+2.0 (obecnie w fazie alpha) oferuje lepszą integrację z
+\passthrough{\lstinline!k8s!} całkowicie porzucając inne platformy.
 
 W trakcie pisania pracy (24 stycznia 2018) pojawiło się drugie Tech
 Preview. W stosunku do pierwszego Tech Preview aplikacja została mocno
-przebudowana i nie wspiera jeszcze konfiguracji \emph{bare metal}, więc
-jestem zmuszony odrzucić to rozwiązanie.
+przebudowana i nie wspiera jeszcze konfiguracji
+\passthrough{\lstinline!bare metal!}, więc jestem zmuszony odrzucić to
+rozwiązanie.
 
 \includegraphics{assets/rancher-tp2-baremetal.png}\\
 
@@ -1608,8 +1676,8 @@ sudo docker run --rm --privileged \
 W ciągu 2 godzin przeglądu nie udało mi się zautomatyzować procesu
 uzyskiwania ww. komendy.
 
-Następnie w \emph{cloud-configu} \emph{RancherOSa} możemy dodać ww.
-komendę w formie:
+Następnie w \passthrough{\lstinline!cloud-configu!}
+\passthrough{\lstinline!RancherOSa!} możemy dodać ww. komendę w formie:
 
 \begin{lstlisting}
 #cloud-config
@@ -1626,11 +1694,11 @@ kubectl apply -f http://192.168.56.1:8080/v3/scripts/303F60E1A5E186F53F3F:151467
 \hypertarget{napotkane-bux142ux119dy}{%
 \paragraph{Napotkane błędy}\label{napotkane-bux142ux119dy}}
 
-W wersji \emph{v2.0.0-alpha10} losowo pojawia się~błąd
-\href{https://github.com/rancher/rancher/issues/10396}{Upgrade
+W wersji \passthrough{\lstinline!v2.0.0-alpha10!} losowo pojawia
+się~błąd \href{https://github.com/rancher/rancher/issues/10396}{Upgrade
 Environment}.
 
-\includegraphics[width=5.20833in,height=1.45833in]{assets/rancher2.0-error.png}\\
+\includegraphics[width=5.20833in,height=1.45833in]{assets/rancher2-error.png}\\
 
 \hypertarget{wnioski-2}{%
 \subsubsection{Wnioski}\label{wnioski-2}}
@@ -1639,15 +1707,16 @@ Rancher na chwilę obecną (styczeń 2018 roku) jest bardzo wygodnym, ale
 również niestabilnym rozwiązaniem.
 
 Ze względu na brak stabilności odrzucam Ranchera jako rozwiązanie
-problemu uruchamiania klastra \emph{Kubernetesa}.
+problemu uruchamiania klastra \passthrough{\lstinline!k8s!}.
 
 \hypertarget{openshift-origin-1}{%
 \section{OpenShift Origin}\label{openshift-origin-1}}
 
 Według
 \href{https://docs.openshift.org/latest/getting_started/administrators.html}{dokumentacji}
-są~dwie metody uruchamiania serwera, w \emph{Dockerze} i bezpośrednio na
-systemie \emph{Linux}.
+są~dwie metody uruchamiania serwera, w
+\passthrough{\lstinline!Dockerze!} i bezpośrednio na systemie
+\passthrough{\lstinline!Linux!}.
 
 \begin{lstlisting}[language=bash]
 # https://docs.openshift.org/latest/getting_started/administrators.html#installation-methods
@@ -1662,25 +1731,28 @@ docker run -d --name "origin" \
   openshift/origin start --public-master
 \end{lstlisting}
 
-Dodałem opcję \emph{--public-master} aby uruchomić konsolę webową
+Dodałem opcję \passthrough{\lstinline!--public-master!} aby uruchomić
+konsolę webową
 
 \hypertarget{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}{%
 \subsubsection{Korzystanie ze sterownika systemd zamiast domyślnego
 cgroupfs}\label{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}}
 
-Większość dystrybucji \emph{Linuxa} (np. Arch, CoreOS, Fedora, Debian)
-domyślnie nie konfiguruje sterownika cgroup Dockera i korzysta z
-domyślnego \emph{cgroupfs}.
+Większość dystrybucji \passthrough{\lstinline!Linuxa!} (np. Arch,
+CoreOS, Fedora, Debian) domyślnie nie konfiguruje sterownika cgroup
+Dockera i korzysta z domyślnego \passthrough{\lstinline!cgroupfs!}.
 
-Typ sterownika cgroup można wyświetlić komendą \emph{docker info}:
+Typ sterownika cgroup można wyświetlić komendą
+\passthrough{\lstinline!docker info!}:
 
 \begin{lstlisting}
 $ docker info | grep -i cgroup
 Cgroup Driver: systemd
 \end{lstlisting}
 
-OpenShift natomiast konfiguruje \emph{Kubernetesa} do korzystania z
-\emph{cgroup} przez \emph{systemd}. Kubelet przy starcie weryfikuje
+OpenShift natomiast konfiguruje \passthrough{\lstinline!k8s!} do
+korzystania z \passthrough{\lstinline!cgroup!} przez
+\passthrough{\lstinline!systemd!}. Kubelet przy starcie weryfikuje
 zgodność silników cgroup, co
 \href{https://github.com/openshift/origin/issues/14766}{skutkuje
 niekompatybilnością z domyślną konfiguracją Dockera}, czyli poniższym
@@ -1690,10 +1762,11 @@ błędem:
 F0120 19:18:58.708005   25376 node.go:269] failed to run Kubelet: failed to create kubelet: misconfiguration: kubelet cgroup driver: "systemd" is different from docker cgroup driver: "cgroupfs"
 \end{lstlisting}
 
-Problem można rozwiązać dopisując \emph{--exec-opt
-native.cgroupdriver=systemd} do linii komend \emph{dockerd} (zwykle w
-pliku \emph{docker.service}). Dla przykładu w \emph{Arch Linuksie}
-zmiana wygląda następująco:
+Problem można rozwiązać dopisując
+\passthrough{\lstinline!--exec-opt native.cgroupdriver=systemd!} do
+linii komend \passthrough{\lstinline!dockerd!} (zwykle w pliku
+\passthrough{\lstinline!docker.service!}). Dla przykładu w
+\passthrough{\lstinline!Arch Linuksie!} zmiana wygląda następująco:
 
 \begin{lstlisting}
 $ cp /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
@@ -1795,13 +1868,12 @@ svc/deployment-example - 172.30.52.184:8080
 Niestety nie udało się przejść kroku 5, więc próba uruchomienia
 OpenShift Origin na Arch Linux zakończyła się niepowodzeniem.
 
-\hypertarget{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualboksie}{%
-\subsubsection{\texorpdfstring{Próba uruchomienia serwera na
-\emph{Fedora Atomic Host} w
-\emph{VirtualBoksie}}{Próba uruchomienia serwera na Fedora Atomic Host w VirtualBoksie}}\label{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualboksie}}
+\hypertarget{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualbox}{%
+\subsubsection{Próba uruchomienia serwera na Fedora Atomic Host w
+VirtualBox}\label{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualbox}}
 
-Maszynę z najnowszym \emph{Fedora Atomic Host} uruchomiłem za pomocą
-poniższego \emph{Vagrantfile}:
+Maszynę z najnowszym \passthrough{\lstinline!Fedora Atomic Host!}
+uruchomiłem za pomocą poniższego \passthrough{\lstinline!Vagrantfile!}:
 
 \begin{lstlisting}[language=Ruby]
 # -*- mode: ruby -*-
@@ -1835,8 +1907,8 @@ $ sudo docker run -d --name "origin" \
   openshift/origin start
 \end{lstlisting}
 
-Kroki 1-5 były analogiczne do uruchamiania na \emph{Arch Linux},
-następnie:
+Kroki 1-5 były analogiczne do uruchamiania na
+\passthrough{\lstinline!Arch Linux!}, następnie:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1894,20 +1966,23 @@ missing route (service "webconsole" not found)
 \end{lstlisting}
 
 W internecie nie znalazłem żadnych informacji na temat tego błędu.
-Próbowałem również uzyskać pomoc na kanale \emph{\#openshift} na
-\emph{irc.freenode.net}, ale bez skutku.
+Próbowałem również uzyskać pomoc na kanale
+\passthrough{\lstinline!#openshift!} na
+\passthrough{\lstinline!irc.freenode.net!}, ale bez skutku.
 
 \hypertarget{wnioski-3}{%
 \subsubsection{Wnioski}\label{wnioski-3}}
 
-Panel administracyjny klastra \emph{OpenShift Origin} jest
-jedyną~znaczącą przewagą nad \emph{Kubesprayem}. Reszta zarządzania
-klastrem odbywa się również za pomocą repozytorium skryptów Ansibla
+Panel administracyjny klastra \passthrough{\lstinline!OpenShift Origin!}
+jest jedyną~znaczącą przewagą nad \passthrough{\lstinline!Kubesprayem!}.
+Reszta zarządzania klastrem odbywa się również za pomocą repozytorium
+skryptów Ansibla
 (\href{https://docs.openshift.com/enterprise/3.0/admin_guide/manage_nodes.html\#adding-nodes}{w
 tym dodawanie kolejnych węzłów klastra}).
 
-Z powodu braku dostępu do ww. panelu próbę uruchomienia \emph{OpenShift
-Origin} uznaję za nieudaną i odrzucam to narzędzie.
+Z powodu braku dostępu do ww. panelu próbę uruchomienia
+\passthrough{\lstinline!OpenShift Origin!} uznaję za nieudaną i odrzucam
+to narzędzie.
 
 \hypertarget{kubespray-1}{%
 \section{kubespray}\label{kubespray-1}}
@@ -1916,8 +1991,7 @@ Cały kod znajduje się w moim repozytorium
 \href{https://github.com/nazarewk/kubernetes-cluster}{kubernetes-cluster}.
 
 \hypertarget{kubernetes-dashboard-1}{%
-\subsubsection{\texorpdfstring{\emph{Kubernetes
-Dashboard}}{Kubernetes Dashboard}}\label{kubernetes-dashboard-1}}
+\subsubsection{Kubernetes Dashboard}\label{kubernetes-dashboard-1}}
 
 Dostęp do Dashboardu najprościej można uzyskać poprzez:
 
@@ -1926,10 +2000,11 @@ Dostęp do Dashboardu najprościej można uzyskać poprzez:
 \tightlist
 \item
   \href{https://github.com/kubernetes/dashboard/wiki/Access-control\#admin-privileges}{nadanie
-  wszystkich uprawnień roli \emph{kubernetes-dashboard}},
+  wszystkich uprawnień roli
+  \passthrough{\lstinline!kubernetes-dashboard!}},
 \item
   Wejście pod adres
-  \emph{http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/\#!/login}
+  \passthrough{\lstinline"http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"}
   ,
 \item
   Kliknięcie skip.
@@ -1948,44 +2023,46 @@ Materiały źródłowe:
 \hypertarget{napotkane-bux142ux119dy-1}{%
 \subsubsection{Napotkane błędy}\label{napotkane-bux142ux119dy-1}}
 
-Błąd przy ustawieniu \emph{loadbalancer\_apiserver.address} na
-\emph{0.0.0.0}:
+Błąd przy ustawieniu
+\passthrough{\lstinline!loadbalancer\_apiserver.address!} na
+\passthrough{\lstinline!0.0.0.0!}:
 
 \begin{lstlisting}
-TASK [kubernetes-apps/cluster_roles : Apply workaround to allow all nodes with cert O=system:nodes to register] ************************************
+TASK [kubernetes-apps/cluster_roles : Apply workaround to allow all nodes with cert O=system:nodes to register] ****
 Wednesday 17 January 2018  22:22:59 +0100 (0:00:00.626)       0:08:31.946 *****
-fatal: [node2]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
-fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client\n"}
+fatal: [node2]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client"}
+fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client"}
 \end{lstlisting}
 
 \hypertarget{wnioski-4}{%
 \section{Wnioski}\label{wnioski-4}}
 
-Na moment pisania tej pracy \emph{Kubespray} jest jedynym aktywnie
-rozwijanym i działającym rozwiązaniem uruchamiania klastra
-\emph{Kubernetesa}.
+Na moment pisania tej pracy \passthrough{\lstinline!Kubespray!} jest
+jedynym aktywnie rozwijanym i działającym rozwiązaniem uruchamiania
+klastra \passthrough{\lstinline!k8s!}.
 
 \hypertarget{uruchamianie-kubernetesa-w-laboratorium-225}{%
-\chapter{\texorpdfstring{Uruchamianie \emph{Kubernetesa} w laboratorium
-225}{Uruchamianie Kubernetesa w laboratorium 225}}\label{uruchamianie-kubernetesa-w-laboratorium-225}}
+\chapter{Uruchamianie Kubernetesa w laboratorium
+225}\label{uruchamianie-kubernetesa-w-laboratorium-225}}
 
 \hypertarget{przygotowanie-wux119zux142uxf3w-coreos}{%
-\section{\texorpdfstring{Przygotowanie węzłów
-\emph{CoreOS}}{Przygotowanie węzłów CoreOS}}\label{przygotowanie-wux119zux142uxf3w-coreos}}
+\section{Przygotowanie węzłów
+CoreOS}\label{przygotowanie-wux119zux142uxf3w-coreos}}
 
-Na wstępie przygotowałem~\emph{coreos.ipxe} i \emph{coreos.ign} do
-rozruchu i bezhasłowego dostępu.
+Na wstępie przygotowałem~\passthrough{\lstinline!coreos.ipxe!} i
+\passthrough{\lstinline!coreos.ign!} do rozruchu i bezhasłowego dostępu.
 
-Po pierwsze stworzyłem Container Linux Config (plik \emph{coreos.yml})
-zawierający:
+Po pierwsze stworzyłem Container Linux Config (plik
+\passthrough{\lstinline!coreos.yml!}) zawierający:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Tworzenie użytkownika \emph{nazarewk},
+  Tworzenie użytkownika \passthrough{\lstinline!nazarewk!},
 \item
-  Nadanie mu praw do sudo i dockera (grupy \emph{sudo} i \emph{docker}),
+  Nadanie mu praw do sudo i dockera (grupy
+  \passthrough{\lstinline!sudo!} i \passthrough{\lstinline!docker!}),
 \item
   Dodanie dwóch kluczy: wewnętrznego uczelnianego i mojego używanego na
   codzień w celu zdalnego dostępu.
@@ -1997,17 +2074,19 @@ passwd:
   - name: nazarewk
     groups: [sudo, docker]
     ssh_authorized_keys:
-    - ssh-rsa ... nazarewk
-    - ssh-rsa ... nazarewk@ldap.iem.pw.edu.pl
+    - ssh-rsa <klucz RSA> nazarewk
+    - ssh-rsa <klucz RSA> nazarewk@ldap.iem.pw.edu.pl
 \end{lstlisting}
 
-Następnie skompilowałem go do formatu Ignition narzędziem \emph{ct},
-skryptem \emph{bin/render-coreos} z wykazu.
+Następnie skompilowałem go do formatu Ignition narzędziem
+\passthrough{\lstinline!ct!}, skryptem
+\passthrough{\lstinline!bin/render-coreos!} z wykazu.
 
-Przygotowałem skrypt \emph{IPXE} do uruchamiania CoreOS
-\emph{zetis/WWW/boot/coreos.ipxe}.
+Przygotowałem skrypt \passthrough{\lstinline!IPXE!} do uruchamiania
+CoreOS \passthrough{\lstinline!zetis/WWW/boot/coreos.ipxe!}.
 
-Umieściłem skrypt w \emph{/home/stud/nazarewk/WWW/boot} i wskazałem go
+Umieściłem skrypt w
+\passthrough{\lstinline!/home/stud/nazarewk/WWW/boot!} i wskazałem go
 maszynom, które będą węzłami:
 
 \begin{lstlisting}[language=bash]
@@ -2021,23 +2100,26 @@ Ubuntu}\label{przeszkody-zwiux105zane-z-uruchamianiem-skryptuxf3w-na-uczelnianym
 \hypertarget{brak-virtualenva}{%
 \subsubsection{Brak virtualenv'a}\label{brak-virtualenva}}
 
-Moje skrypty nie przewidywały braku \emph{virtualenva}, więc musiałem
-ręcznie zainstalować go komendą
+Moje skrypty nie przewidywały braku
+\passthrough{\lstinline!virtualenva!}, więc musiałem ręcznie
+zainstalować go komendą
 \passthrough{\lstinline!apt-get install virtualenv!}. Dodałem ten krok
-do skryptu \emph{setup-packages}.
+do skryptu \passthrough{\lstinline!setup-packages!}.
 
 \hypertarget{klonowanie-repozytorium-bez-logowania}{%
 \subsubsection{Klonowanie repozytorium bez
 logowania}\label{klonowanie-repozytorium-bez-logowania}}
 
 W celu umożliwienia anonimowego klonowania repozytorium z Githuba,
-zmieniłem protokół z \emph{git} na \emph{https}:
+zmieniłem protokół z \passthrough{\lstinline!git!} na
+\passthrough{\lstinline!https!}:
 
 \begin{lstlisting}
 git clone https://github.com/nazarewk/kubernetes-cluster.git
 \end{lstlisting}
 
-Problem pojawił się również dla submodułów gita (\emph{.gitmodules}).
+Problem pojawił się również dla submodułów gita
+(\passthrough{\lstinline!.gitmodules!}).
 
 \hypertarget{atrybut-wykonywalnoux15bci-skryptuxf3w}{%
 \subsubsection{Atrybut wykonywalności
@@ -2046,14 +2128,16 @@ skryptów}\label{atrybut-wykonywalnoux15bci-skryptuxf3w}}
 W konfiguracji uczelnianej git nie ustawia domyślnie atrybutu
 wykonalności dla plików wykonywalnych i zdejmuje go przy aktualizacji
 pliku. Problem rozwiązałem dodaniem komendy
-\passthrough{\lstinline!chmod +x bin/*!} do skryptu \emph{pull}.
+\passthrough{\lstinline!chmod +x bin/*!} do skryptu
+\passthrough{\lstinline!pull!}.
 
 \hypertarget{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}{%
 \subsubsection{Konfiguracja dostępu do maszyn bez
 hasła}\label{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}}
 
-Poza konfiguracją \emph{CoreOS} wypełem konfigurację SSH do bezhasłowego
-dostępu. W pliku \emph{\textasciitilde{}/.ssh/config} umieściłem:
+Poza konfiguracją \passthrough{\lstinline!CoreOS!} wypełem konfigurację
+SSH do bezhasłowego dostępu. W pliku
+\passthrough{\lstinline!\~/.ssh/config!} umieściłem:
 
 \begin{lstlisting}
 Host s?
@@ -2071,9 +2155,10 @@ Host s?
 \subsubsection{Problemy z siecią}\label{problemy-z-sieciux105}}
 
 W trakcie pierwszego uruchamiania występowały problemy z siecią
-uczelnianą, więc rozszerzyłem plik \emph{ansible.cfg} o ponawianie prób
-wywoływania komend dodając wpis \emph{retires=5} do sekcji
-\emph{{[}ssh\_connection{]}}.
+uczelnianą, więc rozszerzyłem plik \passthrough{\lstinline!ansible.cfg!}
+o ponawianie prób wywoływania komend dodając wpis
+\passthrough{\lstinline!retires=5!} do sekcji
+\passthrough{\lstinline![ssh\_connection]!}.
 
 \hypertarget{limit-3-serweruxf3w-dns}{%
 \subsubsection{Limit 3 serwerów DNS}\label{limit-3-serweruxf3w-dns}}
@@ -2097,9 +2182,9 @@ Friday 26 January 2018  14:47:15 +0100 (0:00:01.016)       0:04:32.563 ********
 fatal: [node3]: FAILED! => {"changed": false, "msg": "Too many nameservers. You can relax this check by set docker_dns_servers_strict=no and we will only use the first 3."}
 \end{lstlisting}
 
-Okazało się, że maszyna \emph{s8} była podłączona również na drugim
-interfejsie sieciowym, w związku z tym miała zbyt dużo wpisów serwerów
-DNS.
+Okazało się, że maszyna \passthrough{\lstinline!s8!} była podłączona
+również na drugim interfejsie sieciowym, w związku z tym miała zbyt dużo
+wpisów serwerów DNS.
 
 Rozwiązałem problem ręcznie logując się na maszynę i wyłączając drugi
 interfejs sieciowy komendą \passthrough{\lstinline!ip l set eno1 down!}.
@@ -2119,9 +2204,9 @@ cd ~/kubernetes/kubernetes-cluster
 bin/setup-cluster-full 10.146.255.{2,4,5}
 \end{lstlisting}
 
-Po uruchomieniu okazało się, że maszyna \emph{s2} posiada tylko połowę
-RAMu (4GB) i nie mieszczą się na niej obrazy Dockera konieczne do
-uruchomienia klastra.
+Po uruchomieniu okazało się, że maszyna \passthrough{\lstinline!s2!}
+posiada tylko połowę RAMu (4GB) i nie mieszczą się na niej obrazy
+Dockera konieczne do uruchomienia klastra.
 
 Kolejną próbą było uruchomienie na maszynach s4, s5, s8 i s9. Skończyło
 się problemami z Vaultem opisanymi w dalszych rozdziałach.
@@ -2139,13 +2224,14 @@ wyżej.
 \subsubsection{Generowanie inventory z HashiCorp
 Vault'em}\label{generowanie-inventory-z-hashicorp-vaultem}}
 
-Skrypt \emph{inventory\_builder.py} z \emph{Kubespray} generuje wpisy
-oznaczające węzły jako posiadające HashiCorp Vaulta.
+Skrypt \passthrough{\lstinline!inventory\_builder.py!} z
+\passthrough{\lstinline!Kubespray!} generuje wpisy oznaczające węzły
+jako posiadające HashiCorp Vaulta.
 
 Uruchomienie z Vault'em zakończyło się błędem, więc wyłączyłem Vault'a
-rozbijając skrypt \emph{bin/setup-cluster-full} na krok konfiguracji i
-krok uruchomienia, pomiędzy którymi mogłem wyedytować
-\emph{inventory/inventory.cfg}:
+rozbijając skrypt \passthrough{\lstinline!bin/setup-cluster-full!} na
+krok konfiguracji i krok uruchomienia, pomiędzy którymi mogłem
+wyedytować \passthrough{\lstinline!inventory/inventory.cfg!}:
 
 \begin{lstlisting}[language=bash]
     bin/setup-cluster-configure 10.146.255.{4,5,6,8,9}
@@ -2153,20 +2239,22 @@ krok uruchomienia, pomiędzy którymi mogłem wyedytować
 \end{lstlisting}
 
 Próbowałem dostosować parametr
-\href{https://github.com/kubernetes-incubator/kubespray/blob/master/docs/vault.md}{\emph{cert\_management}},
-żeby działał zarówno z \emph{Vaultem} jak i bez, ale nie dało to żadnego
-skutku. Objawem było nie uruchamianie się \emph{etcd}.
+\href{https://github.com/kubernetes-incubator/kubespray/blob/master/docs/vault.md}{\passthrough{\lstinline!cert\_management!}},
+żeby działał zarówno z \passthrough{\lstinline!Vaultem!} jak i bez, ale
+nie dało to żadnego skutku. Objawem było nie uruchamianie się
+\passthrough{\lstinline!etcd!}.
 
 Uznałem, że taka konfiguracja jeszcze nie działa i zarzuciłem dalsze
 próby. Aby rozwiązać problem trzeba usunąć wpisy pod kategorią
-\emph{{[}vault{]}} z pliku \emph{inventory.cfg}.
+\passthrough{\lstinline![vault]!} z pliku
+\passthrough{\lstinline!inventory.cfg!}.
 
 \hypertarget{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}{%
 \subsubsection{Niepoprawne znajdowanie adresów IP w
 ansible}\label{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}}
 
-Z jakiegoś~powodu konfiguracje \emph{s6} (node3) i \emph{s8} (node4)
-kończyły się błędem:
+Z jakiegoś~powodu konfiguracje \passthrough{\lstinline!s6!} (node3) i
+\passthrough{\lstinline!s8!} (node4) kończyły się błędem:
 
 \begin{lstlisting}
 TASK [kubernetes/preinstall : Stop if ip var does not match local ips] ********
@@ -2190,10 +2278,11 @@ Przyczyną błędu okazały się pozostałości konfiguracji maszyn niezależne
 ode mnie.
 
 \hypertarget{dostux119p-do-kubernetes-dashboardu}{%
-\subsubsection{\texorpdfstring{Dostęp do \emph{Kubernetes
-Dashboardu}}{Dostęp do Kubernetes Dashboardu}}\label{dostux119p-do-kubernetes-dashboardu}}
+\subsubsection{Dostęp do Kubernetes
+Dashboardu}\label{dostux119p-do-kubernetes-dashboardu}}
 
-\emph{Kubernetes Dashboard} jest dostępny pod poniższą ścieżką~HTTP:
+\passthrough{\lstinline!Kubernetes Dashboard!} jest dostępny pod
+poniższą ścieżką~HTTP:
 
 \begin{lstlisting}
 /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/service/default/kubernetes
@@ -2206,11 +2295,11 @@ Można się do niego dostać na dwa sposoby:
 \tightlist
 \item
   \passthrough{\lstinline!kubectl proxy!}, które wystawia dashboard na
-  adresie \emph{http://127.0.0.1:8001}
+  adresie \passthrough{\lstinline!http://127.0.0.1:8001!}
 \item
-  Pod adresem \emph{https://10.146.225.4:6443}, gdzie
-  \emph{10.146.225.4} to adres IP dowolnego mastera, w tym przypadku
-  maszyny \emph{s4}
+  Pod adresem \passthrough{\lstinline!https://10.146.225.4:6443!}, gdzie
+  \passthrough{\lstinline!10.146.225.4!} to adres IP dowolnego mastera,
+  w tym przypadku maszyny \passthrough{\lstinline!s4!}
 \end{enumerate}
 
 Kompletne adresy to:
@@ -2225,13 +2314,14 @@ https://10.146.225.4:6443/api/v1/namespaces/kube-system/services/https:kubernete
 
 Jeżeli nie pracujemy z maszyny uczelnianej porty możemy przekierować
 przez SSH na następujące sposoby (jeżeli skrypty uruchamialiśmy z
-maszyny \emph{s2} i łączymy się do mastera na maszynie \emph{s4}):
+maszyny \passthrough{\lstinline!s2!} i łączymy się do mastera na
+maszynie \passthrough{\lstinline!s4!}):
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Plik \emph{\textasciitilde{}/.ssh/config}:
+  Plik \passthrough{\lstinline!\~/.ssh/config!}:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -2255,12 +2345,13 @@ ssh -L 8001:localhost:8001 -L 6443:10.146.225.4:6443 nazarewk@s2
 \hypertarget{uux17cytkownik-i-hasux142o}{%
 \paragraph{Użytkownik i hasło}\label{uux17cytkownik-i-hasux142o}}
 
-Domyślna nazwa użytkownika Dashboardu to \emph{kube}, a hasło znajduje
-się w pliku \emph{credentials/kube\_user}.
+Domyślna nazwa użytkownika Dashboardu to \passthrough{\lstinline!kube!},
+a hasło znajduje się w pliku
+\passthrough{\lstinline!credentials/kube\_user!}.
 
-W starszej wersji (uruchamianej wcześniej) \emph{Kubernetes} i/lub
-\emph{Kubespray} brakowało opcji logowania przy pomocy nazwy użytkownika
-i hasła:
+W starszej wersji (uruchamianej wcześniej) \passthrough{\lstinline!k8s!}
+i/lub \passthrough{\lstinline!Kubespray!} brakowało opcji logowania przy
+pomocy nazwy użytkownika i hasła:
 
 \includegraphics[width=5.20833in,height=2.5in]{assets/dashboard-login-old.png}\\
 Od 29 stycznia 2018 roku widzę poprawny ekran logowania (opcja Basic):
@@ -2271,40 +2362,46 @@ Od 29 stycznia 2018 roku widzę poprawny ekran logowania (opcja Basic):
 \subsubsection{Instalacja dodatkowych aplikacji z użyciem
 Kubespray}\label{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}}
 
-\emph{Kubespray} ma wbudowaną instalację kilku dodatkowych aplikacji
-playbookiem \emph{upgrade-cluster.yml} z tagiem \emph{apps} (skrypt
-\emph{bin/setup-cluster-upgrade}).
+\passthrough{\lstinline!Kubespray!} ma wbudowaną instalację kilku
+dodatkowych aplikacji playbookiem
+\passthrough{\lstinline!upgrade-cluster.yml!} z tagiem
+\passthrough{\lstinline!apps!} (skrypt
+\passthrough{\lstinline!bin/setup-cluster-upgrade!}).
 
-Zmieniłem~\emph{kube\_script\_dir} na lokalizacje z poza
-\emph{/usr/local/bin}, bo w systemie \emph{CoreOS} jest read-only
-squashfsem, wybrałem \emph{/opt/bin} ponieważ znajdował się już~w
-\emph{PATHie} na \emph{CoreOS}. Później dowiedziałem się, że domyślnie
-zmiany \emph{CoreOS} powinny być umieszczane w folderze \emph{/opt}
+Zmieniłem~\passthrough{\lstinline!kube\_script\_dir!} na lokalizacje z
+poza \passthrough{\lstinline!/usr/local/bin!}, bo w systemie
+\passthrough{\lstinline!CoreOS!} jest read-only squashfsem, wybrałem
+\passthrough{\lstinline!/opt/bin!} ponieważ znajdował się już~w
+\passthrough{\lstinline!PATHie!} na \passthrough{\lstinline!CoreOS!}.
+Później dowiedziałem się, że domyślnie zmiany
+\passthrough{\lstinline!CoreOS!} powinny być umieszczane w folderze
+\passthrough{\lstinline!/opt!}
 
 W końcu ze względu na liczne błędy zarzuciłem temat.
 
 \hypertarget{instalacja-helm}{%
-\subsubsection{\texorpdfstring{Instalacja
-\emph{Helm}}{Instalacja Helm}}\label{instalacja-helm}}
+\subsubsection{Instalacja Helm}\label{instalacja-helm}}
 
-\href{https://github.com/kubernetes/helm}{\emph{Helm}} jest menadżerem
-pakietów dla \emph{Kubernetes}. Jego głównym zadaniem jest
-standaryzacja, automatyzacja i ułatwienie instalacji aplikacji w
-\emph{Kubernetes}.
+\href{https://github.com/kubernetes/helm}{\passthrough{\lstinline!Helm!}}
+jest menadżerem pakietów dla \passthrough{\lstinline!k8s!}. Jego głównym
+zadaniem jest standaryzacja, automatyzacja i ułatwienie instalacji
+aplikacji w \passthrough{\lstinline!k8s!}.
 
-\emph{Helm} składa się z:
+\passthrough{\lstinline!Helm!} składa się z:
 
 \begin{itemize}
 \tightlist
 \item
-  programu \emph{helm} uruchamianego lokalnie i korzystającego z danych
-  dostępowych \emph{kubectla},
+  programu \passthrough{\lstinline!helm!} uruchamianego lokalnie i
+  korzystającego z danych dostępowych
+  \passthrough{\lstinline!kubectla!},
 \item
-  aplikacji serwerowej \emph{Tiller}, z którą \emph{helm} prowadzi
-  interakcje,
+  aplikacji serwerowej \passthrough{\lstinline!Tiller!}, z którą
+  \passthrough{\lstinline!helm!} prowadzi interakcje,
 \item
-  pakietów \emph{Charts} i ich repozytoriów, domyślnie jest to
-  \href{https://github.com/kubernetes/charts}{\emph{kubernetes/charts}},
+  pakietów \passthrough{\lstinline!Charts!} i ich repozytoriów,
+  domyślnie jest to
+  \href{https://github.com/kubernetes/charts}{\passthrough{\lstinline!kubernetes/charts!}},
 \end{itemize}
 
 Jego instalacja sprowadza się~do:
@@ -2315,15 +2412,17 @@ Jego instalacja sprowadza się~do:
 \item
   ściągnięcia pliku wykonywalnego dla obecnej architektury,
 \item
-  dodania roli RBAC dla \emph{Tillera},
+  dodania roli RBAC dla \passthrough{\lstinline!Tillera!},
 \item
   Wywołanie komendy
   \passthrough{\lstinline!helm init --service-account tiller!}
 \end{enumerate}
 
-Wszystkie kroki zawierają się w skrypcie \emph{bin/install-helm}. Ze
-względu na braku dystrybucji \emph{Helm} na \emph{FreeBSD} całość
-uruchamiam przez SSH na węźle-zarządcy (domyślnie \emph{s4}).
+Wszystkie kroki zawierają się w skrypcie
+\passthrough{\lstinline!bin/install-helm!}. Ze względu na braku
+dystrybucji \passthrough{\lstinline!Helm!} na
+\passthrough{\lstinline!FreeBSD!} całość uruchamiam przez SSH na
+węźle-zarządcy (domyślnie \passthrough{\lstinline!s4!}).
 
 Szybko okazało się, że większość pakietów wymaga trwałych zasobów
 dyskowych i nie uda się ich uruchomić bez ich konfiguracji w sieci
@@ -2333,31 +2432,34 @@ uczelnianej.
 \chapter{Docelowa konfiguracja w sieci
 uczelnianej}\label{docelowa-konfiguracja-w-sieci-uczelnianej}}
 
-Pełną konfiguracja \emph{Kubernetesa} można uruchomić z maszyny ldap;
-znajduje się ona w folderze \emph{/pub/Linux/CoreOS/zetis/kubernetes}
-maszyny \emph{ldap}, który zawiera podane foldery:
+Pełną konfiguracja \passthrough{\lstinline!k8s!} można uruchomić z
+maszyny ldap; znajduje się ona w folderze
+\passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes!} maszyny
+\passthrough{\lstinline!ldap!}, który zawiera podane foldery:
 
 \begin{itemize}
 \tightlist
 \item
-  \emph{kubernetes-cluster} - moje repozytorium zawierające konfigurację
-  i skrypty pozwalające uruchomić klaster,
+  \passthrough{\lstinline!kubernetes-cluster!} - moje repozytorium
+  zawierające konfigurację i skrypty pozwalające uruchomić klaster,
 \item
-  \emph{boot} - skrót do folderu
-  \emph{kubernetes-cluster/zetis/WWW/boot} zawierającego konfigurację
-  iPXE oraz Ignition:
+  \passthrough{\lstinline!boot!} - skrót do folderu
+  \passthrough{\lstinline!kubernetes-cluster/zetis/WWW/boot!}
+  zawierającego konfigurację iPXE oraz Ignition:
 
   \begin{itemize}
   \tightlist
   \item
-    \emph{coreos.ign} - plik konfigurujący CoreOS, wygenerowany z pliku
-    \emph{coreos.yml} narzędziem do transpilacji konfiguracji
-    \href{https://github.com/coreos/container-linux-config-transpiler}{\emph{ct}},
+    \passthrough{\lstinline!coreos.ign!} - plik konfigurujący CoreOS,
+    wygenerowany z pliku \passthrough{\lstinline!coreos.yml!} narzędziem
+    do transpilacji konfiguracji
+    \href{https://github.com/coreos/container-linux-config-transpiler}{\passthrough{\lstinline!ct!}},
     narzędzie domyślnie nie jest skompilowane na FreeBSD i musimy
     uruchomić je z Linuxa,
   \end{itemize}
 \item
-  \emph{log} - standardowe wyjście uruchamianych komend,
+  \passthrough{\lstinline!log!} - standardowe wyjście uruchamianych
+  komend,
 \end{itemize}
 
 \hypertarget{procedura-uruchomienia-klastra}{%
@@ -2368,31 +2470,31 @@ klastra}\label{procedura-uruchomienia-klastra}}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Wchodzę na maszynie \emph{ldap} do folderu
-  \emph{/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster}
+  Wchodzę na maszynie \passthrough{\lstinline!ldap!} do folderu
+  \passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster!}
 \item
-  Upewniam się, że mój klucz SSH znajduje się w \emph{boot/coreos.ign},
+  Upewniam się, że mój klucz SSH znajduje się w
+  \passthrough{\lstinline!boot/coreos.ign!},
 \item
-  Włączam maszyny-węzły wybierając z menu \emph{iPXE CoreOS}
-  -\textgreater{} \emph{Kubernetes} lub wybierając w narzędziu
-  \emph{boot} bezpośrednio \emph{coreos kub},
+  Włączam maszyny-węzły wybierając z menu
+  \passthrough{\lstinline!iPXE CoreOS!} -\textgreater{}
+  \passthrough{\lstinline!k8s!} lub wybierając w narzędziu
+  \passthrough{\lstinline!boot!} bezpośrednio
+  \passthrough{\lstinline!coreos kub!},
 \item
   Upewniam się, że mam bezhasłowy dostęp do tych maszyn, minimalna
-  konfiguracja \emph{\textasciitilde{}/.ssh/config} to:
+  konfiguracja \passthrough{\lstinline!\~/.ssh/config!} to:
 \end{enumerate}
 
 \begin{lstlisting}
 Host s?
   User admin
-
-Host *
-  User nazarewk
-  IdentityFile ~/.ssh/id_rsa
-  IdentitiesOnly yes
-
-Host s? 10.146.255.*
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
+
+Host *
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
 \end{lstlisting}
 
 \begin{enumerate}
@@ -2400,8 +2502,9 @@ Host s? 10.146.255.*
 \setcounter{enumi}{4}
 \tightlist
 \item
-  Upewniam się, że istnieje folder \emph{kubespray/my\_inventory},
-  jeżeli nie, to go tworzymę kopiując domyślną konfigurację:
+  Upewniam się, że istnieje folder
+  \passthrough{\lstinline!kubespray/my\_inventory!}, jeżeli nie, to go
+  tworzymę kopiując domyślną konfigurację:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -2413,12 +2516,15 @@ cp -rav kubespray/inventory kubespray/my_inventory
 \setcounter{enumi}{5}
 \tightlist
 \item
-  Otwieram plik \emph{inventory/inventory.cfg} i upewniam się, że
-  uruchomione maszyny są obecne w sekcji \emph{{[}all{]}} oraz
-  przypisane do odpowiednich ról: \emph{{[}kube-master{]}} i
-  \emph{{[}etcd{]}} lub \emph{{[}kube-node{]}}. Identyfikatorem maszyny
-  jest pierwsze słowo w grupie \emph{{[}all{]}}, przykładowa
-  konfiguracja dla maszyn \emph{s4}, \emph{s5} i \emph{s6} z jednym
+  Otwieram plik \passthrough{\lstinline!inventory/inventory.cfg!} i
+  upewniam się, że uruchomione maszyny są obecne w sekcji
+  \passthrough{\lstinline![all]!} oraz przypisane do odpowiednich ról:
+  \passthrough{\lstinline![kube-master]!} i
+  \passthrough{\lstinline![etcd]!} lub
+  \passthrough{\lstinline![kube-node]!}. Identyfikatorem maszyny jest
+  pierwsze słowo w grupie \passthrough{\lstinline![all]!}, przykładowa
+  konfiguracja dla maszyn \passthrough{\lstinline!s4!},
+  \passthrough{\lstinline!s5!} i \passthrough{\lstinline!s6!} z jednym
   zarządcą to:
 \end{enumerate}
 
@@ -2455,12 +2561,14 @@ Opcjonalnie można do każdego węzła:
 \begin{itemize}
 \tightlist
 \item
-  dopisać \emph{ansible\_python\_interpreter=/opt/bin/python}, żeby
-  ułatwić uruchamianie ansibla partiami,
+  dopisać
+  \passthrough{\lstinline!ansible\_python\_interpreter=/opt/bin/python!},
+  żeby ułatwić uruchamianie ansibla partiami,
 \item
-  dopisać \emph{ansible\_host=}, jeżeli che się korzystać z pierwszego
-  wyrazu opisu węzła jako aliasu, a nie faktycznej jego nazwy w sieci
-  uczelnianej,
+  dopisać
+  \passthrough{\lstinline!ansible\_host=<prawdziwa\_nazwa\_hosta>!},
+  jeżeli che się korzystać z pierwszego wyrazu opisu węzła jako aliasu,
+  a nie faktycznej jego nazwy w sieci uczelnianej,
 \end{itemize}
 
 \begin{enumerate}
@@ -2468,8 +2576,9 @@ Opcjonalnie można do każdego węzła:
 \setcounter{enumi}{6}
 \tightlist
 \item
-  Upewniam się, że plik \emph{inventory/group\_vars/all.yml} zawiera
-  naszą konfigurację; minimalny przykład:
+  Upewniam się, że plik
+  \passthrough{\lstinline!inventory/group\_vars/all.yml!} zawiera naszą
+  konfigurację; minimalny przykład:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -2490,8 +2599,8 @@ kube_script_dir: /opt/bin/kubernetes-scripts
 \setcounter{enumi}{7}
 \tightlist
 \item
-  Uruchamiam konfigurowanie maszyn \emph{bin/setup-cluster} lub bez
-  skryptu:
+  Uruchamiam konfigurowanie maszyn
+  \passthrough{\lstinline!bin/setup-cluster!} lub bez skryptu:
 \end{enumerate}
 
 \begin{lstlisting}[language=bash]
@@ -2522,18 +2631,19 @@ s6                         : ok=186  changed=54   unreachable=0    failed=0
 \begin{lstlisting}[language=bash]
 ldap% bin/kubectl get nodes
 NAME      STATUS    ROLES     AGE       VERSION
-s4        Ready     master    2m        v1.9.1+coreos.0
-s5        Ready     node      2m        v1.9.1+coreos.0
-s6        Ready     node      2m        v1.9.1+coreos.0
+s4        Ready     master    2m        v1.9.1_coreos.0
+s5        Ready     node      2m        v1.9.1_coreos.0
+s6        Ready     node      2m        v1.9.1_coreos.0
 \end{lstlisting}
 
 \hypertarget{sprawdzanie-czy-klaster-dziaux142a}{%
 \section{Sprawdzanie, czy klaster
 działa}\label{sprawdzanie-czy-klaster-dziaux142a}}
 
-Wywołanie skryptu \emph{bin/students nazarewk create} jest równoważne
-uruchomieniu komendy \emph{kubectl create -f nazarewk.yml}, gdzie plik
-\emph{nazarewk.yml} to:
+Wywołanie skryptu \passthrough{\lstinline!bin/students nazarewk create!}
+jest równoważne uruchomieniu komendy
+\passthrough{\lstinline!kubectl create -f nazarewk.yml!}, gdzie plik
+\passthrough{\lstinline!nazarewk.yml!} to:
 
 \begin{lstlisting}
 apiVersion: v1
@@ -2568,13 +2678,15 @@ W skrócie:
 \begin{itemize}
 \tightlist
 \item
-  tworzę \emph{Namespace}
+  tworzę \passthrough{\lstinline!Namespace!}
 \item
-  tworzę \emph{ServiceAccount}
+  tworzę \passthrough{\lstinline!ServiceAccount!}
 \item
-  przypisuję wbudowaną \emph{Role} o nazwie \emph{admin} do
-  \emph{ServiceAccount} o nazwie \emph{nazarewk} za pomocą
-  \emph{RoleBinding},
+  przypisuję wbudowaną \passthrough{\lstinline!Role!} o nazwie
+  \passthrough{\lstinline!admin!} do
+  \passthrough{\lstinline!ServiceAccount!} o nazwie
+  \passthrough{\lstinline!nazarewk!} za pomocą
+  \passthrough{\lstinline!RoleBinding!},
 \end{itemize}
 
 \hypertarget{korzystanie-z-klastra-jako-student}{%
@@ -2584,7 +2696,7 @@ student}\label{korzystanie-z-klastra-jako-student}}
 \begin{itemize}
 \tightlist
 \item
-  tworzę użytkownika z jego własnym \emph{Namespace}
+  tworzę użytkownika z jego własnym \passthrough{\lstinline!Namespace!}
 \end{itemize}
 
 \begin{lstlisting}
@@ -2605,7 +2717,7 @@ nazarewk      Active    16s
 \begin{itemize}
 \tightlist
 \item
-  kopiuję token na \emph{s2} z uruchomionym ubuntu:
+  kopiuję token na \passthrough{\lstinline!s2!} z uruchomionym ubuntu:
 \end{itemize}
 
 \begin{lstlisting}
@@ -2615,13 +2727,13 @@ nazarewk      Active    16s
 \begin{itemize}
 \tightlist
 \item
-  pobieram \emph{kubectl}
+  pobieram \passthrough{\lstinline!kubectl!}
 \end{itemize}
 
 \begin{lstlisting}
 s2% cd /tmp
 s2% curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-sw% chmod +x kubectl
+s2% chmod +x kubectl
 s2% sudo mv kubectl /usr/local/bin
 s2% source <(kubectl completion zsh)
 \end{lstlisting}
@@ -2665,14 +2777,17 @@ Error from server (Forbidden): nodes is forbidden: User "system:serviceaccount:n
 \end{itemize}
 
 \begin{lstlisting}
-s2% kubectl run echoserver \                                                                                                    
---image=gcr.io/google_containers/echoserver:1.4 \
---port=8080 \
---replicas=2
+s2% kubectl run echoserver --image=gcr.io/google_containers/echoserver:1.4 --port=8080 --replicas=2
 deployment "echoserver" created
+\end{lstlisting}
+
+\begin{lstlisting}
 s2% kubectl get deployments
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 echoserver   2         2         2            2           3m
+\end{lstlisting}
+
+\begin{lstlisting}
 s2% kubectl get pods
 NAME                         READY     STATUS    RESTARTS   AGE
 echoserver-7b9bbf6ff-22df4   1/1       Running   0          4m
@@ -2688,8 +2803,14 @@ echoserver-7b9bbf6ff-c6kbv   1/1       Running   0          4m
 \begin{lstlisting}
 s2% kubectl expose deployment echoserver --type=NodePort
 service "echoserver" exposed
+\end{lstlisting}
+
+\begin{lstlisting}
 s2% kubectl describe services/echoserver | grep -e NodePort:
 NodePort:                 <unset>  30100/TCP
+\end{lstlisting}
+
+\begin{lstlisting}
 s2% curl s4:30100
 CLIENT VALUES:
 client_address=10.233.107.64
@@ -2713,7 +2834,8 @@ BODY:
 \begin{itemize}
 \tightlist
 \item
-  sprawdzam, czy z \emph{ldapa} też mam dostęp do aplikacji:
+  sprawdzam, czy z \passthrough{\lstinline!ldapa!} też mam dostęp do
+  aplikacji:
 \end{itemize}
 
 \begin{lstlisting}
@@ -2761,6 +2883,9 @@ Error from server (NotFound): serviceaccounts "nazarewk" not found
 \begin{lstlisting}
 ldap% curl s4:30100
 curl: (7) Failed to connect to s4 port 30100: Connection refused
+\end{lstlisting}
+
+\begin{lstlisting}
 ldap% bin/kubectl get namespace 
 NAME          STATUS    AGE
 default       Active    46m
@@ -2772,9 +2897,9 @@ kube-system   Active    46m
 \chapter{Rezultaty i wnioski}\label{rezultaty-i-wnioski}}
 
 Główne założenia pracy inżynierskiej zostały spełnione. Wyjaśniłem dużą
-ilość zagadnień związanych z \emph{Kubernetes} oraz oddałem do użytku
-skrypty konfigurujące klaster \emph{Kubernetes} wraz z prostym w
-obsłudze dodawaniem i usuwaniem jego użytkowników.
+ilość zagadnień związanych z \passthrough{\lstinline!k8s!} oraz oddałem
+do użytku skrypty konfigurujące klaster \passthrough{\lstinline!k8s!}
+wraz z prostym w obsłudze dodawaniem i usuwaniem jego użytkowników.
 
 W trakcie pisania pracy temat okazał się zbyt obszerny, żeby go
 kompletnie i wyczerpująco opisać w pracy inżynierskiej. W związku z tym
@@ -2790,32 +2915,29 @@ na brak czasu.
 
 \appendix
 
+\hypertarget{przypisy}{%
+\chapter{Przypisy}\label{przypisy}}
+
+\theendnotes
+
 \hypertarget{wykaz-skryptuxf3w}{%
 \chapter{Wykaz skryptów}\label{wykaz-skryptuxf3w}}
 
-\hypertarget{ipxe-boot}{%
-\section{ipxe-boot}\label{ipxe-boot}}
+\hypertarget{repozytorium-kubernetes-cluster}{%
+\section{repozytorium
+kubernetes-cluster}\label{repozytorium-kubernetes-cluster}}
 
-\href{https://github.com/nazarewk/ipxe-boot}{\emph{ipxe-boot}} jest
-stworzonym przeze mnie na potrzeby pracy repozytorium git skryptów
-pozwalających na bezdyskowe uruchamianie maszyn poza siecią uczelnianą.
-
-Nie zostały one wykorzystane w końcowej formie pracy inżynierskiej, więc
-nie będę ich bezpośrednio wymieniał.
-
-\hypertarget{kubernetes-cluster}{%
-\section{kubernetes-cluster}\label{kubernetes-cluster}}
-
-\href{https://github.com/nazarewk/kubernetes-cluster}{\emph{kubernetes-cluster}}
+\passthrough{\lstinline!kubernetes-cluster!}
+(\passthrough{\lstinline!https://github.com/nazarewk/kubernetes-cluster!})
 jest repozytorium Git, które zawiera kompletny kod źródłowy
-wykorzystywany w tej pracy inżynierskiej i umieszczony w katalogu
-\emph{/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster/} sieci
-uczelnianej.
+wykorzystywany w tej pracy inżynierskiej.
 
-\newpage
+Kod można znaleźć~i uruchomić w sieci uczelnianej z katalogu
+\passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster/!}
+na maszynie \passthrough{\lstinline!ldap!}.
 
 \hypertarget{binpull}{%
-\subsubsection{\texorpdfstring{\emph{bin/pull}}{bin/pull}}\label{binpull}}
+\subsubsection{bin/pull}\label{binpull}}
 
 Pobiera aktualną wersję~repozytorium wraz z najnowszą wersją zależności:
 
@@ -2830,7 +2952,7 @@ chmod +x ${0%/*}/*
 \end{lstlisting}
 
 \hypertarget{binvars}{%
-\subsubsection{\texorpdfstring{\emph{bin/vars}}{bin/vars}}\label{binvars}}
+\subsubsection{bin/vars}\label{binvars}}
 
 Zawiera wspólne zmienne środowiskowe wykorzystywane w reszcie skryptów
 oraz linii komend:
@@ -2856,13 +2978,12 @@ if [ -z "$KC_CONFIGURED" ]; then
 fi
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binensure-virtualenv}{%
-\subsubsection{\texorpdfstring{\emph{bin/ensure-virtualenv}}{bin/ensure-virtualenv}}\label{binensure-virtualenv}}
+\subsubsection{bin/ensure-virtualenv}\label{binensure-virtualenv}}
 
 Konfiguruje środowisko Pythona, włącznie z próbą instalacji brakującego
-\emph{virtualenv} przez \emph{apt}:
+\passthrough{\lstinline!virtualenv!} przez
+\passthrough{\lstinline!apt!}:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -2909,13 +3030,13 @@ create_env () {
 pip install -U -r $PDIR/requirements.txt
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binensure-configuration}{%
-\subsubsection{\texorpdfstring{\emph{bin/ensure-configuration}}{bin/ensure-configuration}}\label{binensure-configuration}}
+\subsubsection{bin/ensure-configuration}\label{binensure-configuration}}
 
-Generuje brakujące pliki konfiguracyjne SSH, \emph{inventory.cfg} i
-\emph{group\_vars/all.yml} nie nadpisując istniejących:
+Generuje brakujące pliki konfiguracyjne SSH,
+\passthrough{\lstinline!inventory.cfg!} i
+\passthrough{\lstinline!group\_vars/all.yml!} nie nadpisując
+istniejących:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -2983,10 +3104,8 @@ kube_script_dir: /opt/bin/kubernetes-scripts
 EOF
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binrender-coreos}{%
-\subsubsection{\texorpdfstring{\emph{bin/render-coreos}}{bin/render-coreos}}\label{binrender-coreos}}
+\subsubsection{bin/render-coreos}\label{binrender-coreos}}
 
 Generuje konfigurację Ignition (JSON) na podstawie Container Linux
 Config (YAML):
@@ -3010,10 +3129,8 @@ $BIN/ct -pretty \
   -out-file "$boot/coreos.ign"
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binsetup-cluster}{%
-\subsubsection{\texorpdfstring{\emph{bin/setup-cluster}}{bin/setup-cluster}}\label{binsetup-cluster}}
+\subsubsection{bin/setup-cluster}\label{binsetup-cluster}}
 
 Właściwy skrypt konfigurujący klaster na działających maszynach CoreOS:
 
@@ -3041,7 +3158,7 @@ EOF
 \end{lstlisting}
 
 \hypertarget{binsetup-cluster-full}{%
-\subsubsection{\texorpdfstring{\emph{bin/setup-cluster-full}}{bin/setup-cluster-full}}\label{binsetup-cluster-full}}
+\subsubsection{bin/setup-cluster-full}\label{binsetup-cluster-full}}
 
 Skrót do pobierania najnowszej wersji, a następnie uruchamiania klastra:
 
@@ -3053,13 +3170,12 @@ $BIN/pull
 $BIN/setup-cluster $@
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binsetup-cluster-upgrade}{%
-\subsubsection{\texorpdfstring{\emph{bin/setup-cluster-upgrade}}{bin/setup-cluster-upgrade}}\label{binsetup-cluster-upgrade}}
+\subsubsection{bin/setup-cluster-upgrade}\label{binsetup-cluster-upgrade}}
 
-Skrypt analogiczny do \emph{setup-cluster}, ale wywołujący
-\emph{upgrade-cluster.yml} zamiast \emph{cluster.yml}:
+Skrypt analogiczny do \passthrough{\lstinline!setup-cluster!}, ale
+wywołujący \passthrough{\lstinline!upgrade-cluster.yml!} zamiast
+\passthrough{\lstinline!cluster.yml!}:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -3075,10 +3191,10 @@ ansible-playbook -i $INVENTORY/inventory.cfg upgrade-cluster.yml -b -v $@
 \end{lstlisting}
 
 \hypertarget{binkubectl}{%
-\subsubsection{\texorpdfstring{\emph{bin/kubectl}}{bin/kubectl}}\label{binkubectl}}
+\subsubsection{bin/kubectl}\label{binkubectl}}
 
-Skrót \emph{kubectl} z automatycznym dołączaniem konfiguracji
-\emph{kubespray}:
+Skrót \passthrough{\lstinline!kubectl!} z automatycznym dołączaniem
+konfiguracji \passthrough{\lstinline!kubespray!}:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -3104,13 +3220,11 @@ fi
 $kubectl $@
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binstudents}{%
-\subsubsection{\texorpdfstring{\emph{bin/students}}{bin/students}}\label{binstudents}}
+\subsubsection{bin/students}\label{binstudents}}
 
-Skrypt zarządzający obiektami \emph{Kubernetes} użytkowników, czyli
-studentów:
+Skrypt zarządzający obiektami \passthrough{\lstinline!k8s!}
+użytkowników, czyli studentów:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -3176,10 +3290,8 @@ EOF
 esac
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{binstudent-tokens}{%
-\subsubsection{\texorpdfstring{\emph{bin/student-tokens}}{bin/student-tokens}}\label{binstudent-tokens}}
+\subsubsection{bin/student-tokens}\label{binstudent-tokens}}
 
 Listuje przepustki konkretnego użytkownika:
 
@@ -3200,12 +3312,10 @@ for token in `$BIN/kubectl $args`; do
 done
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{bininstall-helm}{%
-\subsubsection{\texorpdfstring{\emph{bin/install-helm}}{bin/install-helm}}\label{bininstall-helm}}
+\subsubsection{bin/install-helm}\label{bininstall-helm}}
 
-Instaluje menadżer pakietów \emph{Helm}:
+Instaluje menadżer pakietów \passthrough{\lstinline!Helm!}:
 
 \begin{lstlisting}[language=bash]
 #!/bin/sh
@@ -3251,10 +3361,10 @@ ssh helm version | grep Server: || ssh helm init --service-account tiller
 \end{lstlisting}
 
 \hypertarget{zetis.sshkubernetes.conf}{%
-\subsubsection{\texorpdfstring{\emph{zetis/.ssh/kubernetes.conf}}{zetis/.ssh/kubernetes.conf}}\label{zetis.sshkubernetes.conf}}
+\subsubsection{zetis/.ssh/kubernetes.conf}\label{zetis.sshkubernetes.conf}}
 
 Częściowy plik konfiguracyjny SSH do umieszczenia w
-\emph{\textasciitilde{}/.ssh/config}:
+\passthrough{\lstinline!\~/.ssh/config!}:
 
 \begin{lstlisting}[language=bash]
 Host s?
@@ -3268,10 +3378,8 @@ Host s?
   UserKnownHostsFile /dev/null
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{zetiswwwbootcoreos.ipxe}{%
-\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ipxe}}{zetis/WWW/boot/coreos.ipxe}}\label{zetiswwwbootcoreos.ipxe}}
+\subsubsection{zetis/WWW/boot/coreos.ipxe}\label{zetiswwwbootcoreos.ipxe}}
 
 Skrypt iPXE uruchamiający maszynę z CoreOS:
 
@@ -3291,14 +3399,12 @@ initrd ${base-url}/coreos_production_pxe_image.cpio.gz
 boot
 \end{lstlisting}
 
-\newpage
-
 \hypertarget{zetiswwwbootcoreos.yml}{%
-\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.yml}}{zetis/WWW/boot/coreos.yml}}\label{zetiswwwbootcoreos.yml}}
+\subsubsection{zetis/WWW/boot/coreos.yml}\label{zetiswwwbootcoreos.yml}}
 
 Plik konfiguracyjny Container Linux Config w formacie YAML, docelowo do
-przepuszczenia przez narzędzie \emph{ct}. Wyjątkowo skróciłem ten
-skrypt, ze względu na długość kluczy SSH:
+przepuszczenia przez narzędzie \passthrough{\lstinline!ct!}. Wyjątkowo
+skróciłem ten skrypt, ze względu na długość kluczy SSH:
 
 \begin{lstlisting}
 passwd:
@@ -3306,13 +3412,13 @@ passwd:
   - name: admin
     groups: [sudo, docker]
     ssh_authorized_keys:
-    - ssh-rsa AAAAB3N...dAYs7Y6L8= ato@volt.iem.pw.edu.pl
-    - ssh-rsa AAAAB3N...N9aLYp0ct/ nazarewk
-    - ssh-rsa AAAAB3N...XRjw== nazarewk@ldap.iem.pw.edu.pl
+    - ssh-rsa <klucz RSA> ato@volt.iem.pw.edu.pl
+    - ssh-rsa <klucz RSA> nazarewk
+    - ssh-rsa <klucz RSA> nazarewk@ldap.iem.pw.edu.pl
 \end{lstlisting}
 
 \hypertarget{zetiswwwbootcoreos.ign}{%
-\subsubsection{\texorpdfstring{\emph{zetis/WWW/boot/coreos.ign}}{zetis/WWW/boot/coreos.ign}}\label{zetiswwwbootcoreos.ign}}
+\subsubsection{zetis/WWW/boot/coreos.ign}\label{zetiswwwbootcoreos.ign}}
 
 Z powyższego pliku wygenerowany zostaje (również skrócony) plik JSON:
 
@@ -3333,9 +3439,9 @@ Z powyższego pliku wygenerowany zostaje (również skrócony) plik JSON:
         ],
         "name": "admin",
         "sshAuthorizedKeys": [
-          "ssh-rsa AAAAB3N...N9aLYp0ct/ nazarewk",
-          "ssh-rsa AAAAB3N...XRjw== nazarewk@ldap.iem.pw.edu.pl",
-          "ssh-rsa AAAAB3N...dAYs7Y6L8= ato@volt.iem.pw.edu.pl"
+          "ssh-rsa <klucz RSA> nazarewk",
+          "ssh-rsa <klucz RSA> nazarewk@ldap.iem.pw.edu.pl",
+          "ssh-rsa <klucz RSA> ato@volt.iem.pw.edu.pl"
         ]
       }
     ]
@@ -3345,4 +3451,14 @@ Z powyższego pliku wygenerowany zostaje (również skrócony) plik JSON:
 }
 \end{lstlisting}
 
+\hypertarget{repozytorium-ipxe-boot}{%
+\section{repozytorium ipxe-boot}\label{repozytorium-ipxe-boot}}
+
+\passthrough{\lstinline!ipxe-boot!}
+(\passthrough{\lstinline!https://github.com/nazarewk/ipxe-boot!}) jest
+repozytorium kodu umożliwiającego uruchomienie środowiska bezdyskowego
+poza uczelnią.
+
+Repozytorium nie zostało wykorzystane w finalnej konfiguracji, więc nie
+będę opisywał jego zawartości.
 \end{document}

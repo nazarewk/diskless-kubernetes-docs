@@ -16,19 +16,19 @@ się wielu podejść do jego rozwiązania:
   - działające na poziomie procesu; oferują przede wszystkim izolację
     zależności i niezależność od systemu operacyjnego, można tu
     wyróżnić między innymi:
-    - interpretery (np. _CPython_ lub _Lua_),
-    - kompilatory JIT (np. _Jython_, _PyPy_, _LuaJIT_, _.NET_),
-    - maszyny wirtualne języków programowania (np. _Java_ lub _V8_);
+    - interpretery (np. `CPython` lub `Lua`),
+    - kompilatory JIT (np. `Jython`, `PyPy`, `LuaJIT`, `.NET`),
+    - maszyny wirtualne języków programowania (np. `Java` lub `V8`);
     
-- wprowadzony w roku 1979 _chroot_ polegający na uruchomieniu procesu ze
+- wprowadzony w roku 1979 `chroot` polegający na uruchomieniu procesu ze
   zmienionym drzewem systemu plików, z którego nie może się wydostać;
 
 - parawirtualizacja, która jest podobna do systemowych wirtualnych maszyn,
   z tą różnicą, że przekierowuje zapytania systemowe do systemu-gospodarza.
   Ten typ wirtualizacji nie pozwala na uruchomienie całkiem innego systemu
   operacyjnego i wymaga kompatybilności systemu-gościa.
-  Przykładem jej implementacji są _jail_ z _FreeBSD_ lub _LXC_ 
-  (_Linux Containers_).
+  Przykładem jej implementacji są `jail` z `FreeBSD` lub `LXC` 
+  (Linux Containers).
 
 
 \pagebreak
@@ -61,26 +61,26 @@ rozwiązanie.
 
 \pagebreak
 Konteneryzację realizuje się łącząc wiele istniejących lub nowych narzędzi
-optymalizowanych w konkretnym celu. Sytuację dobrze ilustruje poniższe porównanie _LXC_
-z _Dockerem_:
+optymalizowanych w konkretnym celu. Sytuację dobrze ilustruje poniższe porównanie `LXC`
+z `Dockerem`:
 
-![_LXC_ vs _Docker_](assets/lxc-vs-docker.png){width=500 height=320}\
+![`LXC` vs `Docker`](assets/lxc-vs-docker.png){width=500 height=320}\
 
-Jak widać na powyższej ilustracji zarówno _LXC_ jak i _Docker_ bazują na kernelu
-_Linuxa_, w tym: _SELinux_ lub _AppArmor_, namespaces i _cGroups_.
-Różnią się natomiast implementacją samych kontenerów - _LXC_ korzysta jedynie z
-_liblxc_, a _Docker_ postanowił zaimplementować wielopoziomowy system:
-_Docker Engine_, _containerd_ i _runc_.
+Jak widać na powyższej ilustracji zarówno `LXC` jak i `Docker` bazują na kernelu
+`Linuxa`, w tym: `SELinux` lub `AppArmor`, namespaces i `cGroups`.
+Różnią się natomiast implementacją samych kontenerów - `LXC` korzysta jedynie z
+`liblxc`, a `Docker` postanowił zaimplementować wielopoziomowy system:
+`Docker Engine`, `containerd` i `runc`.
 
 ## Cel pracy inżynierskiej
 
 Celem tej pracy jest: 1) przedstawienie podstawowych pojęć związanych
 z aktualnie najpopularniejszym rozwiązaniem zarządzania kontenerami o nazwie
-_Kubernetes_, 2) przegląd dostępnych rozwiązań oraz
+`k8s`, 2) przegląd dostępnych rozwiązań oraz
 wdrożenie tego  systemu w sieci uczelnianej na potrzeby prowadzenia
 laboratoriów ze studentami.
 
 Wdrożenie w sieci uczelnianej wiąże się z koniecznością uruchomienia systemu
 z sieci na maszynach bezdyskowych.
 
-Celem dodatkowym jest przeprowadzenie testów wydajnościowych klastra _Kubernetes_.
+Celem dodatkowym jest przeprowadzenie testów wydajnościowych klastra `k8s`.

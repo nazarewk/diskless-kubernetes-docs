@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 dir=$(dirname $(readlink -f $0))
-${dir}/pandoc.sh -o ../dist/output.pdf
+cd ${dir}/../src
+${dir}/pandoc.sh -o ../dist/output.pdf "$@"

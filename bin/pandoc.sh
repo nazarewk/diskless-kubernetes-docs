@@ -26,7 +26,6 @@ run_pandoc () {
 
 run_pandoc \
 -N -s \
---reference-links --reference-location=document \
 --bibliography=bibliography.bib \
 --template=template.latex \
 --listings \
