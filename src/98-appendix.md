@@ -1,6 +1,6 @@
 \appendix
 
-# Przypisy
+# Wykaz odnośników
 \theendnotes
 
 # Wykaz skryptów

@@ -88,10 +88,10 @@
 \raggedbottom
 
 % Przypisy na końcu dokumentu
-\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+\renewcommand{\href}[2]{#2\endnote{\url{#1}}}
 \usepackage{endnotes}
 \usepackage{hyperendnotes}
-\let\footnote=\endnote
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 % Wyczyść nagłówek (wykorzystamy nagłówek z markdowna)
 \def\enoteheading{}
 
@@ -145,101 +145,83 @@
 \hypertarget{wstux119p}{%
 \chapter{Wstęp}\label{wstux119p}}
 
-W pracy możemy wyróżnić dwa stosunkowo niezależne od siebie pojęcia:
-zarządzanie kontenerami w klastrze \passthrough{\lstinline!Kubernetes!}
-(zamiennie nazywanym \passthrough{\lstinline!k8s!}) oraz jego bazowaniu
-na maszynach bezdyskowych. W tym rozdziale zarysowany jest problem
-izolacji w kontekście systemów komputerowy: co rozwiązuje, w jaki sposób
-się zmieniał, jaki jest stan obecny. Następnie przedstawione są
-motywacje kierujące wyborem \passthrough{\lstinline!k8s!} z pośród
-dostępnych narzędzi zarządzania kontenerami oraz wyborem systemów
-bezdyskowych jako jego fundamentu.
+Historia wirtualizacji i przydzielania zasobów sięga już pierwszych
+systemów komputerowych.
 
-\hypertarget{zarys-historyczny-izolacji-zasobuxf3w-komputerowych}{%
-\section{Zarys historyczny izolacji zasobów
-komputerowych}\label{zarys-historyczny-izolacji-zasobuxf3w-komputerowych}}
+Podstawową przeszkodą w korzystaniu z komputerów była ich wysoka cena;
+bogate instytucje odpłatnie wynajmowały swoje systemy innym firmom.
+Umożliwiając dostęp tylko jednemu użytkownikowi jednocześnie, maszyny
+przez większość czasu nie pracowały. Wraz ze wzrostem liczby
+obsługiwanych użytkowników przypadających na jedną maszynę~zwiększało
+się wysycenie jej zasobów, a zatem i zyski.
 
-Historia wirtualizacji i przydzielania zasobów sięga pierwszych systemów
-komputerowych. Podstawową przeszkodą w korzystaniu z komputerów była ich
-wysoka cena; bogate instytucje odpłatnie wynajmowały swoje systemy innym
-instytucjom. Umożliwiając dostęp tylko jednemu użytkownikowi
-jednocześnie maszyny przez większość czasu nie pracowały. Wraz ze
-wzrostem liczby użytkowników zwiększało się wysycenie zasobów. Kolejną
-przeszkodą był brak ograniczeń dostępowych dla poszczególnych
-użytkowników: każdy świadomie lub nie mógł uszkodzić konta innych
-użytkowników. W ten sposób zrodził się pomysł
+Następną przeszkodą okazał się brak ograniczeń dostępowych dla
+poszczególnych użytkowników: każdy świadomie lub nie mógł uszkodzić
+cudze zasoby. W ten sposób zrodził się pomysł
 \passthrough{\lstinline!chroot!}, czyli izolacji użytkowników na
 poziomie systemu plików.
 
-Na tym etapie wraz z rozwojem technologii zwiększała się różnorodność
-sprzętowa i systemowa. W związku z pierwszą rozwijały się systemy
-operacyjne oferowały abstrakcje dostępu do sprzętu oraz powstawały
-narzędzia emulujące inny sprzęt (tzw. wirtualizacja sprzętowa).
+Wraz z rozwojem technologii zwiększała się różnorodność sprzętowa i
+systemowa. W związku z pierwszą systemy operacyjne oferowały abstrakcje
+dostępu do sprzętu oraz powstawały narzędzia emulujące inny sprzęt.
 Różnorodność systemowa była natomiast abstrahowana przez aplikacyjne
-wirtualne maszyny jak na przykład \passthrough{\lstinline!Java!}, które
-umożliwiały jednorodny dostęp do zasobów systemowych.
+wirtualne maszyny, które umożliwiały jednorodny dostęp do zasobów
+niejednorodnych systemów operacyjnych, ale w żaden sposób go nie
+ograniczały.
 
-W centrach danych zyskała popularność~wirtualizacja sprzętowa
-pozwalająca na uruchomienie na jednej fizycznej maszynie wielu
-niezależnych od siebie maszyn wirtualnych, na których z kolei działają
-dowolne systemy operacyjne. W toku rozwoju technologii w latach 2000
-pojawił się trend rozpraszania systemów i dążenia do uruchamiania jak
-najmniejszej funkcjonalnej części systemu komputerowego na pojedynczej
-maszynie wirtualnej. Przede wszystkim takie podejście zwiększa
-bezpieczeństwo: po uzyskaniu dostępu do jednego z serwerów włamywacz
-nadal nie ma dostępu do innych części systemu. Przeciętna maszyna
-fizyczna nie jest w stanie uruchomić więcej niż~kilku do kilkunastu
-maszyn wirtualnych. W związku z tym utrzymywanie całej maszyny
-wirtualnej i systemu operacyjnego w celu uruchamiania często
-pojedynczego procesu aplikacyjnego stało się kosztowne i nieekonomiczne.
+W centrach danych zyskała popularność~wirtualizacja sprzętowa. Pozwala
+ona uruchomić na jednej fizycznej maszynie wiele niezależnych od siebie
+maszyn wirtualnych, na których działają dowolne systemy operacyjne. W
+toku rozwoju technologii po roku 2000 pojawił się trend rozpraszania
+oprogramowania i dążenia do uruchamiania jak najmniejszej jego
+funkcjonalnej części na pojedynczej maszynie wirtualnej. Główną~zaletą
+takiego podejścia jest bezpieczeństwo: po uzyskaniu dostępu do jednego z
+serwerów włamywacz nadal nie ma dostępu do reszty infrastruktury.
+Wadą~natomiast jest to, że jedna maszyna fizyczna jest w stanie
+uruchomić nie więcej niż~kilka do kilkunastu maszyn wirtualnych. W
+związku z tym utrzymywanie całej maszyny wirtualnej w celu uruchamiania
+pojedynczego procesu aplikacyjnego często jest nieekonomiczne.
 
-Na przełomie dekady zaczęły pojawiać się narzędzia pozwalające na
-uruchamianie wielu w pełni odizolowanych procesów współdzielących
-jedynie jądro systemu operacyjnego. Znacznie zmniejszyło to narzut
-zasobów wymagany do uruchamiania kolejnych aplikacji-procesów i
-umożliwiło uruchamianie setek, a nawet tysięcy aplikacji na jednej
-fizycznej maszynie. Metodologia zyskała miano konteneryzacji. Jest z
-powodzeniem wykorzystywana w systemach produkcyjnych na całym świecie.
+Na przełomie ostatniej dekady zaczęły pojawiać się narzędzia pozwalające
+uruchamiać wiele w pełni odizolowanych procesów współdzielących jedynie
+jądro systemu operacyjnego. Znacznie zmniejszyło to narzut zasobów
+wymaganych do uruchamiania kolejnych aplikacji-procesów i umożliwiło
+współdzielenie jednej maszyny przez setki, a nawet tysiące programów.
+Metodologia ta zyskała miano konteneryzacji i jest z powodzeniem
+wykorzystywana w systemach produkcyjnych na całym świecie.
 
 Technologia konteneryzacji jest młoda, a konkurencja duża. Z jednej
-strony trwa wyścig o stworzenie najlepszego rozwiązania. Z drugiej
-strony nikt nie może pozwolić sobie na niekompatybilność implementacji i
-równie aktywnie rozwijane są~ otwarte standardy konteneryzacji w ramach
-\href{https://www.opencontainers.org/about}{\passthrough{\lstinline!Open Container Initiative!}}.
-Obecnie najpopularniejszą implementacją kontenerów jest
+strony trwa wyścig o stworzenie najlepszego rozwiązania, a z drugiej
+aktywnie rozwijane są~ otwarte standardy konteneryzacji w ramach
+\href{https://www.opencontainers.org/about}{\passthrough{\lstinline!Open Container Initiative!}},
+ponieważ nikt nie może pozwolić sobie na niekompatybilność swojej
+implementacji. Obecnie najpopularniejszą implementacją kontenerów jest
 \passthrough{\lstinline!Docker!}.
 
-Aspektem równie ważnym jak same kontenery jest kwestia zarządzania nimi.
-O ile kilkoma serwerami z kilkudziesięcioma kontenerami może zarządzać
-człowiek, o tyle do zarządzania tysiącami kontenerów wymagany jest
-znacznie zautomatyzowany i wyspecjalizowany system. Obecnie przodującym
-rozwiązaniem tego problemu jest \passthrough{\lstinline!Kubernetes!} i
-na nim skupia się ten dokument.
+Aspektem równie ważnym jak sama implementacja kontenerów, jest kwestia
+zarządzania nimi. O ile kilkoma serwerami z kilkudziesięcioma
+kontenerami może zarządzać człowiek, o tyle do zarządzania tysiącami
+kontenerów wymagany jest w dużej mierze zautomatyzowany i
+wyspecjalizowany system.
+
+Obecnie przodującym rozwiązaniem tego problemu jest
+\passthrough{\lstinline!Kubernetes!} (zamiennie
+\passthrough{\lstinline!k8s!}). Projekt powstał niedawno (w połowie 2014
+roku) i mimo tego, że coraz bardziej umacnia swoją pozycję~na rynku
+nadal umie go skonfigurować tylko nieliczne grono specjalistów. Celem
+niniejszej pracy jest przedstawienie sposobu konfiguracji klastra
+\passthrough{\lstinline!k8s!} na fizycznych maszynach\footnote{ang.
+  \emph{bare metal}, czyli uruchamianie na prostej sieci komputerowej
+  bez zewnętrznych zależności, w odróżnieniu od kompleksowych usług
+  chmurowych, które w znacznym stopniu automatyzują~i ułatwiają
+  konfigurację} na przykładzie sieci komputerowej Wydziału Elektrycznego
+Politechniki Warszawskiej. Laboratoria komputerowe dostępne w tej sieci
+są wyposażone w maszyny bezdyskowe, a zatem należy pokrótce
+scharakteryzować tego typu systemy.
 
 \hypertarget{charakterystyka-systemuxf3w-bezdyskowych}{%
 \section{Charakterystyka systemów
 bezdyskowych}\label{charakterystyka-systemuxf3w-bezdyskowych}}
-
-Historycznie funkcję serwerów w centrach danych pełniły w pełni
-wyposażone stacje robocze składające się między innymi z:
-
-\begin{itemize}
-\tightlist
-\item
-  pamięci RAM,
-\item
-  procesorów,
-\item
-  kart sieciowych,
-\item
-  dysków twardych.
-\end{itemize}
-
-Na takich maszynach systemy operacyjne są indywidualnie instalowane na
-lokalnym dysku twardym w celu ograniczenia komunikacji sieciowej, która
-była znacznie od nich wolniejsza. W takiej architekturze każdy serwer
-miał własną~konfigurację i nie było centralnego miejsca do zarządzania
-nimi.
 
 W dzisiejszych czasach rozwój sieci komputerowych i spadek cen pamięci
 RAM pozwolił na konfigurację maszyn nie posiadających dysku twardego.
@@ -248,87 +230,34 @@ konfigurację (np. protokołem \passthrough{\lstinline!PXE!}), a następnie
 umieszczają kompletny system operacyjny w pamięci RAM.
 
 W momencie wyłączenia maszyny cały stan jest tracony, a przy ponownym
-rozruchu maszyna konfigurowana jest od nowa. W celu trwałego
-przechowywania danych systemy bezdyskowe łączą się~do zewnętrznego
-serwera plików (np. \passthrough{\lstinline!NFS!} lub
-\passthrough{\lstinline!CephFS!}) i na nim przechowują dane.
+rozruchu konfigurowana jest od nowa. w celu trwałego przechowywania
+danych systemy bezdyskowe korzystają z zewnętrznych serwerów plikowych.
 
 Rozwiązanie pozwala to na jednorazową konfigurację~bazowego systemu
 operacyjnego i uzyskanie konfiguracji na dowolnej ilości maszyn bez
-ingerencji człowieka. W efekcie koszt utrzymania centrum danych przenosi
+ingerencji człowieka. W efekcie koszt utrzymania centrów danych przenosi
 się z konfiguracji indywidualnych maszyn na konfigurację pojedynczych
 usług działających na dowolnej liczbie maszyn.
 
-W związku z powyższym system bezdyskowy jest bardzo dobrym kandydatem do
-konfiguracji klastra Kubernetes.
-
-\hypertarget{lista-alternatyw-kubernetes}{%
-\section{Lista alternatyw
-Kubernetes}\label{lista-alternatyw-kubernetes}}
-
-\passthrough{\lstinline!Kubernetes!} oferuje duże możliwości w stosunku
-do progu wejścia w system, ale istnieją również inne rozwiązania, o
-których warto wspomnieć.
-
-\hypertarget{fleet}{%
-\paragraph{Fleet}\label{fleet}}
-
-jest nakładką~na \passthrough{\lstinline!systemd!} realizującą
-rozproszony system inicjalizacji systemów operacyjnych
-\passthrough{\lstinline!CoreOS!}. Kontenery są~uruchamiane i zarządzane
-przez \passthrough{\lstinline!systemd!}, a stan przechowywany jest w
-\passthrough{\lstinline!etcd!}.
-
-Aktualnie projekt kończy swój żywot na rzecz
-\passthrough{\lstinline!k8s!} i w dniu 1 lutego 2018, został wycofany z
-domyślnej dystrybucji \passthrough{\lstinline!CoreOS!}. Nadal będzie
-dostępny w rejestrze pakietów \passthrough{\lstinline!CoreOS!}.
-
-\hypertarget{docker-swarm}{%
-\paragraph{Docker Swarm}\label{docker-swarm}}
-
-jest rozwiązaniem zarządzania kontenerami zintegrowanym z systemem
-\passthrough{\lstinline!Docker!}. Główną zaletą jest niski próg wejścia
-i prostota, a wadą są małe możliwości w stosunku do innych rozwiązań.
-
-\hypertarget{nomad}{%
-\paragraph{Nomad}\label{nomad}}
-
-jest narzędziem do zarządzania siecią komputerową, które również oferuje
-zarządzanie kontenerami.
-
-Przy jego tworzeniu twórcy kierują się filozofią
-\passthrough{\lstinline!Unix!}. W związku z tym
-\passthrough{\lstinline!Nomad!} jest prosty w obsłudze, wyspecjalizowany
-i rozszerzalny. Zwykle działa w tandemie z innymi produktami firmy
-``HashiCorp'' jak \passthrough{\lstinline!Consul!} i
-\passthrough{\lstinline!Vault!}.
-
-\hypertarget{mesos}{%
-\paragraph{Mesos}\label{mesos}}
-
-jest najbardziej zaawansowanym i najefektywniej skalującym się
-rozwiązaniem zarządzania kontenerami. Jest również najbardziej
-skomplikowanym i trudnym w zarządzaniu rozwiązaniem. W związku z tym
-znajduje swoje zastosowanie tylko w największych sieciach komputerowych
-o zasięgu globalnym.
+Zarządzanie klastrem \passthrough{\lstinline!k8s!} poza środowiskiem
+chmurowym znacznie ogranicza wybór narzędzia konfiguracyjnego, a
+bezdyskowość jego węzłów ma duży wpływ na wybór systemu operacyjnego.
 
 \hypertarget{system-kubernetes}{%
 \chapter{System Kubernetes}\label{system-kubernetes}}
 
-\href{https://kubernetes.io/}{\passthrough{\lstinline!Kubernetes!}} jest
-obecnie najpopularniejszym systemem zarządzania kontenerami, a przez to
-tematem przewodnim tego dokumentu. Został stworzony przez
-\passthrough{\lstinline!Google!} na bazie ich wewnętrznego systemu Borg,
-a następnie udostępniony na zasadach otwartego oprogramowania.
+\href{https://kubernetes.io/}{\passthrough{\lstinline!Kubernetes!}}
+został stworzony przez firmę Google na bazie ich wewnętrznego systemu
+\passthrough{\lstinline!Borg!}, a następnie udostępniony na zasadach
+otwartego oprogramowania (ang. \emph{open-source}). Charakteryzuje się
+korzystnym stosunkiem kosztów zarządzania do oferowanych możliwości.
 
-W porównaniu do innych narzędzi \passthrough{\lstinline!k8s!} oferuje
-najlepszy kompromis między oferowanymi możliwościami, a kosztami
-administracyjnymi.
+\hypertarget{zarzux105dzanie-klastrem}{%
+\paragraph{Zarządzanie klastrem}\label{zarzux105dzanie-klastrem}}
 
-Zarządzanie klastrem zdefiniowane jest jako zbiór czynności i procesów
-polegających na przygotowaniu klastra do użytku oraz definiowanie
-aplikacji realizującymi usługi na poziomie klastra, takimi jak:
+rozumiem jako zbiór czynności i procesów polegających na przygotowaniu
+klastra do użytku oraz definiowanie aplikacji realizującymi usługi na
+poziomie klastra, takimi jak:
 
 \begin{itemize}
 \tightlist
@@ -349,48 +278,21 @@ aplikacji realizującymi usługi na poziomie klastra, takimi jak:
   centralny system monitorujący obciążenie węzłów,
 \end{itemize}
 
-Korzystanie z klastra zdefiniowane jest jako uruchamianie dowolnych
-aplikacji na skonfigurowanym klastrze.
+\hypertarget{wykorzystanie-klastra}{%
+\paragraph{Wykorzystanie klastra}\label{wykorzystanie-klastra}}
 
-\hypertarget{wyjaux15bnienie-pojux119cia-stanu-w-klastrze-kubernetes}{%
-\section{Wyjaśnienie pojęcia stanu w klastrze
-Kubernetes}\label{wyjaux15bnienie-pojux119cia-stanu-w-klastrze-kubernetes}}
+rozumiem jako uruchamianie dowolnych aplikacji na wcześniej
+skonfigurowanym klastrze.
 
-Ważną~kwestią jest zrozumienie pojęcia stanu w klastrze
-\passthrough{\lstinline!k8s!}. Jest to konfiguracja do której klaster
-dąży, a nie w której znajduje się w danej chwili.
+\hypertarget{struktura-klastra-kubernetes}{%
+\section{Struktura klastra
+Kubernetes}\label{struktura-klastra-kubernetes}}
 
-Zwykle stan docelowy i aktywny szybko się ze sobą~zbiegają, ale nie jest
-to regułą. Najczęstszymi scenariuszami jest brak zasobów do uruchomienia
-aplikacji w klastrze lub utrata węzła roboczego.
-
-W pierwszym przypadku stan klastra może wskazywać na istnienie 5
-instancji aplikacji, ale pamięci RAM wystarcza na uruchomienie tylko 3.
-Więc bez zmiany infrastruktury brakujące 2 instancje nigdy nie zostaną
-uruchomione. W momencie dołączenia kolejnego węzła klastra może się
-okazać, że posiadamy już oczekiwane zasoby i aplikacja zostanie
-uruchomiona w pełni.
-
-W drugim przypadku załóżmy, że aplikacja jest uruchomiona w 9 kopiach na
-4 węzłach, po 2 kopię na pierwszych trzech węzłach i 3 kopie na
-ostatnim. W momencie wyłączenia ostatniego węzła aplikacja będzie miała
-uruchomione tylko 6 z 9 docelowych instancji. Zanim moduł kontrolujący
-klaster zauważy braki aktywny stan 6 nie będzie się zgadzał z docelowym
-9. W ciągu kilku do kilkudziesięciu sekund kontroler uruchomi brakujące
-3 instancje i uzyskamy docelowy stan klastra: po 3 kopie aplikacji na 3
-węzłach.
-
-\hypertarget{infrastruktura-logiczna-klastra-kubernetes}{%
-\section{Infrastruktura logiczna klastra
-Kubernetes}\label{infrastruktura-logiczna-klastra-kubernetes}}
-
-\passthrough{\lstinline!Kubernetes!} jest TODO: WRITE HERE
-
-Zdecydowałem się przybliżyć temat na podstawie poniższego diagramu:
+/TODO: write this
 
 \includegraphics[width=5.20833in,height=3.6875in]{assets/kubernetes-architecture.png}\\
 
-Na ilustracji możemy wyróżnić 5 grup funkcjonalnych:
+Na ilustracji wyróżnione zostało 5 grup funkcjonalnych:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -613,6 +515,37 @@ funkcjonalności dostępne po przeprowadzeniu prawidłowej konfiguracji
 klastra i oddaniu węzłów do użytku. Z architekturą wiążę pojęcia
 korzystania z klastra, stanu i obiektów \passthrough{\lstinline!k8s!}.
 
+\hypertarget{stan-w-klastrze-kubernetes}{%
+\paragraph{Stan w klastrze
+Kubernetes}\label{stan-w-klastrze-kubernetes}}
+
+zdefiniowany jest jako konfiguracja, do której klaster dąży.
+
+\hypertarget{status-w-klastrze-kubernetes}{%
+\paragraph{Status w klastrze
+Kubernetes}\label{status-w-klastrze-kubernetes}}
+
+zdefiniowany jest jako rzeczywista konfiguracja, w której klaster się w
+danej chwili znajduje.
+
+Zwykle stan i status klastra szybko się ze sobą~zbiegają, ale nie jest
+to regułą. Dwoma najczęstszymi powodami braku ich synchronizacji
+są~niewystarczające zasoby lub utrata węzła roboczego.
+
+W pierwszym przypadku stan klastra może wskazywać na istnienie 5
+instancji aplikacji, ale pamięci RAM wystarcza na uruchomienie tylko 3.
+Więc bez zmiany infrastruktury brakujące 2 instancje nigdy nie zostaną
+uruchomione. W momencie dołączenia kolejnego węzła klastra może się
+okazać, że posiadamy już oczekiwane zasoby i aplikacja zostanie
+uruchomiona w pełni, czyli stan aplikacji pokryje się z jej statusem.
+
+W drugim przypadku mając aplikację uruchomioną w 4 replikach na 2
+węzłach, po utraceniu drugiego węzła stan aplikacji będzie nadal
+wskazywał na 4 repliki, a status na 2. Następnie w ciągu kilku do
+kilkudziesięciu sekund moduł kontrolujący klaster zauważy braki,
+uruchomi brakujące 2 repliki i przez to doprowadzi status klastra do
+stanu docelowego.
+
 \hypertarget{obiekty-kubernetes-api}{%
 \subsubsection{Obiekty Kubernetes API}\label{obiekty-kubernetes-api}}
 
@@ -697,7 +630,7 @@ Obiekty imperatywne reprezentują wykonanie akcji, a deklaratywne
 określają stan w jakim klaster powinien się znaleźć.
 
 \hypertarget{pod}{%
-\paragraph{Pod`}\label{pod}}
+\paragraph{Pod}\label{pod}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/}{\passthrough{\lstinline!Pod!}}
 jest najmniejszą jednostką aplikacyjną~w \passthrough{\lstinline!k8s!}.
@@ -729,7 +662,7 @@ z \passthrough{\lstinline!Service!} na czas nieprzechodzenia
 \passthrough{\lstinline!readinessProbe!}.
 
 \hypertarget{replicaset}{%
-\paragraph{ReplicaSet`}\label{replicaset}}
+\paragraph{ReplicaSet}\label{replicaset}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/}{\passthrough{\lstinline!ReplicaSet!}}
 jest następcą \passthrough{\lstinline!ReplicaControllera!}, czyli
@@ -739,7 +672,7 @@ imperatywnym kontrolerem dbającym o działanie określonej liczby
 Jest to bardzo prosty kontroler i nie powinien być~używany bezpośrednio.
 
 \hypertarget{deployment}{%
-\paragraph{Deployment`}\label{deployment}}
+\paragraph{Deployment}\label{deployment}}
 
 \href{https://kubernetes.io/docs/concepts/workloads/controllers/deployment/}{\passthrough{\lstinline!Deployment!}}
 pozwala na deklaratywne aktualizacje \passthrough{\lstinline!Pod!}ów i
@@ -947,9 +880,8 @@ rozwijany.
 \hypertarget{openshift-ansible}{%
 \subsubsection{OpenShift Ansible}\label{openshift-ansible}}
 
-Konfiguracja \protect\hyperlink{openshift-origin}{OpenShift Origin}
-realizowana jest zestawem skryptów Ansible'owych rozwijanych jako
-projekt
+Konfiguracja \passthrough{\lstinline!OpenShift Origin!} realizowana jest
+zestawem skryptów Ansible'owych rozwijanych jako projekt
 \href{https://github.com/openshift/openshift-ansible}{openshift-ansible}.
 
 \hypertarget{canonical-distribution-of-kubernetes}{%
@@ -1059,8 +991,7 @@ OpenShift jest komercyjną~usługą typu \passthrough{\lstinline!PaaS!}
 
 Rdzeniem projektu jest open sourcowy
 \href{https://github.com/openshift/origin}{OpenShift Origin}
-konfigurowany przez \protect\hyperlink{openshift-ansible}{OpenShift
-Ansible}.
+konfigurowany przez OpenShift Ansible.
 
 Materiały źródłowe:
 
@@ -1207,7 +1138,7 @@ Dodatkowe materiały:
 
 \href{https://github.com/coreos/coreos-cloudinit}{\passthrough{\lstinline!coreos-cloudinit!}}
 jest częściową implementacją~standardu w języku Go udostępnioną przez
-twórców \protect\hyperlink{coreos}{\passthrough{\lstinline!CoreOS!}}
+twórców \passthrough{\lstinline!CoreOS!}
 \href{https://github.com/coreos/coreos-cloudinit/commit/3460ca4414fd91de66cd581d997bf453fd895b67}{Rok
 temu przestał być~rozwijany} i wychodzi z użytku.
 
@@ -1218,19 +1149,18 @@ coreos-cloudinit}\label{rancheros-coreos-cloudinit}}
 \href{http://rancher.com/docs/os/latest/en/configuration/}{\passthrough{\lstinline!Rancher cloud-init!}}
 jest jest
 \href{https://github.com/rancher/os/commit/e2ed97648ad63455743ebc16080a82ee47f8bb0c}{przejętym}
-\protect\hyperlink{coreos-cloudinit}{\passthrough{\lstinline!coreos-cloudinit!}}
-przez zespół
-\protect\hyperlink{rancheros}{\passthrough{\lstinline!RancherOS!}}.
+\passthrough{\lstinline!coreos-cloudinit!} przez zespół
+\passthrough{\lstinline!RancherOS!}.
 
 \hypertarget{clr-cloud-init}{%
 \paragraph{clr-cloud-init}\label{clr-cloud-init}}
 
 \href{https://clearlinux.org/blogs/announcing-clr-cloud-init}{\passthrough{\lstinline!clr-cloud-init!}}
 jest wewnętrzną~implementacją~standardu dla systemu
-\protect\hyperlink{clearlinux}{\passthrough{\lstinline!ClearLinux!}}.
-Powstała z chęci optymalizacji standardu pod
-\passthrough{\lstinline!ClearLinux!} oraz pozbycia się zależności
-referencyjnej implementacji od \passthrough{\lstinline!Pythona!}.
+\passthrough{\lstinline!ClearLinux!}. Powstała z chęci optymalizacji
+standardu pod \passthrough{\lstinline!ClearLinux!} oraz pozbycia się
+zależności referencyjnej implementacji od
+\passthrough{\lstinline!Pythona!}.
 
 \hypertarget{coreos}{%
 \section{CoreOS}\label{coreos}}
@@ -1251,15 +1181,14 @@ wykupiony przez Red Hat}.
 \subsubsection{Konfiguracja}\label{konfiguracja}}
 
 Konfiguracja obsługiwana jest przez
-\href{https://coreos.com/os/docs/latest/provisioning.html}{Container
-Linux Config} transpilowany do
-\href{https://coreos.com/ignition/docs/latest/}{Ignition}. Transpiler
-konwertuje ogólną konfigurację na przygotowaną~pod konkretne chmury
-(AWS, GCE, Azure itp.). Minusem jest brak dystrybucji transpilatora pod
-\passthrough{\lstinline!FreeBSD!}.
+\href{https://coreos.com/os/docs/latest/provisioning.html}{\passthrough{\lstinline!Container Linux Config!}}
+transpilowany do
+\href{https://coreos.com/ignition/docs/latest/}{\passthrough{\lstinline!Ignition!}}.
+Transpiler konwertuje ogólną konfigurację na przygotowaną~pod konkretne
+chmury (AWS, GCE, Azure itp.). Minusem jest brak dystrybucji
+transpilatora pod \passthrough{\lstinline!FreeBSD!}.
 
-Poprzednikiem~Ignition jest
-\protect\hyperlink{coreos-cloudinit}{coreos-cloudinit}.
+Poprzednikiem~Ignition jest \passthrough{\lstinline!coreos-cloudinit!}.
 
 \hypertarget{rancheros}{%
 \section{RancherOS}\label{rancheros}}
@@ -1296,12 +1225,11 @@ W związku z bugiem w systemie RancherOS
 cloud-config}, więc odrzucam ten system operacyjny w dalszych
 rozważaniach.
 
-\hypertarget{ros-config}{%
-\subsubsection{Konfiguracja}\label{ros-config}}
+\hypertarget{konfiguracja-1}{%
+\subsubsection{Konfiguracja}\label{konfiguracja-1}}
 
-\passthrough{\lstinline!RancherOS!} jest konfigurowany przez
-\protect\hyperlink{rancheros-+-coreos-cloudinit}{własną~wersję}
-coreos-cloudinit.
+Narzędzie konfigurujące \passthrough{\lstinline!RancherOS!} zostało
+przejęte \passthrough{\lstinline!coreos-cloudinit!}.
 
 Znaczną przewagą wobec oryginału jest możliwość~sekwencyjnego
 uruchamiania dowolnej liczby plików konfiguracyjnych.
@@ -2783,10 +2711,59 @@ jedynie wzmianki o nich bez dogłębnej analizy.
 Nie udało mi się przeprowadzić~testów wydajnościowych klastra ze względu
 na brak czasu.
 
-\appendix
+\hypertarget{lista-alternatyw-kubernetes}{%
+\section{Lista alternatyw
+Kubernetes}\label{lista-alternatyw-kubernetes}}
 
-\hypertarget{przypisy}{%
-\chapter{Przypisy}\label{przypisy}}
+\passthrough{\lstinline!Kubernetes!} oferuje duże możliwości w stosunku
+do progu wejścia w system, ale istnieją również inne rozwiązania, o
+których warto wspomnieć.
+
+\hypertarget{fleet}{%
+\paragraph{Fleet}\label{fleet}}
+
+jest nakładką~na \passthrough{\lstinline!systemd!} realizującą
+rozproszony system inicjalizacji systemów operacyjnych
+\passthrough{\lstinline!CoreOS!}. Kontenery są~uruchamiane i zarządzane
+przez \passthrough{\lstinline!systemd!}, a stan przechowywany jest w
+\passthrough{\lstinline!etcd!}.
+
+Aktualnie projekt kończy swój żywot na rzecz
+\passthrough{\lstinline!k8s!} i w dniu 1 lutego 2018, został wycofany z
+domyślnej dystrybucji \passthrough{\lstinline!CoreOS!}. Nadal będzie
+dostępny w rejestrze pakietów \passthrough{\lstinline!CoreOS!}.
+
+\hypertarget{docker-swarm}{%
+\paragraph{Docker Swarm}\label{docker-swarm}}
+
+jest rozwiązaniem zarządzania kontenerami zintegrowanym z systemem
+\passthrough{\lstinline!Docker!}. Główną zaletą jest niski próg wejścia
+i prostota, a wadą są małe możliwości w stosunku do innych rozwiązań.
+
+\hypertarget{nomad}{%
+\paragraph{Nomad}\label{nomad}}
+
+jest narzędziem do zarządzania siecią komputerową, które również oferuje
+zarządzanie kontenerami.
+
+Przy jego tworzeniu twórcy kierują się filozofią
+\passthrough{\lstinline!Unix!}. W związku z tym
+\passthrough{\lstinline!Nomad!} jest prosty w obsłudze, wyspecjalizowany
+i rozszerzalny. Zwykle działa w tandemie z innymi produktami firmy
+``HashiCorp'' jak \passthrough{\lstinline!Consul!} i
+\passthrough{\lstinline!Vault!}.
+
+\hypertarget{mesos}{%
+\paragraph{Mesos}\label{mesos}}
+
+jest najbardziej zaawansowanym i najefektywniej skalującym się
+rozwiązaniem zarządzania kontenerami. Jest również najbardziej
+skomplikowanym i trudnym w zarządzaniu rozwiązaniem. W związku z tym
+znajduje swoje zastosowanie tylko w największych sieciach komputerowych
+o zasięgu globalnym. \appendix
+
+\hypertarget{wykaz-odnoux15bnikuxf3w}{%
+\chapter{Wykaz odnośników}\label{wykaz-odnoux15bnikuxf3w}}
 
 \theendnotes
 

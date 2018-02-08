@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pdf" type="BashConfigurationType" factoryName="Bash" activateToolWindowBeforeRun="false" singleton="true">
+  <configuration default="false" name="pdf" type="BashConfigurationType" factoryName="Bash" singleton="true">
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="INTERPRETER_PATH" value="/sbin/bash" />
     <option name="WORKING_DIRECTORY" value="" />

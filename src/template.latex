@@ -103,10 +103,10 @@ $endif$
 \raggedbottom
 
 % Przypisy na końcu dokumentu
-\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+\renewcommand{\href}[2]{#2\endnote{\url{#1}}}
 \usepackage{endnotes}
 \usepackage{hyperendnotes}
-\let\footnote=\endnote
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 % Wyczyść nagłówek (wykorzystamy nagłówek z markdowna)
 \def\enoteheading{}
 
