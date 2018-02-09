@@ -1,21 +1,29 @@
 
 # Podsumowanie
 
-W niniejszej pracy omówiono zagadnienia konfiguracji klastra Kubernetes.
-Przedstawione zostały  
+W niniejszej pracy omówiono zagadnienie konfiguracji klastra `Kubernetes`.
+Przedstawione zostały elementarne pojęcia z zakresu konfiguracji i korzystania
+z klastra `k8s` bazowanego na maszynach bezdyskowych. Bezpośrednim rezultatem
+pracy są skrypty implementujące klaster w sieci uczelnianej oraz umożliwiające
+prowadzenie zajęć demonstracyjnych ze studentami.
 
-Główne założenia pracy inżynierskiej zostały spełnione. Wyjaśniłem dużą ilość
-zagadnień związanych z `k8s` oraz oddałem do użytku skrypty konfigurujące
-klaster `k8s` wraz z prostym w obsłudze dodawaniem i usuwaniem jego
-użytkowników.
+W związku z aktywnym rozwojem projektu `k8s` stworzenie publikacji
+wyczerpującej temat nie jest możliwe. Wiele obiecujących narzędzi pojawiało się
+i znacznie zmieniało w trakcie pisania niniejszej pracy.
+Nie zostały one należycie opisane lub nie nadawały się jeszcze do użytku w
+momencie jej zakończenia. Projekty te mogłyby realizować alternatywne
+implementacje poruszonych w tej pracy zagadnień.
 
-W trakcie pisania pracy temat okazał się zbyt obszerny, żeby go kompletnie i
-wyczerpująco opisać w pracy inżynierskiej. W związku z tym musiałem wybrać
-tylko najważniejsze informacje i przekazać je w możliwie najkrótszej formie.
+Ze względu na ograniczenia czasowe praca nie poruszyła zaawansowanych zagadnień
+`k8s` oraz nie zaimplementowała żadnych mechanizmów bazujących na zewnętrznych
+usługach. Przykładami zagadnień, które mogłyby zostać w przyszłości opisane, są:
 
-Projekt jest bardzo aktywnie rozwijany, więc wiele informacji wyszło na jaw
-w końcowych etapach pisania pracy. W samej pracy pojawiły się jedynie
-wzmianki o nich bez dogłębnej analizy.
+- integracja z sieciowymi systemami plików w celu utrwalenia danych,
+- bezobsługowe dołączanie nowych węzłów do klastra `k8s` działającego w sieci
+  uczelnianiej,
+- opracowanie zajęć laboratoryjnych bazowanych na `Kubernetes`.
 
-Nie udało mi się przeprowadzić testów wydajnościowych klastra ze względu na
-brak czasu.
+Przedstawiony we wstępie cel został osiągnięty, a wysiłek włożony w realizację
+pracy zaowocował znacznym zwiększeniem kompetencji autora związanych z
+tematyką konteneryzacji i `Kubernetes`. Zdobyta wiedza jest bezcenną wartością
+na rynku pracy.
