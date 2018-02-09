@@ -1,5 +1,8 @@
 
-# Rezultaty i wnioski
+# Podsumowanie
+
+W niniejszej pracy omówiono zagadnienia konfiguracji klastra Kubernetes.
+Przedstawione zostały  
 
 Główne założenia pracy inżynierskiej zostały spełnione. Wyjaśniłem dużą ilość
 zagadnień związanych z `k8s` oraz oddałem do użytku skrypty konfigurujące

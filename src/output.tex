@@ -843,6 +843,33 @@ Kubernetes}\label{zarzux105dzanie-klastrem-kubernetes}}
 Ze względu na dużą liczbę dostępnych narzędzi konfiguracyjnych
 wymienione zostały tylko wybrane.
 
+\hypertarget{kubectl}{%
+\paragraph{\texorpdfstring{\texttt{kubectl}}{kubectl}}\label{kubectl}}
+
+jest podstawowym narzędziem prowadzącym interakcję z klastrem, łączy
+się~do serwera API i modyfikuje stan klastra.
+
+\hypertarget{helm}{%
+\paragraph{\texorpdfstring{\texttt{Helm}}{Helm}}\label{helm}}
+
+jest menadżerem pakietów dla \passthrough{\lstinline!k8s!}. Jego głównym
+zadaniami są: standaryzacja, automatyzacja i ułatwienie instalacji
+aplikacji w \passthrough{\lstinline!k8s!}. Składa się z trzech części:
+
+\begin{itemize}
+\tightlist
+\item
+  programu \passthrough{\lstinline!helm!} uruchamianego lokalnie i
+  korzystającego z danych dostępowych \passthrough{\lstinline!kubectl!},
+\item
+  aplikacji serwerowej \passthrough{\lstinline!Tiller!}, z którą
+  \passthrough{\lstinline!helm!} prowadzi interakcje,
+\item
+  pakietów \passthrough{\lstinline!Charts!} i ich repozytoriów,
+  domyślnie jest to
+  \href{https://github.com/kubernetes/charts}{\passthrough{\lstinline!kubernetes/charts!}},
+\end{itemize}
+
 \hypertarget{narzux119dzia-ograniczone-do-linii-komend}{%
 \subsubsection{Narzędzia ograniczone do linii
 komend}\label{narzux119dzia-ograniczone-do-linii-komend}}
@@ -1259,16 +1286,15 @@ Rozbieżność reszty parametrów była pomijalnie mała.
 Kubernetes}\label{praktyczne-rozeznanie-w-narzux119dziach-zarzux105dzania-klastrem-kubernetes}}
 
 W tym rozdziale przeprowadzę czysto praktyczny przegląd wybranych
-rozwiązań.
+rozwiązań na maszynach wirtualnych \passthrough{\lstinline!VirtualBox!}
+tak jak miało to miejsce w przeglądzie systemów operacyjnych.
 
 \hypertarget{kubespray-cli}{%
 \subsubsection{kubespray-cli}\label{kubespray-cli}}
 
-W trakcie testowania szybko okazało się, że
-\passthrough{\lstinline!kubespray-cli!} nie jest aktywnie rozwiązane i
-stało się niekompatybilne z samym projektem
-\passthrough{\lstinline!kubespray!}, a przez to niemożliwe do
-wykorzystania. W związku z tym uznaję
+W trakcie testowania szybko okazało się, że narzędzie nie jest aktywnie
+rozwijane i stało się niekompatybilne z samym projektem
+\passthrough{\lstinline!kubespray!}. W związku z tym uznaję
 \passthrough{\lstinline!kubespray-cli!} za nie mające zastosowania w tej
 pracy inżynierskiej.
 
@@ -1293,10 +1319,11 @@ zmuszony odrzucić to rozwiązanie.
 
 Testy przeprowadziłem na maszynach wirtualnych
 \passthrough{\lstinline!VirtualBox!} w trybie bezdyskowym systemu
-operacyjnego CoreOS z wykorzystaniem repozytorium
+operacyjnego \passthrough{\lstinline!CoreOS!} z wykorzystaniem
+repozytorium
 \href{https://github.com/nazarewk/ipxe-boot}{\passthrough{\lstinline!ipxe-boot!}}.
 
-Węzęł zarządzający uruchomiłem poniższą komendą:
+Węzeł zarządzający uruchomiłem poniższą komendą:
 
 \begin{lstlisting}[language=bash]
 docker run --rm --name rancher -d -p 8080:8080 rancher/server:v2.0.0-alpha10
@@ -1304,10 +1331,9 @@ docker run --rm --name rancher -d -p 8080:8080 rancher/server:v2.0.0-alpha10
 
 Pierwszym krokiem było zalogowanie się~do panelu administracyjnego
 Ranchera dostępnego na porcie 8080 lokalnej maszyny i uzyskanie komendy
-konfigurującej węzeł roboczy.
-
-Następnie w celu dodania węzła do klastra wystarczyło wywołać uzyskaną
-komendę na dowolnej liczbie maszyn wirtualnych:
+konfigurującej węzeł roboczy. Kolejnym i ostatnim krokiem konfiguracji
+było uruchomienie uzyskanej komendy na dowolnej liczbie węzłów
+roboczych:
 
 \begin{lstlisting}[language=bash]
 sudo docker run --rm --privileged \
@@ -1333,22 +1359,22 @@ Environment}.
 \subsubsection{Wnioski}\label{wnioski}}
 
 Rancher na chwilę obecną (styczeń 2018 roku) jest bardzo wygodnym, ale
-również niestabilnym rozwiązaniem.
-
-Ze względu na brak stabilności odrzucam Ranchera jako rozwiązanie
-problemu uruchamiania klastra \passthrough{\lstinline!k8s!}.
+również niestabilnym rozwiązaniem. Ze tego względu odrzucam Ranchera
+jako rozwiązanie problemu uruchamiania klastra
+\passthrough{\lstinline!k8s!}.
 
 \hypertarget{openshift-origin}{%
 \section{OpenShift Origin}\label{openshift-origin}}
 
 Według
 \href{https://docs.openshift.org/latest/getting_started/administrators.html}{dokumentacji}
-są~dwie metody uruchamiania serwera, w
-\passthrough{\lstinline!Dockerze!} i bezpośrednio na systemie
-\passthrough{\lstinline!Linux!}.
+istnieją~dwie metody uruchamiania serwera, w Dockerze i bezpośrednio na
+systemie Linux.
+
+Zdecydowałem się~uruchomić~system w Dockerze ze względu na uniwersalność
+rozwiązania. Komendą~uruchamiającą~serwer był:
 
 \begin{lstlisting}[language=bash]
-# https://docs.openshift.org/latest/getting_started/administrators.html#installation-methods
 docker run -d --name "origin" \
   --privileged --pid=host --net=host \
   -v /:/rootfs:ro \
@@ -1360,80 +1386,53 @@ docker run -d --name "origin" \
   openshift/origin start --public-master
 \end{lstlisting}
 
-Dodałem opcję \passthrough{\lstinline!--public-master!} aby uruchomić
-interfejs graficzny.
+W porównaniu do przykładu z dokumentacji dodany został~argument
+\passthrough{\lstinline!--public-master!} w celu uruchomienia interfejsu
+graficznego.
 
-\hypertarget{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}{%
-\subsubsection{Korzystanie ze sterownika systemd zamiast domyślnego
-cgroupfs}\label{korzystanie-ze-sterownika-systemd-zamiast-domyux15blnego-cgroupfs}}
+\hypertarget{sterowniki-cgroup}{%
+\subsubsection{\texorpdfstring{Sterowniki
+\texttt{cgroup}}{Sterowniki cgroup}}\label{sterowniki-cgroup}}
 
 Większość dystrybucji \passthrough{\lstinline!Linuxa!} (np. Arch,
-CoreOS, Fedora, Debian) domyślnie nie konfiguruje sterownika cgroup
-Dockera i korzysta z domyślnego \passthrough{\lstinline!cgroupfs!}.
+CoreOS, Fedora, Debian) nie konfiguruje sterownika
+\passthrough{\lstinline!cgroup!} Dockera i korzysta z domyślnego
+\passthrough{\lstinline!cgroupfs!}, wersję~sterownika można zweryfikować
+komendą~\passthrough{\lstinline!docker info | grep -i cgroup!}.
 
-Typ sterownika cgroup można wyświetlić komendą
-\passthrough{\lstinline!docker info!}:
-
-\begin{lstlisting}
-$ docker info | grep -i cgroup
-Cgroup Driver: systemd
-\end{lstlisting}
-
-OpenShift natomiast konfiguruje \passthrough{\lstinline!k8s!} do
-korzystania z \passthrough{\lstinline!cgroup!} przez
-\passthrough{\lstinline!systemd!}. Kubelet przy starcie weryfikuje
-zgodność silników cgroup, co
-\href{https://github.com/openshift/origin/issues/14766}{skutkuje
-niekompatybilnością z domyślną konfiguracją Dockera}, czyli poniższym
-błędem:
+OpenShift korzysta ze sterownika \passthrough{\lstinline!systemd!}, a
+\passthrough{\lstinline!kubelet!} w trakcie rozruchu weryfikuje
+zgodność~sterowników, co skutkuje
+\href{https://github.com/openshift/origin/issues/14766}{niekompatybilnością
+z domyślną konfiguracją Dockera}, objawiającą się~poniższym błędem:
 
 \begin{lstlisting}
 F0120 19:18:58.708005   25376 node.go:269] failed to run Kubelet: failed to create kubelet: misconfiguration: kubelet cgroup driver: "systemd" is different from docker cgroup driver: "cgroupfs"
 \end{lstlisting}
 
-Problem można rozwiązać dopisując
+Problem można rozwiązać dodając argumenty
 \passthrough{\lstinline!--exec-opt native.cgroupdriver=systemd!} do
-linii komend \passthrough{\lstinline!dockerd!} (zwykle w pliku
-\passthrough{\lstinline!docker.service!}). Dla przykładu w
-\passthrough{\lstinline!Arch Linuksie!} zmiana wygląda następująco:
+komendy uruchamiającej główny proces Dockera.
 
-\begin{lstlisting}
-$ cp /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
-$ vim /etc/systemd/system/docker.service
-$ diff /usr/lib/systemd/system/docker.service /etc/systemd/system/docker.service
-13c13
-< ExecStart=/usr/bin/dockerd -H fd://
----
-> ExecStart=/usr/bin/dockerd -H fd:// --exec-opt native.cgroupdriver=systemd
-\end{lstlisting}
+\hypertarget{pruxf3ba-uruchomienia-serwera-na-systemie-arch-linux}{%
+\subsubsection{Próba uruchomienia serwera na systemie Arch
+Linux}\label{pruxf3ba-uruchomienia-serwera-na-systemie-arch-linux}}
 
-\hypertarget{pruxf3ba-uruchomienia-serwera-na-arch-linux}{%
-\subsubsection{Próba uruchomienia serwera na Arch
-Linux}\label{pruxf3ba-uruchomienia-serwera-na-arch-linux}}
-
-Po wystartowaniu serwera zgodnie z dokumentacją~OpenShift Origin i
-naprawieniu błędu z konfiguracją~cgroup przeszedłem do kolejnego kroku
-\href{https://docs.openshift.org/latest/getting_started/administrators.html\#try-it-out}{Try
-It Out}:
+Po rozwiązniu powyższego problemu i udanym uruchomieniu ww. komendy
+rozruchowej przeszedłem do dalszych etapów instalacji zgodnie z
+dokumentacją:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Uruchomienie shella na serwerze:
+  Uruchomiłem linię komend OpenShift i zalogowałem się jako użytkownik
+  testowy:
 \end{enumerate}
 
 \begin{lstlisting}
 $ docker exec -it origin bash
 \end{lstlisting}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Logowanie jako testowy użytkownik:
-\end{enumerate}
 
 \begin{lstlisting}
 $ oc login
@@ -1443,10 +1442,10 @@ Password: test
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
+\setcounter{enumi}{1}
 \tightlist
 \item
-  Stworzenie nowego projektu:
+  Stworzyłem nowy projekt:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -1455,10 +1454,10 @@ $ oc new-project test
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{3}
+\setcounter{enumi}{2}
 \tightlist
 \item
-  Pobranie aplikacji z Docker Huba:
+  Pobrałem przykładową aplikację:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -1467,23 +1466,17 @@ $ oc tag --source=docker openshift/deployment-example:v1 deployment-example:late
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{4}
+\setcounter{enumi}{3}
 \tightlist
 \item
-  Wystartowanie aplikacji:
+  Uruchomiłem instancję aplikacji:
 \end{enumerate}
 
 \begin{lstlisting}
 $ oc new-app deployment-example:latest
 \end{lstlisting}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{5}
-\tightlist
-\item
-  Odczekanie aż~aplikacja się uruchomi:
-\end{enumerate}
+Uruchomienie przykładowej zakończyło się poniższym błędem:
 
 \begin{lstlisting}
 $ watch -n 5 oc status
@@ -1494,15 +1487,17 @@ svc/deployment-example - 172.30.52.184:8080
     deployment #1 failed 1 minute ago: config change
 \end{lstlisting}
 
-Niestety nie udało się przejść kroku 5, więc próba uruchomienia
-OpenShift Origin na Arch Linux zakończyła się niepowodzeniem.
+Próba uruchomienia OpenShift Origin na Arch Linux zakończyła się
+niepowodzeniem.
 
 \hypertarget{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualbox}{%
 \subsubsection{Próba uruchomienia serwera na Fedora Atomic Host w
 VirtualBox}\label{pruxf3ba-uruchomienia-serwera-na-fedora-atomic-host-w-virtualbox}}
 
-Maszynę z najnowszym \passthrough{\lstinline!Fedora Atomic Host!}
-uruchomiłem za pomocą poniższego \passthrough{\lstinline!Vagrantfile!}:
+Następnie spróbowałem uruchomić OpenShift Origin na oficjalnie
+wspieranym systemie operacyjnym
+\passthrough{\lstinline!Fedora Atomic Host!} z użyciem Vagranta w
+poniższej konfiguracji \passthrough{\lstinline!Vagrantfile!}:
 
 \begin{lstlisting}[language=Ruby]
 # -*- mode: ruby -*-
@@ -1522,29 +1517,19 @@ Vagrant.configure("2") do |config|
 end
 \end{lstlisting}
 
-\begin{lstlisting}
-$ vagrant up
-$ vagrant ssh
-$ sudo docker run -d --name "origin" \
-  --privileged --pid=host --net=host \
-  -v /:/rootfs:ro \
-  -v /var/run:/var/run:rw \
-  -v /sys:/sys \
-  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-  -v /var/lib/docker:/var/lib/docker:rw \
-  -v /var/lib/origin/openshift.local.volumes:/var/lib/origin/openshift.local.volumes:rslave \
-  openshift/origin start
-\end{lstlisting}
-
-Kroki 1-5 były analogiczne do uruchamiania na
-\passthrough{\lstinline!Arch Linux!}, następnie:
+Maszynę z lokalnym dyskiem uruchomiłem komendami
+\passthrough{\lstinline!vagrant up!}, a następnie uzyskałem do niej
+dostęp komendą~\passthrough{\lstinline!vagrant ssh!}. Kroki 1-4 były
+analogiczne do uruchamiania na \passthrough{\lstinline!Arch Linux!}, po
+czym przeszedłem do kolejnych kroków z dokumentacji:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{5}
+\setcounter{enumi}{4}
 \tightlist
 \item
-  Odczekanie aż~aplikacja się uruchomi i weryfikacja działania:
+  Odczekałem aż przykładowa aplikacja się uruchomi i zweryfikowałem jej
+  działanie:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -1554,21 +1539,28 @@ In project test on server https://10.0.2.15:8443
 svc/deployment-example - 172.30.221.105:8080
   dc/deployment-example deploys istag/deployment-example:latest 
     deployment #1 deployed 3 seconds ago - 1 pod
+\end{lstlisting}
+
+\begin{lstlisting}
 $ curl http://172.30.221.105:8080 | grep v1
 <div class="box"><h1>v1</h1><h2></h2></div>
 \end{lstlisting}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{6}
+\setcounter{enumi}{5}
 \tightlist
 \item
-  Aktualizacja, przebudowanie i weryfikacja działania aplikacji:
+  Przeprowadziłem aktualizację~aplikacji i ponownie zweryfikowałem jej
+  działanie:
 \end{enumerate}
 
 \begin{lstlisting}
 $ oc tag --source=docker openshift/deployment-example:v2 deployment-example:latest
 Tag deployment-example:latest set to openshift/deployment-example:v2.
+\end{lstlisting}
+
+\begin{lstlisting}
 $ watch -n 5 oc status
 In project test on server https://10.0.2.15:8443
 
@@ -1576,16 +1568,20 @@ svc/deployment-example - 172.30.221.105:8080
   dc/deployment-example deploys istag/deployment-example:latest 
     deployment #2 running for 8 seconds - 1 pod
     deployment #1 deployed 8 minutes ago - 1 pod
+\end{lstlisting}
+
+\begin{lstlisting}
 $ curl -s http://172.30.221.105:8080 | grep v2
 <div class="box"><h1>v2</h1><h2></h2></div>
 \end{lstlisting}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{7}
+\setcounter{enumi}{6}
 \tightlist
 \item
-  Nie udało się uzyskać dostępu do panelu administracyjnego OpenShift:
+  Próba dostania się~do graficznego panelu administracyjnego zakończyła
+  się niepowodzeniem:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -1594,16 +1590,15 @@ missing service (service "webconsole" not found)
 missing route (service "webconsole" not found)
 \end{lstlisting}
 
-W internecie nie znalazłem żadnych informacji na temat tego błędu.
-Próbowałem również uzyskać pomoc na kanale
-\passthrough{\lstinline!#openshift!} na
-\passthrough{\lstinline!irc.freenode.net!}, ale bez skutku.
+Nie znalazłem rozwiązania powyższego problemu w internecie, ani na
+oficjalnym kanale \passthrough{\lstinline!#openshift!} na
+\passthrough{\lstinline!irc.freenode.net!}.
 
 \hypertarget{wnioski-1}{%
 \subsubsection{Wnioski}\label{wnioski-1}}
 
 Panel administracyjny klastra \passthrough{\lstinline!OpenShift Origin!}
-jest jedyną~znaczącą przewagą nad \passthrough{\lstinline!Kubesprayem!}.
+jest jedyną~znaczącą przewagą nad \passthrough{\lstinline!kubespray!}.
 Reszta zarządzania klastrem odbywa się również za pomocą repozytorium
 skryptów Ansibla
 (\href{https://docs.openshift.com/enterprise/3.0/admin_guide/manage_nodes.html\#adding-nodes}{w
@@ -1616,425 +1611,319 @@ to narzędzie.
 \hypertarget{kubespray-1}{%
 \section{kubespray}\label{kubespray-1}}
 
-Cały kod znajduje się w moim repozytorium
+Kroki podjęte w celu przetestowania narzędzia
+\passthrough{\lstinline!kubespray!} zostały zawarte w skrypcie
+\passthrough{\lstinline!bin/setup-cluster!} z repozytorium
 \href{https://github.com/nazarewk/kubernetes-cluster}{kubernetes-cluster}.
+Pełny kod źródłowy został zawarty w ``Dodatku B''.
 
-\hypertarget{kubernetes-dashboard-1}{%
-\subsubsection{Kubernetes Dashboard}\label{kubernetes-dashboard-1}}
+W trakcie testowania narzędzia \passthrough{\lstinline!kubespray!} nie
+napotkałem żadnych problemów, a szczegóły konfiguracji zawarłem jedynie
+w kolejnych rozdziałach.
 
-Dostęp do Dashboardu najprościej można uzyskać poprzez:
+\hypertarget{wstux119pna-implementacja-kubespray-w-laboratorium-225}{%
+\chapter{Wstępna implementacja kubespray w laboratorium
+225}\label{wstux119pna-implementacja-kubespray-w-laboratorium-225}}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \href{https://github.com/kubernetes/dashboard/wiki/Access-control\#admin-privileges}{nadanie
-  wszystkich uprawnień roli
-  \passthrough{\lstinline!kubernetes-dashboard!}},
-\item
-  Wejście pod adres
-  \passthrough{\lstinline"http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"}
-  ,
-\item
-  Kliknięcie skip.
-\end{enumerate}
+Po wybraniu narzędzia \passthrough{\lstinline!kubespray!} przystąpiłem
+do jego uruchomienia w laboratorium 225 w celu dopracowania ostatecznej
+konfiguracji.
 
-Materiały źródłowe:
+Repozytorium \passthrough{\lstinline!kubernetes-cluster!} pobrałem do
+folderu
+\passthrough{\lstinline!/home/stud/nazarewk/kubernetes/kubernetes-cluster!}
+na maszynie \passthrough{\lstinline!ldap!}.
 
-\begin{itemize}
-\tightlist
-\item
-  https://github.com/kubernetes/dashboard/wiki/Access-control
-\item
-  https://github.com/kubernetes-incubator/kubespray/blob/master/docs/getting-started.md\#accessing-kubernetes-dashboard
-\end{itemize}
+Konieczne było przygotowanie dwóch plików konfigurujących rozruch
+CoreOS.
 
-\hypertarget{napotkane-bux142ux119dy-1}{%
-\subsubsection{Napotkane błędy}\label{napotkane-bux142ux119dy-1}}
+\hypertarget{zetiswwwbootcoreos.ipxe}{%
+\paragraph{\texorpdfstring{\texttt{zetis/WWW/boot/coreos.ipxe}}{zetis/WWW/boot/coreos.ipxe}}\label{zetiswwwbootcoreos.ipxe}}
 
-Błąd przy ustawieniu
-\passthrough{\lstinline!loadbalancer\_apiserver.address!} na
-\passthrough{\lstinline!0.0.0.0!}:
+jest plikiem konfiguracyjnym programu rozruchowego iPXE. Został
+udostępniony pod adresem
+\passthrough{\lstinline!http://vol/\~nazarewk/boot/coreos.ipxe!},
+zawierał:
 
 \begin{lstlisting}
-TASK [kubernetes-apps/cluster_roles : Apply workaround to allow all nodes with cert O=system:nodes to register] ****
-Wednesday 17 January 2018  22:22:59 +0100 (0:00:00.626)       0:08:31.946 *****
-fatal: [node2]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client"}
-fatal: [node1]: FAILED! => {"changed": false, "msg": "error running kubectl (/opt/bin/kubectl apply --force --filename=/etc/kubernetes/node-crb.yml) command (rc=1): Unable to connect to the server: http: server gave HTTP response to HTTPS client"}
+#!ipxe
+set http http://vol
+set ftp http://ftp/pub/
+
+set base-url ${ftp}/Linux/CoreOS/alpha
+set ignition ${http}/~nazarewk/boot/coreos.ign
+
+set opts ${opts} coreos.autologin
+set opts ${opts} coreos.first_boot=1 coreos.config.url=${ignition}
+set opts ${opts} systemd.journald.max_level_console=debug
+kernel ${base-url}/coreos_production_pxe.vmlinuz ${opts}
+initrd ${base-url}/coreos_production_pxe_image.cpio.gz
+
+boot
 \end{lstlisting}
 
-\hypertarget{uruchamianie-kubernetesa-w-laboratorium-225}{%
-\chapter{Uruchamianie Kubernetesa w laboratorium
-225}\label{uruchamianie-kubernetesa-w-laboratorium-225}}
+\hypertarget{zetiswwwbootcoreos.yml}{%
+\paragraph{\texorpdfstring{\texttt{zetis/WWW/boot/coreos.yml}}{zetis/WWW/boot/coreos.yml}}\label{zetiswwwbootcoreos.yml}}
 
-\hypertarget{przygotowanie-wux119zux142uxf3w-coreos}{%
-\section{Przygotowanie węzłów
-CoreOS}\label{przygotowanie-wux119zux142uxf3w-coreos}}
+jest plikiem Container Linux Config, z którego skryptem
+\passthrough{\lstinline!bin/render-coreos!} generowany jest docelowy
+plik konfiguracyjny Ignition
+\passthrough{\lstinline!zetis/WWW/boot/coreos.ign!}.
 
-Na wstępie przygotowałem~\passthrough{\lstinline!coreos.ipxe!} i
-\passthrough{\lstinline!coreos.ign!} do rozruchu i bezhasłowego dostępu.
-
-Po pierwsze stworzyłem Container Linux Config (plik
-\passthrough{\lstinline!coreos.yml!}) zawierający:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Tworzenie użytkownika \passthrough{\lstinline!nazarewk!},
-\item
-  Nadanie mu praw do sudo i dockera (grupy
-  \passthrough{\lstinline!sudo!} i \passthrough{\lstinline!docker!}),
-\item
-  Dodanie dwóch kluczy: wewnętrznego uczelnianego i mojego używanego na
-  codzień w celu zdalnego dostępu.
-\end{enumerate}
+Przykładem pliku \passthrough{\lstinline!coreos.yml!} tworzącego
+użytkownika \passthrough{\lstinline!admin!} w grupach
+\passthrough{\lstinline!docker!} i \passthrough{\lstinline!sudo!} oraz
+dodającego klucz dostępowy SSH jest:
 
 \begin{lstlisting}
 passwd:
   users:
-  - name: nazarewk
+  - name: admin
     groups: [sudo, docker]
     ssh_authorized_keys:
     - ssh-rsa <klucz RSA> nazarewk
-    - ssh-rsa <klucz RSA> nazarewk@ldap.iem.pw.edu.pl
 \end{lstlisting}
 
-Następnie skompilowałem go do formatu Ignition narzędziem
-\passthrough{\lstinline!ct!}, skryptem
-\passthrough{\lstinline!bin/render-coreos!} z wykazu.
+Na podstawie powyższego pliku skrypt
+\passthrough{\lstinline!bin/render-coreos!} generuje następujący plik
+\passthrough{\lstinline!coreos.ign!} w formacie JSON:
 
-Przygotowałem skrypt \passthrough{\lstinline!IPXE!} do uruchamiania
-CoreOS \passthrough{\lstinline!zetis/WWW/boot/coreos.ipxe!}.
+\begin{lstlisting}
+{
+  "ignition": {
+    "config": {},
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {},
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "sudo",
+          "docker"
+        ],
+        "name": "admin",
+        "sshAuthorizedKeys": [
+          "ssh-rsa <klucz RSA> nazarewk"
+        ]
+      }
+    ]
+  },
+  "storage": {},
+  "systemd": {}
+}
+\end{lstlisting}
 
-Umieściłem skrypt w
-\passthrough{\lstinline!/home/stud/nazarewk/WWW/boot!} i wskazałem go
-maszynom, które będą węzłami:
+Plik \passthrough{\lstinline!coreos.ign!} został udostępniony pod
+adresem \passthrough{\lstinline!http://vol/\~nazarewk/boot/coreos.ign!}.
+
+Po przygotowaniu powyższych plików konieczne było wskazanie ich maszynom
+wywołując poniższą~komendę na maszynie \passthrough{\lstinline!volt!}:
 
 \begin{lstlisting}[language=bash]
 sudo lab 's4 s5 s6 s8 s9' boot http://vol/~nazarewk/boot/coreos.ipxe 
 \end{lstlisting}
 
-\hypertarget{przeszkody-zwiux105zane-z-uruchamianiem-skryptuxf3w-na-uczelnianym-ubuntu}{%
-\section{Przeszkody związane z uruchamianiem skryptów na uczelnianym
-Ubuntu}\label{przeszkody-zwiux105zane-z-uruchamianiem-skryptuxf3w-na-uczelnianym-ubuntu}}
+\hypertarget{konfiguracja-kubespray}{%
+\section{Konfiguracja kubespray}\label{konfiguracja-kubespray}}
 
-\hypertarget{brak-virtualenva}{%
-\subsubsection{Brak virtualenv'a}\label{brak-virtualenva}}
+Konfiguracja \passthrough{\lstinline!kubespray!} ogranicza się~do
+skopiowania przykładowego inwentarza i edycji plików
+\passthrough{\lstinline!inventory.cfg!} oraz
+\passthrough{\lstinline!group\_vars/all.yml!}.
 
-Moje skrypty nie przewidywały braku
-\passthrough{\lstinline!virtualenva!}, więc musiałem ręcznie
-zainstalować go komendą
-\passthrough{\lstinline!apt-get install virtualenv!}. Dodałem ten krok
-do skryptu \passthrough{\lstinline!setup-packages!}.
+\hypertarget{inventory.cfg}{%
+\paragraph{\texorpdfstring{\texttt{inventory.cfg}}{inventory.cfg}}\label{inventory.cfg}}
 
-\hypertarget{klonowanie-repozytorium-bez-logowania}{%
-\subsubsection{Klonowanie repozytorium bez
-logowania}\label{klonowanie-repozytorium-bez-logowania}}
+jest plikiem INI reprezentującym topologię~klastra
+\passthrough{\lstinline!k8s!}. Składa się~on z następujących sekcji:
+
+\begin{itemize}
+\tightlist
+\item
+  definicji~wszystkich węzłów klastra w sekcji
+  \passthrough{\lstinline![all]!},
+\item
+  węzłów na których uruchomiony jest klaster
+  \passthrough{\lstinline!etcd!} w sekcji
+  \passthrough{\lstinline![etcd]!},
+\item
+  węzłów zarządzających w sekcji
+  \passthrough{\lstinline![kube-master]!},
+\item
+  węzłów roboczych w sekcji \passthrough{\lstinline![kube-node]!},
+\item
+  połączenia sekcji \passthrough{\lstinline![kube-master]!} i
+  \passthrough{\lstinline![kube-node]!} w
+  sekcję~\passthrough{\lstinline![k8s-cluster]!}.
+\end{itemize}
+
+Kompletnym przykładem pliku dla laboratorium 225 jest:
+
+\begin{lstlisting}
+[all]
+s4  ansible_host=s4 ip=10.146.225.4 ansible_python_interpreter=/opt/bin/python
+s5  ansible_host=s5 ip=10.146.225.5 ansible_python_interpreter=/opt/bin/python
+s6  ansible_host=s6 ip=10.146.225.6 ansible_python_interpreter=/opt/bin/python
+;s8  ansible_host=s8 ip=10.146.225.8 ansible_python_interpreter=/opt/bin/python
+;s9  ansible_host=s9 ip=10.146.225.9 ansible_python_interpreter=/opt/bin/python
+
+[kube-master]
+s4
+
+[kube-node]
+s5
+s6 
+
+[etcd]
+s4
+
+[k8s-cluster:children]
+kube-node
+kube-master
+\end{lstlisting}
+
+\hypertarget{group_varsall.yml}{%
+\paragraph{\texorpdfstring{\texttt{group\_vars/all.yml}}{group\_vars/all.yml}}\label{group_varsall.yml}}
+
+jest plikiem YAML zawierającym parametry wywołania
+\passthrough{\lstinline!kubespray!} wspólne dla wszystkich węzłów.
+
+Minimalną konfiguracją dla systemu \passthrough{\lstinline!CoreOS!}
+jest:
+
+\begin{lstlisting}
+bootstrap_os: coreos  # automatyczna instalacja Pythona na CoreOS
+kube_basic_auth: true  # podstawowe logowanie do Dashboardu Kubernetes
+kubeconfig_localhost: true  # konfiguracja lokalnego kubectl
+download_run_once: true  # pozwala na jednorazowe pobieranie plikow 
+\end{lstlisting}
+
+\hypertarget{napotkane-problemy}{%
+\section{Napotkane problemy}\label{napotkane-problemy}}
+
+\hypertarget{klonowanie-repozytoriuxf3w-bez-logowania}{%
+\subsubsection{Klonowanie repozytoriów bez
+logowania}\label{klonowanie-repozytoriuxf3w-bez-logowania}}
 
 W celu umożliwienia anonimowego klonowania repozytorium z Githuba,
-zmieniłem protokół z \passthrough{\lstinline!git!} na
-\passthrough{\lstinline!https!}:
+konieczne było wykorzystanie protokołu \passthrough{\lstinline!https!}
+zamiast \passthrough{\lstinline!git!}:
 
 \begin{lstlisting}
 git clone https://github.com/nazarewk/kubernetes-cluster.git
 \end{lstlisting}
 
-Problem pojawił się również dla submodułów gita
-(\passthrough{\lstinline!.gitmodules!}).
+Zmiana musiała być~wprowadzona również~do submodułów
+\passthrough{\lstinline!git!}.
 
-\hypertarget{atrybut-wykonywalnoux15bci-skryptuxf3w}{%
-\subsubsection{Atrybut wykonywalności
-skryptów}\label{atrybut-wykonywalnoux15bci-skryptuxf3w}}
+\hypertarget{zdejmowanie-atrybutu-wykonywalnoux15bci-pliku}{%
+\subsubsection{Zdejmowanie atrybutu wykonywalności
+pliku}\label{zdejmowanie-atrybutu-wykonywalnoux15bci-pliku}}
 
-W konfiguracji uczelnianej git nie ustawia domyślnie atrybutu
-wykonalności dla plików wykonywalnych i zdejmuje go przy aktualizacji
-pliku. Problem rozwiązałem dodaniem komendy
-\passthrough{\lstinline!chmod +x bin/*!} do skryptu
-\passthrough{\lstinline!pull!}.
+W konfiguracji uczelnianej \passthrough{\lstinline!git!} nie ustawia
+zdejmuje atrybut wykonalności pobieranych plików. Po każdej komendzie
+\passthrough{\lstinline!git pull!} konieczne było wywołanie komendy
+\passthrough{\lstinline!chmod +x bin/*!}.
 
-\hypertarget{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}{%
-\subsubsection{Konfiguracja dostępu do maszyn bez
-hasła}\label{konfiguracja-dostux119pu-do-maszyn-bez-hasux142a}}
+\hypertarget{konfiguracja-bezhasux142owego-dostux119pu-ssh}{%
+\subsubsection{Konfiguracja bezhasłowego dostępu
+SSH}\label{konfiguracja-bezhasux142owego-dostux119pu-ssh}}
 
-Poza konfiguracją \passthrough{\lstinline!CoreOS!} wypełem konfigurację
-SSH do bezhasłowego dostępu. W pliku
-\passthrough{\lstinline!\~/.ssh/config!} umieściłem:
+W celu uruchomienia narzędzia \passthrough{\lstinline!kubespray!} w
+trybie bezinterakcyjnym konieczna była konfiguracja bezhasłowego dostępu
+SSH do zarządzanych maszyn. Powyższy problem rozwiązuje dodanie
+poniższych wpisów w pliku \passthrough{\lstinline!\~/.ssh/config!}:
 
 \begin{lstlisting}
 Host s?
   User admin
-  
-IdentityFile ~/.ssh/id_rsa
-IdentitiesOnly yes
-
-Host s?
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
 \end{lstlisting}
 
-\hypertarget{problemy-z-sieciux105}{%
-\subsubsection{Problemy z siecią}\label{problemy-z-sieciux105}}
+\hypertarget{problemy-z-sieciux105-uczelnianux105}{%
+\subsubsection{Problemy z siecią
+uczelnianą}\label{problemy-z-sieciux105-uczelnianux105}}
 
-W trakcie pierwszego uruchamiania występowały problemy z siecią
-uczelnianą, więc rozszerzyłem plik \passthrough{\lstinline!ansible.cfg!}
-o ponawianie prób wywoływania komend dodając wpis
-\passthrough{\lstinline!retires=5!} do sekcji
-\passthrough{\lstinline![ssh\_connection]!}.
+W trakcie pierwszego uruchamiania \passthrough{\lstinline!kubespray!}
+występowały przeciążenia sieci uczelnianej, w związku z tym komendy były
+tracone. Problemowi zaradzono konfigurując Ansible do powtarzania
+nieudanych komend.
 
-\hypertarget{limit-3-serweruxf3w-dns}{%
-\subsubsection{Limit 3 serwerów DNS}\label{limit-3-serweruxf3w-dns}}
+\hypertarget{ograniczenie-3-serweruxf3w-dns-w-kubespray}{%
+\subsubsection{Ograniczenie 3 serwerów DNS w
+kubespray}\label{ograniczenie-3-serweruxf3w-dns-w-kubespray}}
 
-Napotkałem
-\href{https://github.com/kubernetes-incubator/kubespray/blob/master/docs/dns-stack.md\#limitations}{limit
-3 serwerów DNS}:
+\passthrough{\lstinline!kubespray!} nie radzi sobie z więcej niż~trzema
+wpisami DNS na konfigurowanych maszynach. Ograniczenie to objawiło się
+na maszynie \passthrough{\lstinline!s8!}, która konfigurowała dodatkowy
+interfejs sieciowy.
 
-\begin{lstlisting}
-TASK [docker : check system nameservers] **************************************
-Friday 26 January 2018  14:47:09 +0100 (0:00:01.429)       0:04:26.879 ******** 
-ok: [node3] => {"changed": false, "cmd": "grep \"^nameserver\" /etc/resolv.conf | sed 's/^nameserver\\s*//'", "delta": "0:00:00.004652", "end": "2018-01-26 13:47:11.659298", "rc": 0, "start": "2018-01-26 13:47:11.654646", "stderr": "", "stderr_lines": [], "stdout": "172.29.146.3\n1
-72.29.146.6\n10.146.146.3\n10.146.146.6", "stdout_lines": ["172.29.146.3", "172.29.146.6", "10.146.146.3", "10.146.146.6"]}
-...
-TASK [docker : add system nameservers to docker options] **********************
-Friday 26 January 2018  14:47:13 +0100 (0:00:01.729)       0:04:30.460 ******** 
-ok: [node3] => {"ansible_facts": {"docker_dns_servers": ["10.233.0.3", "172.29.146.3", "172.29.146.6", "10.146.146.3", "10.146.146.6"]}, "changed": false}
-...
-TASK [docker : check number of nameservers] ***********************************
-Friday 26 January 2018  14:47:15 +0100 (0:00:01.016)       0:04:32.563 ******** 
-fatal: [node3]: FAILED! => {"changed": false, "msg": "Too many nameservers. You can relax this check by set docker_dns_servers_strict=no and we will only use the first 3."}
-\end{lstlisting}
+Problemu można uniknąć wyłączając zbędne interfejsy sieciowe.
 
-Okazało się, że maszyna \passthrough{\lstinline!s8!} była podłączona
-również na drugim interfejsie sieciowym, w związku z tym miała zbyt dużo
-wpisów serwerów DNS.
+\hypertarget{niewystarczajux105ca-iloux15bux107pamiux119ci-ram-na-maszynie-s2}{%
+\subsubsection{Niewystarczająca ilość~pamięci RAM na maszynie
+s2}\label{niewystarczajux105ca-iloux15bux107pamiux119ci-ram-na-maszynie-s2}}
 
-Rozwiązałem problem ręcznie logując się na maszynę i wyłączając drugi
-interfejs sieciowy komendą \passthrough{\lstinline!ip l set eno1 down!}.
+Maszyna \passthrough{\lstinline!s2!} nie posiada ilości pamięci RAM
+wystarczającej do uruchomienia węzła \passthrough{\lstinline!k8s!} i nie
+powinna być wykorzystywana.
 
-\hypertarget{pierwszy-dzieux144---uruchamianie-skryptuxf3w-z-maszyny-s6}{%
-\section{Pierwszy dzień - uruchamianie skryptów z maszyny
-s6}\label{pierwszy-dzieux144---uruchamianie-skryptuxf3w-z-maszyny-s6}}
+\hypertarget{eksperymentalna-konfiguracja-narzux119dzia-vault-w-kubespray}{%
+\subsubsection{Eksperymentalna konfiguracja narzędzia Vault w
+kubespray}\label{eksperymentalna-konfiguracja-narzux119dzia-vault-w-kubespray}}
 
-Większość przeszkód opisałem w powyższym rozdziale, więc w tym skupię
-się tylko na problemach związanych z pierwszą próbą uruchomienia
-skryptów na maszynie s6.
+W trakcie testów \passthrough{\lstinline!kubespray!} zostało rozszerzone
+o wsparcie narzędzia \passthrough{\lstinline!Vault!} firmy HashiCorp.
+Rozszerzenie okazało się niekompletne i konieczne było jego wyłączenie.
 
-Najpierw próbowałem uruchomić skrypty na maszynach: s2, s4 i s5
-
-\begin{lstlisting}[language=bash]
-cd ~/kubernetes/kubernetes-cluster
-bin/setup-cluster-full 10.146.255.{2,4,5}
-\end{lstlisting}
-
-Po uruchomieniu okazało się, że maszyna \passthrough{\lstinline!s2!}
-posiada tylko połowę RAMu (4GB) i nie mieszczą się na niej obrazy
-Dockera konieczne do uruchomienia klastra.
-
-Kolejną próbą było uruchomienie na maszynach s4, s5, s8 i s9. Skończyło
-się problemami z Vaultem opisanymi w dalszych rozdziałach.
-
-\hypertarget{kolejne-pruxf3by-uruchamiania-klastra-z-maszyny-s2}{%
-\section{Kolejne próby uruchamiania klastra z maszyny
-s2}\label{kolejne-pruxf3by-uruchamiania-klastra-z-maszyny-s2}}
-
-Dalsze testy przeprowadzałem na maszynach: s4, s5, s6, s8 i s9.
-
-Najwięcej czasu spędziłem na rozwiązaniu problemu z DNSami opisanym
-wyżej.
-
-\hypertarget{generowanie-inventory-z-hashicorp-vaultem}{%
-\subsubsection{Generowanie inventory z HashiCorp
-Vault'em}\label{generowanie-inventory-z-hashicorp-vaultem}}
-
-Skrypt \passthrough{\lstinline!inventory\_builder.py!} z
-\passthrough{\lstinline!Kubespray!} generuje wpisy oznaczające węzły
-jako posiadające HashiCorp Vaulta.
-
-Uruchomienie z Vault'em zakończyło się błędem, więc wyłączyłem Vault'a
-rozbijając skrypt \passthrough{\lstinline!bin/setup-cluster-full!} na
-krok konfiguracji i krok uruchomienia, pomiędzy którymi mogłem
-wyedytować \passthrough{\lstinline!inventory/inventory.cfg!}:
-
-\begin{lstlisting}[language=bash]
-    bin/setup-cluster-configure 10.146.255.{4,5,6,8,9}
-    bin/setup-cluster
-\end{lstlisting}
-
-Próbowałem dostosować parametr
-\href{https://github.com/kubernetes-incubator/kubespray/blob/master/docs/vault.md}{\passthrough{\lstinline!cert\_management!}},
-żeby działał zarówno z \passthrough{\lstinline!Vaultem!} jak i bez, ale
-nie dało to żadnego skutku. Objawem było nie uruchamianie się
-\passthrough{\lstinline!etcd!}.
-
-Uznałem, że taka konfiguracja jeszcze nie działa i zarzuciłem dalsze
-próby. Aby rozwiązać problem trzeba usunąć wpisy pod kategorią
-\passthrough{\lstinline![vault]!} z pliku
-\passthrough{\lstinline!inventory.cfg!}.
-
-\hypertarget{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}{%
-\subsubsection{Niepoprawne znajdowanie adresów IP w
-ansible}\label{niepoprawne-znajdowanie-adresuxf3w-ip-w-ansible}}
-
-Z jakiegoś~powodu konfiguracje \passthrough{\lstinline!s6!} (node3) i
-\passthrough{\lstinline!s8!} (node4) kończyły się błędem:
-
-\begin{lstlisting}
-TASK [kubernetes/preinstall : Stop if ip var does not match local ips] ********
-Friday 26 January 2018  16:37:48 +0100 (0:00:01.297)       0:00:48.587 ********
-fatal: [node4]: FAILED! => {
-    "assertion": "ip in ansible_all_ipv4_addresses",
-    "changed": false,
-    "evaluated_to": false
-}
-fatal: [node3]: FAILED! => {
-    "assertion": "ip in ansible_all_ipv4_addresses",
-    "changed": false,
-    "evaluated_to": false
-}
-\end{lstlisting}
-
-Trzy dni później nie wprowadzając po drodze~żadnych zmian uruchomiłem
-klaster bez problemu.
-
-Przyczyną błędu okazały się pozostałości konfiguracji maszyn niezależne
-ode mnie.
-
-\hypertarget{dostux119p-do-kubernetes-dashboardu}{%
-\subsubsection{Dostęp do Kubernetes
-Dashboardu}\label{dostux119p-do-kubernetes-dashboardu}}
-
-\passthrough{\lstinline!Kubernetes Dashboard!} jest dostępny pod
-poniższą ścieżką~HTTP:
-
-\begin{lstlisting}
-/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/service/default/kubernetes
-\end{lstlisting}
-
-Można się do niego dostać na dwa sposoby:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \passthrough{\lstinline!kubectl proxy!}, które wystawia dashboard na
-  adresie \passthrough{\lstinline!http://127.0.0.1:8001!}
-\item
-  Pod adresem \passthrough{\lstinline!https://10.146.225.4:6443!}, gdzie
-  \passthrough{\lstinline!10.146.225.4!} to adres IP dowolnego mastera,
-  w tym przypadku maszyny \passthrough{\lstinline!s4!}
-\end{enumerate}
-
-Kompletne adresy to:
-
-\begin{lstlisting}
-http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/service/default/kubernetes
-https://10.146.225.4:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/service/default/kubernetes
-\end{lstlisting}
-
-\hypertarget{przekierowanie-portuxf3w}{%
-\paragraph{Przekierowanie portów}\label{przekierowanie-portuxf3w}}
-
-Jeżeli nie pracujemy z maszyny uczelnianej porty możemy przekierować
-przez SSH na następujące sposoby (jeżeli skrypty uruchamialiśmy z
-maszyny \passthrough{\lstinline!s2!} i łączymy się do mastera na
-maszynie \passthrough{\lstinline!s4!}):
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Plik \passthrough{\lstinline!\~/.ssh/config!}:
-\end{enumerate}
-
-\begin{lstlisting}
-Host s2
-  LocalForward 127.0.0.1:8001 localhost:8001
-  LocalForward 127.0.0.1:6443 10.146.225.4:6443
-\end{lstlisting}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Argumenty ssh, np.:
-\end{enumerate}
-
-\begin{lstlisting}
-ssh -L 8001:localhost:8001 -L 6443:10.146.225.4:6443 nazarewk@s2
-\end{lstlisting}
-
-\hypertarget{uux17cytkownik-i-hasux142o}{%
-\paragraph{Użytkownik i hasło}\label{uux17cytkownik-i-hasux142o}}
+\hypertarget{logowanie-do-kubernetes-dashboard}{%
+\subsubsection{Logowanie do Kubernetes
+Dashboard}\label{logowanie-do-kubernetes-dashboard}}
 
 Domyślna nazwa użytkownika Dashboardu to \passthrough{\lstinline!kube!},
 a hasło znajduje się w pliku
 \passthrough{\lstinline!credentials/kube\_user!}.
 
-W starszej wersji (uruchamianej wcześniej) \passthrough{\lstinline!k8s!}
-i/lub \passthrough{\lstinline!Kubespray!} brakowało opcji logowania przy
+W starszej wersji \passthrough{\lstinline!k8s!} i/lub
+\passthrough{\lstinline!kubespray!} brakowało opcji logowania przy
 pomocy nazwy użytkownika i hasła:
 
 \includegraphics[width=5.20833in,height=2.5in]{assets/dashboard-login-old.png}\\
-Od 29 stycznia 2018 roku widzę poprawny ekran logowania (opcja Basic):
+
+Od 29 stycznia 2018 roku zaobserwowany został poprawny ekran logowania
+(opcja \passthrough{\lstinline!Basic!}):
 
 \includegraphics[width=5.20833in,height=4.63542in]{assets/dashboard-login-new.png}\\
 
 \hypertarget{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}{%
 \subsubsection{Instalacja dodatkowych aplikacji z użyciem
-Kubespray}\label{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}}
+kubespray}\label{instalacja-dodatkowych-aplikacji-z-uux17cyciem-kubespray}}
 
-\passthrough{\lstinline!Kubespray!} ma wbudowaną instalację kilku
+\passthrough{\lstinline!kubespray!} ma wbudowaną instalację kilku
 dodatkowych aplikacji playbookiem
 \passthrough{\lstinline!upgrade-cluster.yml!} z tagiem
 \passthrough{\lstinline!apps!} (skrypt
-\passthrough{\lstinline!bin/setup-cluster-upgrade!}).
+\passthrough{\lstinline!bin/setup-cluster-upgrade!}). Ze względu na
+liczne pojawiające się błędy temat został zarzucony.
 
-Zmieniłem~\passthrough{\lstinline!kube\_script\_dir!} na lokalizacje z
-poza \passthrough{\lstinline!/usr/local/bin!}, bo w systemie
-\passthrough{\lstinline!CoreOS!} jest read-only squashfsem, wybrałem
-\passthrough{\lstinline!/opt/bin!} ponieważ znajdował się już~w
-\passthrough{\lstinline!PATHie!} na \passthrough{\lstinline!CoreOS!}.
-Później dowiedziałem się, że domyślnie zmiany
-\passthrough{\lstinline!CoreOS!} powinny być umieszczane w folderze
-\passthrough{\lstinline!/opt!}
+\hypertarget{uruchomienie-helm}{%
+\subsubsection{Uruchomienie Helm}\label{uruchomienie-helm}}
 
-W końcu ze względu na liczne błędy zarzuciłem temat.
-
-\hypertarget{instalacja-helm}{%
-\subsubsection{Instalacja Helm}\label{instalacja-helm}}
-
-\href{https://github.com/kubernetes/helm}{\passthrough{\lstinline!Helm!}}
-jest menadżerem pakietów dla \passthrough{\lstinline!k8s!}. Jego głównym
-zadaniem jest standaryzacja, automatyzacja i ułatwienie instalacji
-aplikacji w \passthrough{\lstinline!k8s!}.
-
-\passthrough{\lstinline!Helm!} składa się z:
-
-\begin{itemize}
-\tightlist
-\item
-  programu \passthrough{\lstinline!helm!} uruchamianego lokalnie i
-  korzystającego z danych dostępowych
-  \passthrough{\lstinline!kubectla!},
-\item
-  aplikacji serwerowej \passthrough{\lstinline!Tiller!}, z którą
-  \passthrough{\lstinline!helm!} prowadzi interakcje,
-\item
-  pakietów \passthrough{\lstinline!Charts!} i ich repozytoriów,
-  domyślnie jest to
-  \href{https://github.com/kubernetes/charts}{\passthrough{\lstinline!kubernetes/charts!}},
-\end{itemize}
-
-Jego instalacja sprowadza się~do:
+Instalacja menadżera pakietów sprowadza się~do:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  ściągnięcia pliku wykonywalnego dla obecnej architektury,
+  ściągnięcia pliku wykonywalnego \passthrough{\lstinline!helm!},
 \item
-  dodania roli RBAC dla \passthrough{\lstinline!Tillera!},
+  stworzenie roli RBAC dla serwerowego komponentu
+  \passthrough{\lstinline!Tiller!},
 \item
   Wywołanie komendy
   \passthrough{\lstinline!helm init --service-account tiller!}
@@ -2043,21 +1932,28 @@ Jego instalacja sprowadza się~do:
 Wszystkie kroki zawierają się w skrypcie
 \passthrough{\lstinline!bin/install-helm!}. Ze względu na braku
 dystrybucji \passthrough{\lstinline!Helm!} na
-\passthrough{\lstinline!FreeBSD!} całość uruchamiam przez SSH na
-węźle-zarządcy (domyślnie \passthrough{\lstinline!s4!}).
+\passthrough{\lstinline!FreeBSD!} całość jest uruchamiana przez SSH na
+węźle zarządzającym (domyślnie \passthrough{\lstinline!s4!}).
 
-Szybko okazało się, że większość pakietów wymaga trwałych zasobów
-dyskowych i nie uda się ich uruchomić bez ich konfiguracji w sieci
-uczelnianej.
+Większość dostępnych~pakietów wymaga trwałych zasobów dyskowych, więc
+temat nie był dalej zgłębiany.
 
-\hypertarget{docelowa-konfiguracja-w-sieci-uczelnianej}{%
-\chapter{Docelowa konfiguracja w sieci
-uczelnianej}\label{docelowa-konfiguracja-w-sieci-uczelnianej}}
+\hypertarget{prezentacja-docelowej-konfiguracji-klastra-kubernetes-w-sieci-uczelnianej}{%
+\chapter{Prezentacja docelowej konfiguracji klastra Kubernetes w sieci
+uczelnianej}\label{prezentacja-docelowej-konfiguracji-klastra-kubernetes-w-sieci-uczelnianej}}
+
+W tym rozdziale opisana jest pełna procedura uruchomienia klastra
+\passthrough{\lstinline!Kubernetes!} z wykorzystaniem opracowanych
+skryptów. Wywoływane komendy są w formacie
+\passthrough{\lstinline!<nazwa\_hosta>\% <komenda>!}. Kolejnymi liniami
+fragmentów kodu jest standardowe wyjście wywoływanych komend, a trzy
+kropki \passthrough{\lstinline!...!} reprezentują~jego wycięte
+fragmenty.
 
 Pełną konfiguracja \passthrough{\lstinline!k8s!} można uruchomić z
-maszyny ldap; znajduje się ona w folderze
-\passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes!} maszyny
-\passthrough{\lstinline!ldap!}, który zawiera podane foldery:
+maszyny \passthrough{\lstinline!ldap!}; znajduje się ona w folderze
+\passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes!}, który
+zawiera następujące pliki i foldery:
 
 \begin{itemize}
 \tightlist
@@ -2072,16 +1968,10 @@ maszyny ldap; znajduje się ona w folderze
   \begin{itemize}
   \tightlist
   \item
-    \passthrough{\lstinline!coreos.ign!} - plik konfigurujący CoreOS,
-    wygenerowany z pliku \passthrough{\lstinline!coreos.yml!} narzędziem
-    do transpilacji konfiguracji
-    \href{https://github.com/coreos/container-linux-config-transpiler}{\passthrough{\lstinline!ct!}},
-    narzędzie domyślnie nie jest skompilowane na FreeBSD i musimy
-    uruchomić je z Linuxa,
+    \passthrough{\lstinline!coreos.ipxe!} - konfiguracja iPXE,
+  \item
+    \passthrough{\lstinline!coreos.ign!} - konfiguracja Ignition,
   \end{itemize}
-\item
-  \passthrough{\lstinline!log!} - standardowe wyjście uruchamianych
-  komend,
 \end{itemize}
 
 \hypertarget{procedura-uruchomienia-klastra}{%
@@ -2092,62 +1982,45 @@ klastra}\label{procedura-uruchomienia-klastra}}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Wchodzę na maszynie \passthrough{\lstinline!ldap!} do folderu
-  \passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster!}
+  Wejście na maszynę \passthrough{\lstinline!ldap!} do folderu
+  \passthrough{\lstinline!/pub/Linux/CoreOS/zetis/kubernetes/kubernetes-cluster!},
 \item
-  Upewniam się, że mój klucz SSH znajduje się w
+  Upewnienie się, że klucz dostępowy SSH jest obecny w
   \passthrough{\lstinline!boot/coreos.ign!},
 \item
-  Włączam maszyny-węzły wybierając z menu
+  Uruchomienie maszyn-węzłów wybierając z menu
   \passthrough{\lstinline!iPXE CoreOS!} -\textgreater{}
   \passthrough{\lstinline!k8s!} lub wybierając w narzędziu
   \passthrough{\lstinline!boot!} bezpośrednio
   \passthrough{\lstinline!coreos kub!},
 \item
-  Upewniam się, że mam bezhasłowy dostęp do tych maszyn, minimalna
-  konfiguracja \passthrough{\lstinline!\~/.ssh/config!} to:
+  Weryfikacja bezhasłowego dostępu do węzłów, minimalna konfiguracja
+  \passthrough{\lstinline!\~/.ssh/config!} to:
 \end{enumerate}
 
 \begin{lstlisting}
 Host s?
   User admin
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
-
-Host *
   IdentityFile ~/.ssh/id_rsa
   IdentitiesOnly yes
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
 \end{lstlisting}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \setcounter{enumi}{4}
-\tightlist
 \item
-  Upewniam się, że istnieje folder
-  \passthrough{\lstinline!kubespray/my\_inventory!}, jeżeli nie, to go
-  tworzymę kopiując domyślną konfigurację:
-\end{enumerate}
-
-\begin{lstlisting}
-cp -rav kubespray/inventory kubespray/my_inventory
-\end{lstlisting}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{5}
-\tightlist
+  W razie braku, utworzenie folderu
+  \passthrough{\lstinline!kubespray/my\_inventory!} komendą
+  \passthrough{\lstinline!cp -rav kubespray/inventory kubespray/my\_inventory!}
 \item
-  Otwieram plik \passthrough{\lstinline!inventory/inventory.cfg!} i
-  upewniam się, że uruchomione maszyny są obecne w sekcji
-  \passthrough{\lstinline![all]!} oraz przypisane do odpowiednich ról:
-  \passthrough{\lstinline![kube-master]!} i
-  \passthrough{\lstinline![etcd]!} lub
-  \passthrough{\lstinline![kube-node]!}. Identyfikatorem maszyny jest
-  pierwsze słowo w grupie \passthrough{\lstinline![all]!}, przykładowa
-  konfiguracja dla maszyn \passthrough{\lstinline!s4!},
-  \passthrough{\lstinline!s5!} i \passthrough{\lstinline!s6!} z jednym
-  zarządcą to:
+  Upewnienie się, że uruchomione maszyny są obecne w odpowiednich
+  sekcjach pliku \passthrough{\lstinline!inventory/inventory.cfg!},
+  domyślna konfiguracja pozwala na uruchomienie klastra na maszynach
+  \passthrough{\lstinline!s4!}, \passthrough{\lstinline!s5!} i
+  \passthrough{\lstinline!s6!} z jednym węzłem zarządzającym
+  \passthrough{\lstinline!s4!}:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -2178,29 +2051,14 @@ kube-node
 kube-master
 \end{lstlisting}
 
-Opcjonalnie można do każdego węzła:
-
-\begin{itemize}
-\tightlist
-\item
-  dopisać
-  \passthrough{\lstinline!ansible\_python\_interpreter=/opt/bin/python!},
-  żeby ułatwić uruchamianie ansibla partiami,
-\item
-  dopisać
-  \passthrough{\lstinline!ansible\_host=<prawdziwa\_nazwa\_hosta>!},
-  jeżeli che się korzystać z pierwszego wyrazu opisu węzła jako aliasu,
-  a nie faktycznej jego nazwy w sieci uczelnianej,
-\end{itemize}
-
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \setcounter{enumi}{6}
 \tightlist
 \item
-  Upewniam się, że plik
-  \passthrough{\lstinline!inventory/group\_vars/all.yml!} zawiera naszą
-  konfigurację; minimalny przykład:
+  Upewnienie się, że plik
+  \passthrough{\lstinline!inventory/group\_vars/all.yml!} zawiera
+  poprawną konfigurację, na przykład:
 \end{enumerate}
 
 \begin{lstlisting}
@@ -2210,10 +2068,6 @@ kube_basic_auth: true
 kubeconfig_localhost: true
 kubectl_localhost: true
 download_run_once: true
-cert_management: "{{ 'vault' if groups.get('vault', None) else 'script' }}"
-helm_enabled: true
-helm_deployment_type: docker
-kube_script_dir: /opt/bin/kubernetes-scripts
 \end{lstlisting}
 
 \begin{enumerate}
@@ -2221,16 +2075,10 @@ kube_script_dir: /opt/bin/kubernetes-scripts
 \setcounter{enumi}{7}
 \tightlist
 \item
-  Uruchamiam konfigurowanie maszyn
-  \passthrough{\lstinline!bin/setup-cluster!} lub bez skryptu:
+  Konfiguracja klastra skryptem
+  \passthrough{\lstinline!bin/setup-cluster!}. Po około 10 minutach
+  skrypt powinien zakończyć się wpisami pokroju:
 \end{enumerate}
-
-\begin{lstlisting}[language=bash]
-ldap% cd kubespray
-ldap% ansible-playbook -i my_inventory/inventory.cfg cluster.yml -b -v
-\end{lstlisting}
-
-Po około 10-20 minutach skrypt powinien zakończyć się wpisami pokroju:
 
 \begin{lstlisting}
 ...
@@ -2247,7 +2095,7 @@ s6                         : ok=186  changed=54   unreachable=0    failed=0
 \setcounter{enumi}{8}
 \tightlist
 \item
-  Weryfikuję instalację:
+  Weryfikacja konfiguracji węzłów:
 \end{enumerate}
 
 \begin{lstlisting}[language=bash]
@@ -2258,9 +2106,13 @@ s5        Ready     node      2m        v1.9.1_coreos.0
 s6        Ready     node      2m        v1.9.1_coreos.0
 \end{lstlisting}
 
-\hypertarget{sprawdzanie-czy-klaster-dziaux142a}{%
-\section{Sprawdzanie, czy klaster
-działa}\label{sprawdzanie-czy-klaster-dziaux142a}}
+\hypertarget{procedury-korzystania-z-klastra-kubernetes}{%
+\section{Procedury korzystania z klastra
+Kubernetes}\label{procedury-korzystania-z-klastra-kubernetes}}
+
+Aby dodać użytkownika wywołujemy skrypt
+\passthrough{\lstinline!bin/students!} z pierwszym argumentem będącym
+nazwą użytkownika i drugim \passthrough{\lstinline!create!}.
 
 Wywołanie skryptu \passthrough{\lstinline!bin/students nazarewk create!}
 jest równoważne uruchomieniu komendy
@@ -2295,31 +2147,29 @@ subjects:
   name: nazarewk
 \end{lstlisting}
 
-W skrócie:
+Tworzone są następujące obiekty Kubernetes:
 
 \begin{itemize}
 \tightlist
 \item
-  tworzę \passthrough{\lstinline!Namespace!}
+  przestrzeń nazw użytkownika,
 \item
-  tworzę \passthrough{\lstinline!ServiceAccount!}
+  konto serwisowe użytkownika,
 \item
-  przypisuję wbudowaną \passthrough{\lstinline!Role!} o nazwie
-  \passthrough{\lstinline!admin!} do
-  \passthrough{\lstinline!ServiceAccount!} o nazwie
-  \passthrough{\lstinline!nazarewk!} za pomocą
-  \passthrough{\lstinline!RoleBinding!},
+  przypisanie kontu serwisowemu roli \passthrough{\lstinline!admin!},
+  która daje pełny dostęp do jego przestrzeni nazw.
 \end{itemize}
 
-\hypertarget{korzystanie-z-klastra-jako-student}{%
-\subsubsection{Korzystanie z klastra jako
-student}\label{korzystanie-z-klastra-jako-student}}
+\hypertarget{przykux142adowa-procedura-korzystania-z-klastra}{%
+\subsubsection{Przykładowa procedura korzystania z
+klastra}\label{przykux142adowa-procedura-korzystania-z-klastra}}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  tworzę użytkownika z jego własnym \passthrough{\lstinline!Namespace!}
-\end{itemize}
+  Stworzenie konta użytkownika
+\end{enumerate}
 
 \begin{lstlisting}
 ldap% bin/students nazarewk create
@@ -2327,7 +2177,10 @@ namespace "nazarewk" created
 serviceaccount "nazarewk" created
 rolebinding "nazarewk-admin-binding" created
 Tokens:
-eyJhb<<<SKROCONY TOKEN>>>ahHfxU-TRw
+eyJhb<SKROCONY_TOKEN>ahHfxU-TRw
+\end{lstlisting}
+
+\begin{lstlisting}
 ldap% bin/students
 NAME          STATUS    AGE
 default       Active    3m
@@ -2336,21 +2189,27 @@ kube-system   Active    3m
 nazarewk      Active    16s
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
 \tightlist
 \item
-  kopiuję token na \passthrough{\lstinline!s2!} z uruchomionym ubuntu:
-\end{itemize}
+  Skopiowanie przepustki użytkownika na (przykładową) maszynę
+  \passthrough{\lstinline!s2!} z działającym systemem operacyjnym
+  Ubuntu:
+\end{enumerate}
 
 \begin{lstlisting}
   ldap% bin/student-tokens nazarewk | ssh nazarewk@s2 "cat > /tmp/token"
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
 \tightlist
 \item
-  pobieram \passthrough{\lstinline!kubectl!}
-\end{itemize}
+  Pobranie narzędzia \passthrough{\lstinline!kubectl!}:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% cd /tmp
@@ -2360,43 +2219,53 @@ s2% sudo mv kubectl /usr/local/bin
 s2% source <(kubectl completion zsh)
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
 \tightlist
 \item
-  sprawdzam, czy mam dostęp do klastra
-\end{itemize}
+  Weryfikacja braku konfiguracji narzędzia:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% kubectl get nodes
 The connection to the server localhost:8080 was refused - did you specify the right host or port?
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
 \tightlist
 \item
-  konfiguruję kubectl (najprościej aliasem)
-\end{itemize}
+  Konfiguracja \passthrough{\lstinline!kubectl!} w najprostszy możliwy
+  sposób, czyli aliasem:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% alias kubectl='command kubectl -s "https://s4:6443" --insecure-skip-tls-verify=true --token="$(cat /tmp/token)" -n nazarewk'
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
 \tightlist
 \item
-  weryfikuję brak dostępu do zasobów globalnych
-\end{itemize}
+  Weryfikacja braku dostępu do zasobów globalnych klastra:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% kubectl get nodes
 Error from server (Forbidden): nodes is forbidden: User "system:serviceaccount:nazarewk:nazarewk" cannot list nodes at the cluster scope
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
 \tightlist
 \item
-  tworzę deployment z przykładową aplikacją
-\end{itemize}
+  Stworzenie \passthrough{\lstinline!Deployment!} przykładowej
+  aplikacji:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% kubectl run echoserver --image=gcr.io/google_containers/echoserver:1.4 --port=8080 --replicas=2
@@ -2416,11 +2285,14 @@ echoserver-7b9bbf6ff-22df4   1/1       Running   0          4m
 echoserver-7b9bbf6ff-c6kbv   1/1       Running   0          4m
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
 \tightlist
 \item
-  wystawiam port, żeby dostać się do aplikacji spoza klastra
-\end{itemize}
+  Stworzenie serwisu typu \passthrough{\lstinline!NodePort!} w celu
+  dostępu do aplikacji:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% kubectl expose deployment echoserver --type=NodePort
@@ -2431,6 +2303,17 @@ service "echoserver" exposed
 s2% kubectl describe services/echoserver | grep -e NodePort:
 NodePort:                 <unset>  30100/TCP
 \end{lstlisting}
+
+Wynik ostatniej komendy oznacza dostęp do aplikacji przez port
+\passthrough{\lstinline!30100!} dowolnego węzła klastra.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{8}
+\tightlist
+\item
+  Weryfikacja działania aplikacji:
+\end{enumerate}
 
 \begin{lstlisting}
 s2% curl s4:30100
@@ -2453,12 +2336,14 @@ BODY:
 -no body in request-
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{9}
 \tightlist
 \item
-  sprawdzam, czy z \passthrough{\lstinline!ldapa!} też mam dostęp do
-  aplikacji:
-\end{itemize}
+  Weryfikacja dostępu do aplikacji z maszyny
+  \passthrough{\lstinline!ldap!}:
+\end{enumerate}
 
 \begin{lstlisting}
 ldap% curl s4:30100
@@ -2481,11 +2366,13 @@ BODY:
 -no body in request-
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{10}
 \tightlist
 \item
-  usuwam użytkownika
-\end{itemize}
+  Usunięcie użytkownika:
+\end{enumerate}
 
 \begin{lstlisting}
 ldap% bin/students nazarewk delete
@@ -2496,11 +2383,13 @@ Tokens:
 Error from server (NotFound): serviceaccounts "nazarewk" not found
 \end{lstlisting}
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{11}
 \tightlist
 \item
-  sprawdzam, czy coś zostało po koncie użytkownika
-\end{itemize}
+  Weryfikacja usunięcia wszystkich zasobów użytkownika:
+\end{enumerate}
 
 \begin{lstlisting}
 ldap% curl s4:30100
@@ -2515,8 +2404,11 @@ kube-public   Active    46m
 kube-system   Active    46m
 \end{lstlisting}
 
-\hypertarget{rezultaty-i-wnioski}{%
-\chapter{Rezultaty i wnioski}\label{rezultaty-i-wnioski}}
+\hypertarget{podsumowanie}{%
+\chapter{Podsumowanie}\label{podsumowanie}}
+
+W niniejszej pracy omówiono zagadnienia konfiguracji klastra Kubernetes.
+Przedstawione zostały
 
 Główne założenia pracy inżynierskiej zostały spełnione. Wyjaśniłem dużą
 ilość zagadnień związanych z \passthrough{\lstinline!k8s!} oraz oddałem
@@ -2540,8 +2432,8 @@ na brak czasu. \appendix
 
 \theendnotes
 
-\hypertarget{wykaz-skryptuxf3w}{%
-\chapter{Wykaz skryptów}\label{wykaz-skryptuxf3w}}
+\hypertarget{wykaz-kodu-ux17aruxf3dux142owego}{%
+\chapter{Wykaz kodu źródłowego}\label{wykaz-kodu-ux17aruxf3dux142owego}}
 
 \hypertarget{repozytorium-kubernetes-cluster}{%
 \section{repozytorium
@@ -2601,7 +2493,7 @@ fi
 \hypertarget{binensure-virtualenv}{%
 \subsubsection{bin/ensure-virtualenv}\label{binensure-virtualenv}}
 
-Konfiguruje środowisko Pythona, włącznie z próbą instalacji brakującego
+Konfiguruje środowisko Pythona, wraz z próbą instalacji brakującego
 \passthrough{\lstinline!virtualenv!} przez
 \passthrough{\lstinline!apt!}:
 
@@ -2717,10 +2609,6 @@ kube_basic_auth: true
 kubeconfig_localhost: true
 kubectl_localhost: true
 download_run_once: true
-cert_management: "{{ 'vault' if groups.get('vault', None) else 'script' }}"
-helm_enabled: true
-helm_deployment_type: docker
-kube_script_dir: /opt/bin/kubernetes-scripts
 EOF
 \end{lstlisting}
 
@@ -2989,17 +2877,14 @@ Częściowy plik konfiguracyjny SSH do umieszczenia w
 \begin{lstlisting}[language=bash]
 Host s?
   User admin
-
-IdentityFile ~/.ssh/id_rsa
-IdentitiesOnly yes
-
-Host s?
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 \end{lstlisting}
 
-\hypertarget{zetiswwwbootcoreos.ipxe}{%
-\subsubsection{zetis/WWW/boot/coreos.ipxe}\label{zetiswwwbootcoreos.ipxe}}
+\hypertarget{zetiswwwbootcoreos.ipxe-1}{%
+\subsubsection{zetis/WWW/boot/coreos.ipxe}\label{zetiswwwbootcoreos.ipxe-1}}
 
 Skrypt iPXE uruchamiający maszynę z CoreOS:
 
@@ -3019,8 +2904,8 @@ initrd ${base-url}/coreos_production_pxe_image.cpio.gz
 boot
 \end{lstlisting}
 
-\hypertarget{zetiswwwbootcoreos.yml}{%
-\subsubsection{zetis/WWW/boot/coreos.yml}\label{zetiswwwbootcoreos.yml}}
+\hypertarget{zetiswwwbootcoreos.yml-1}{%
+\subsubsection{zetis/WWW/boot/coreos.yml}\label{zetiswwwbootcoreos.yml-1}}
 
 Plik konfiguracyjny Container Linux Config w formacie YAML, docelowo do
 przepuszczenia przez narzędzie \passthrough{\lstinline!ct!}. Wyjątkowo

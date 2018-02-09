@@ -3,7 +3,7 @@
 # Wykaz odnośników
 \theendnotes
 
-# Wykaz skryptów
+# Wykaz kodu źródłowego
 
 ## repozytorium kubernetes-cluster
 
@@ -31,7 +31,7 @@ skryptów oraz linii komend:
 
 #### bin/ensure-virtualenv
 
-Konfiguruje środowisko Pythona, włącznie z próbą
+Konfiguruje środowisko Pythona, wraz z próbą
 instalacji brakującego `virtualenv` przez `apt`:
 
 ```{.bash include=kubernetes-cluster/bin/ensure-virtualenv}
