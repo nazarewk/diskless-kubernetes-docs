@@ -101,7 +101,7 @@
 
 %%%%%%%%%%%%%%% Strona Tytułowa %%%%%%%%%%%%%%%%%
 % To trzeba wypelnic swoimi danymi
-\title{Implementacja środowiska Kubernetes na maszynach bezdyskowych}
+\title{Implementacja i testy wydajności środowiska Kubernetes na maszynach bezdyskowych}
 
 % autor
 \author{Krzysztof Nazarewski}
@@ -109,7 +109,7 @@
 
 \opiekun{mgr inż. Andrzej Toboła}
 %\konsultant{prof. Dzielny Konsultant}  % opcjonalnie
-\terminwykonania{1 lutego 2018} % data na oświadczeniu o samodzielności
+\terminwykonania{7 lutego 2018} % data na oświadczeniu o samodzielności
 \rok{2018}
 
 
@@ -2731,10 +2731,7 @@ konfiguracji \passthrough{\lstinline!kubespray!}:
 # Purpose: kubectl wrapper which uses generated  configurations
 
 # Handle running kubectl from PATH
-[ "${0%/*}" == "$0" ] \
- && _bin=$(dirname $(which kubectl)) \
- || _bin=${0%/*}
-
+[ "${0%/*}" == "$0" ] && _bin=$(dirname $(which kubectl)) || _bin=${0%/*}
 . $_bin/vars
 
 local_bin="$PDIR/artifacts/kubectl"
@@ -2987,4 +2984,5 @@ poza uczelnią.
 
 Repozytorium nie zostało wykorzystane w finalnej konfiguracji, więc nie
 będę opisywał jego zawartości.
+\cleardoublepage
 \end{document}

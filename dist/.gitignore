@@ -1,3 +1,5 @@
 *
 !.gitignore
 !output.pdf
+!merge_*.pdf
+!merged.pdf

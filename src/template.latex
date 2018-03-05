@@ -124,7 +124,7 @@ $endif$
 
 \opiekun{mgr inż. Andrzej Toboła}
 %\konsultant{prof. Dzielny Konsultant}  % opcjonalnie
-\terminwykonania{1 lutego 2018} % data na oświadczeniu o samodzielności
+\terminwykonania{7 lutego 2018} % data na oświadczeniu o samodzielności
 \rok{2018}
 
 
@@ -158,4 +158,5 @@ $endif$
 \begin{document}
 \maketitle
 $body$
+\cleardoublepage
 \end{document}
